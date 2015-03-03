@@ -330,9 +330,15 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
     var colors = d3.scale.category20().range()
 	.concat (d3.scale.category20b().range(),
 		 d3.scale.category20c().range());
+    var chartData = [];
 
-    function drawRatioCompressionChart (data) {
-	$("#ratio-compression-chart").highcharts({
+    function drawRatioCompressionChart (xAxis, yAxis) {
+	if (xAxis == undefined)
+	    xAxis = 'linear';
+	if (yAxis == undefined)
+	    yAxis = 'linear';
+
+	var chart = $("#ratio-compression-chart").highcharts({
             chart: { type: 'scatter' },
             title: { text: 'Compression Ratio vs. Compression Speed' },
             xAxis: {
@@ -340,18 +346,20 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
                     enabled: true,
                     text: 'Compression Speed'
 		},
+		startOnTick: true,
 		endOnTick: true,
-		min: 0,
+		min: (xAxis == 'logarithmic') ? undefined : 0,
 		labels: {
 		    rotation: -45,
 		    formatter: function() { return formatSpeed(this.value); }
 		},
-		type: 'linear'
+		type: xAxis
             },
             yAxis: {
 		title: {
                     text: 'Ratio'
-		}
+		},
+		type: yAxis
             },
             legend: {
 		layout: 'vertical',
@@ -374,7 +382,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
                     }
 		}
             },
-            series: data.map(function (e, i, a) {
+            series: chartData.map(function (e, i, a) {
 		var colors = d3.scale.category20().range();
 		return {
 		    name: e.plugin,
@@ -388,11 +396,25 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		    })
 		};
 	    })
+	}).highcharts();
+
+	$("#ratio-compression-chart .highcharts-xaxis-title").click(function (e) {
+	    drawRatioCompressionChart(chart.userOptions.xAxis.type == "linear" ? "logarithmic" : "linear",
+				      chart.userOptions.yAxis.type);
+	});
+	$("#ratio-compression-chart .highcharts-yaxis-title").click(function (e) {
+	    drawRatioCompressionChart(chart.userOptions.xAxis.type,
+				      chart.userOptions.yAxis.type == "linear" ? "logarithmic" : "linear");
 	});
     }
 
-    function drawRatioDecompressionChart (data) {
-	$("#ratio-decompression-chart").highcharts({
+    function drawRatioDecompressionChart (xAxis, yAxis) {
+	if (xAxis == undefined)
+	    xAxis = 'linear';
+	if (yAxis == undefined)
+	    yAxis = 'linear';
+
+	var chart = $("#ratio-decompression-chart").highcharts({
             chart: { type: 'scatter' },
             title: { text: 'Compression Ratio vs. Decompression Speed' },
             xAxis: {
@@ -400,18 +422,20 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
                     enabled: true,
                     text: 'Decompression Speed'
 		},
+		startOnTick: true,
 		endOnTick: true,
-		min: 0,
+		min: (xAxis == 'logarithmic') ? undefined : 0,
 		labels: {
 		    rotation: -45,
 		    formatter: function() { return formatSpeed(this.value); }
 		},
-		type: 'linear'
+		type: xAxis
             },
             yAxis: {
 		title: {
                     text: 'Ratio'
-		}
+		},
+		type: yAxis
             },
             legend: {
 		layout: 'vertical',
@@ -434,7 +458,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
                     }
 		}
             },
-            series: data.map(function (e, i, a) {
+            series: chartData.map(function (e, i, a) {
 		var colors = d3.scale.category20().range();
 		return {
 		    name: e.plugin,
@@ -448,11 +472,25 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		    })
 		};
 	    })
+	}).highcharts();
+
+	$("#ratio-decompression-chart .highcharts-xaxis-title").click(function (e) {
+	    drawRatioDecompressionChart(chart.userOptions.xAxis.type == "linear" ? "logarithmic" : "linear",
+					chart.userOptions.yAxis.type);
+	});
+	$("#ratio-decompression-chart .highcharts-yaxis-title").click(function (e) {
+	    drawRatioDecompressionChart(chart.userOptions.xAxis.type,
+					chart.userOptions.yAxis.type == "linear" ? "logarithmic" : "linear");
 	});
     }
 
-    function drawCompressionDecompressionChart (data) {
-	$("#compression-decompression-chart").highcharts({
+    function drawCompressionDecompressionChart (xAxis, yAxis) {
+	if (xAxis == undefined)
+	    xAxis = 'linear';
+	if (yAxis == undefined)
+	    yAxis = 'linear';
+
+	var chart = $("#compression-decompression-chart").highcharts({
             chart: { type: 'scatter' },
             title: { text: 'Compression Speed vs. Decompression Speed' },
             xAxis: {
@@ -461,17 +499,24 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
                     text: 'Decompression Speed'
 		},
 		endOnTick: true,
-		min: 0,
+		min: (xAxis == 'logarithmic') ? undefined : 0,
 		labels: {
 		    rotation: -45,
 		    formatter: function() { return formatSpeed(this.value); }
 		},
-		type: 'linear'
+		type: xAxis
             },
             yAxis: {
 		title: {
                     text: 'Compression Speed'
-		}
+		},
+		startOnTick: true,
+		endOnTick: true,
+		min: (yAxis == 'logarithmic') ? undefined : 0,
+		labels: {
+		    formatter: function() { return formatSpeed(this.value); }
+		},
+		type: yAxis
             },
             legend: {
 		layout: 'vertical',
@@ -494,7 +539,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
                     }
 		}
             },
-            series: data.map(function (e, i, a) {
+            series: chartData.map(function (e, i, a) {
 		return {
 		    name: e.plugin,
 		    color: colors[i % colors.length],
@@ -507,19 +552,28 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		    })
 		};
 	    })
+	}).highcharts();
+
+	$("#compression-decompression-chart .highcharts-xaxis-title").click(function (e) {
+	    drawCompressionDecompressionChart(chart.userOptions.xAxis.type == "linear" ? "logarithmic" : "linear",
+					      chart.userOptions.yAxis.type);
+	});
+	$("#compression-decompression-chart .highcharts-yaxis-title").click(function (e) {
+	    drawCompressionDecompressionChart(chart.userOptions.xAxis.type,
+					      chart.userOptions.yAxis.type == "linear" ? "logarithmic" : "linear");
 	});
     }
 
     var updateChart = function () {
-	var data = [];
+	chartData = [];
 	var dataIdx = {};
 
 	$scope.data.forEach (function (e, i, a) {
 	    if (dataIdx[e.plugin] == undefined) {
-		dataIdx[e.plugin] = data.length;
-		data.push ({ plugin: e.plugin, values: [] });
+		dataIdx[e.plugin] = chartData.length;
+		chartData.push ({ plugin: e.plugin, values: [] });
 	    }
-	    data[dataIdx[e.plugin]].values.push ({
+	    chartData[dataIdx[e.plugin]].values.push ({
 		codec: e.codec,
 		level: e.level,
 		ratio: e.ratio,
@@ -528,9 +582,9 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	    });
 	});
 
-	drawRatioCompressionChart(data);
-	drawRatioDecompressionChart(data);
-	drawCompressionDecompressionChart(data);
+	drawRatioCompressionChart();
+	drawRatioDecompressionChart();
+	drawCompressionDecompressionChart();
     };
 
     dataCache = [];
