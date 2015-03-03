@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="squashBenchmark">
+  <head>
+    <meta charset="utf-8">
+    <title>Squash Benchmark</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.2/sandstone/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.14/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.js"></script>
+    <script src="//code.highcharts.com/highcharts.js"></script>
+
+    <style type="text/css">
+      .result-bar {
+        padding-left: 1em;
+        color: black;
+        white-space: nowrap;
+        text-align: left;
+        text-shadow: 0px 0px 1px white;
+      }
+    </style>
+  </head>
+  <body ng-controller="SquashBenchmarkCtrl">
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="https://quixdb.github.io/squash" class="navbar-brand">Squash</a>
+        </div>
+
+        <div class="navbar-collapse collapse" id="navbar-main">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="documentation-dropdow">Documentation <span class="caret"></span></a>
+              <ul class="dropdown-menu" aria-labelledby="documentation-dropdown">
+                <li><a href="https://quixdb.github.io/squash/man/squash.1.html"><code>squash</code> <abbr title="Command Line Interface">CLI</abbr></a></li>
+                <li class="divider"></li>
+                <li><a href="https://quixdb.github.io/squash/api/c/index.html">C API Reference</a></li>
+                <li><a href="https://quixdb.github.io/squash/api/c/md_docs_user-guide.html">C User Guide</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="support-dropdown">Support <span class="caret"></span></a>
+              <ul class="dropdown-menu" aria-labelledby="support-dropdown">
+                <li><a href="https://groups.google.com/forum/#!forum/squash-compression">Mailing List</a></li>
+                <li><a href="irc://chat.freenode.net/squash">IRC</a></li>
+                <li>
+		  <a href="https://stackoverflow.com/questions/tagged/squash-compression">Stack Overflow</a>
+		</li>
+                <li class="divider"></li>
+                <li><a href="https://github.com/quixdb/squash/issues">Issue Tracker</a></li>
+              </ul>
+            </li>
+            <li class="active"><a href="#">Benchmark</a></li>
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="https://github.com/quixdb/squash"><i class="fa fa-lg fa-github"></i> GitHub</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="container">
+      <div class="page-header jumbotron">
+	<h1>Squash Benchmark</h1>
+
+	<p>
+	  Squash is an abstraction layer for compression algorithms,
+	  making it trivial to switch between them… or write a
+	  benchmark which tries them all, which is what you see here!
+	</p>
+
+	<p>
+	  The Squash Benchmark currently consists of {{ datasets.length }}
+	  datasets, each of which is tested against 39 different
+	  compression algorithms on {{ machines.length }} different
+	  computers.  Each algortihm is tested at every compression
+	  level it offers, yielding over {{ machines.length * 3500 }}
+	  individual pieces of data.
+	</p>
+
+	<p>
+	  <a href="#results" class="btn btn-primary btn-lg">Skip to results (pretty pictures!)</a>
+	  <a href="https://quixdb.github.com/squash" class="btn btn-default btn-lg">Learn more about Squash</a>
+	</p>
+      </div>
+
+      <div id="configuration">
+	<h1>Configuration</h1>
+
+	<form>
+	  <h2>Choose a dataset</h2>
+
+	  <p>
+	    Different codecs can behave <em>very</em> differently with
+	    different data.  Some are great at compressing text but
+	    horrible with binary data, some excel with more repetitive
+	    data like logs.  Many have long initialization times but are
+	    fast once they get started, while others can
+	    compress/decompress small buffers almost instantly.
+	  </p>
+
+	  <p>
+	    This benchmark is run against many standard datasets.
+	    Hopefully one of them is interesting for you, but if not
+	    don't worry—you can use Squash to easily run your own
+	    benchmark with whatever data you want.
+	  </p>
+
+	  <table class="table table-striped">
+	    <thead>
+	      <tr>
+		<th></th>
+		<th ng-click="datasetSortReverse = (datasetSort == 'id') ? !datasetSortReverse : false; datasetSort = 'id'">
+		  Name
+		  <i ng-if="datasetSort == 'id'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+		<th ng-click="datasetSortReverse = (datasetSort == 'source') ? !datasetSortReverse : false; datasetSort = 'source'">
+		  Source
+		  <i ng-if="datasetSort == 'source'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+		<th ng-click="datasetSortReverse = (datasetSort == 'description') ? !datasetSortReverse : false; datasetSort = 'description'">
+		  Description
+		  <i ng-if="datasetSort == 'description'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+		<th ng-click="datasetSortReverse = (datasetSort == 'size') ? !datasetSortReverse : false; datasetSort = 'size'">
+		  Size (bytes)
+		  <i ng-if="datasetSort == 'size'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <tr ng-repeat="corpus in datasets | orderBy:datasetSort:datasetSortReverse">
+		<td>
+		  <input type="radio" name="corpus" ng-value="corpus.id" ng-model="$parent.dataset">
+		</td>
+		<td>
+		  <label for="dataset-{{corpus.id}}" ng-bind="corpus.id"></label>
+		</td>
+		<td><a ng-href="{{corpus.sourceUrl}}" ng-bind="corpus.source"></a></td>
+		<td ng-bind="corpus.description"></td>
+		<td ng-bind="corpus.size">}</td>
+	      </tr>
+	    </tbody>
+	  </table>
+	</form>
+
+	<div>
+	  <h2>Choose a machine</h2>
+
+	  <p>
+	    If you think certain algorithms are always faster, you've
+	    got another thing coming!  Different CPUs can behave very
+	    differently with the same data.
+	  </p>
+
+	  <p>
+	    The Squash benchmark is currently run on many of the
+	    machines I have access to—this happens to be fairly recent
+	    Intel CPUs, and a mix of ARM SBCs.
+	  </p>
+
+	  <table class="table table-condensed table-striped">
+	    <thead>
+	      <tr>
+		<th></th>
+		<th ng-click="machineSortReverse = (machineSort == 'name') ? !machineSortReverse : false; machineSort = 'name'">
+		  Hostname
+		  <i ng-if="machineSort == 'name'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+		<th ng-click="machineSortReverse = (machineSort == 'cpu') ? !machineSortReverse : false; machineSort = 'cpu'">
+		  CPU/SoC
+		  <i ng-if="machineSort == 'cpu'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+		<th ng-click="machineSortReverse = (machineSort == 'architecture') ? !machineSortReverse : false; machineSort = 'architecture'">
+		  Architecture
+		  <i ng-if="machineSort == 'architecture'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+		<th ng-click="machineSortReverse = (machineSort == 'speed') ? !machineSortReverse : false; machineSort = 'speed'">
+		  Clock Speed (MHz)
+		  <i ng-if="machineSort == 'speed'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+		<th ng-click="machineSortReverse = (machineSort == 'memory') ? !machineSortReverse : false; machineSort = 'memory'">
+		  Memory (MB)
+		  <i ng-if="machineSort == 'memory'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+		<th ng-click="machineSortReverse = (machineSort == 'platform') ? !machineSortReverse : false; machineSort = 'platform'">
+		  Platform
+		  <i ng-if="machineSort == 'platform'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+		<th ng-click="machineSortReverse = (machineSort == 'distro') ? !machineSortReverse : false; machineSort = 'distro'">
+		  Distro
+		  <i ng-if="machineSort == 'distro'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+		<th ng-click="machineSortReverse = (machineSort == 'kernel') ? !machineSortReverse : false; machineSort = 'kernel'">
+		  Kernel
+		  <i ng-if="machineSort == 'kernel'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <tr ng-repeat="system in machines | orderBy:machineSort:machineSortReverse">
+		<td><input type="radio" name="system" id="dataset-{{system.name}}" value="{{system.name}}"></td>
+		<td><label for="dataset-{{system.name}}" ng-bind="system.name"></label></td>
+		<td><a ng-href="{{ system.cpuUrl }}" ng-bind="system.cpu"></a></td>
+		<td ng-bind="system.architecture"></td>
+		<td ng-bind="system.speed"></td>
+		<td ng-bind="system.memory"></td>
+		<td><a href="{{ system.platformUrl }}" ng-bind="system.platform"></a></td>
+		<td ng-bind="system.distro"></td>
+		<td ng-bind="system.kernel"></td>
+	      </tr>
+	    </tbody>
+	  </table>
+	</div>
+      </div>
+
+      <div id="results">
+	<h2>Results</h2>
+
+	<div class="panel panel-primary">
+	  <div class="panel-heading">
+	    <div>
+	      <!-- <div class="dropdown" style="float: right"> -->
+	      <!-- 	<div id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
+	      <!-- 	  <i class="fa fa-cog fa-2x"></i> -->
+	      <!-- 	</div> -->
+	      <!-- 	<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dLabel"> -->
+	      <!-- 	  <li><a href="#">Compression Speed <i class="fa fa-check"></i></a></li> -->
+	      <!-- 	  <li><a href="#">Decompression Speed <i class="fa fa-check"></i></a></li> -->
+	      <!-- 	  <li><a href="#">Compression Ratio <i class="fa fa-check"></i></a></li> -->
+	      <!-- 	</ul> -->
+	      <!-- </div> -->
+	      <h3 class="panel-title" style="">Results</h3>
+	    </div>
+	  </div>
+
+	  <table class="table table-condensed table-striped">
+	    <thead>
+	      <tr>
+		<!-- <th>Show</th> -->
+		<th ng-click="rawSortReverse = (rawSort == 'plugin') ? !rawSortReverse : false; rawSort = 'plugin'">
+		  Plugin
+		  <i ng-if="rawSort == 'plugin'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+		<th ng-click="rawSortReverse = (rawSort == 'codec') ? !rawSortReverse : false; rawSort = 'codec'">
+		  Codec
+		  <i ng-if="rawSort == 'codec'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+		<th ng-click="rawSortReverse = (rawSort == 'level') ? !rawSortReverse : false; rawSort = 'level'">
+		  Level
+		  <i ng-if="rawSort == 'level'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+		<th ng-click="rawSortReverse = (rawSort == 'compressed_size') ? !rawSortReverse : false; rawSort = 'compressed_size'">
+		  Compression Ratio
+		  <i ng-if="rawSort == 'compressed_size'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+		<th ng-click="rawSortReverse = (rawSort == 'compress_cpu') ? !rawSortReverse : false; rawSort = 'compress_cpu'">
+		  Compression Speed
+		  <i ng-if="rawSort == 'compress_cpu'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+		<th ng-click="rawSortReverse = (rawSort == 'decompress_cpu') ? !rawSortReverse : false; rawSort = 'decompress_cpu'">
+		  Decompression Speed
+		  <i ng-if="rawSort == 'decompress_cpu'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		</th>
+	      </tr>
+	    </thead>
+
+	    <tbody>
+	      <tr ng-repeat="result in data | orderBy:rawSort:rawSortReverse">
+		<td style="width: 1px; vertical-align: middle" ng-bind="result.plugin"></td>
+		<td style="width: 1px; vertical-align: middle" ng-bind="result.codec"></td>
+		<td style="width: 1px; vertical-align: middle" ng-bind="result.level"></td>
+		<td>
+		  <div class="progress" style="margin-bottom: 0">
+		    <div class="progress-bar progress-bar-warning result-bar"
+			 style="width: {{ ((result.ratio - 1) / (bestRatio - 1)) * 100 }}%">
+		      {{ result.ratio | number:2 }}
+		    </div>
+		  </div>
+		</td>
+		<td>
+		  <div class="progress" style="margin-bottom: 0">
+		    <div class="progress-bar progress-bar-info result-bar"
+			 style="width: {{ (result.compression_rate / bestCompressionRate) * 100 }}%">
+		      {{ result.compression_rate | formatSpeed }}
+		    </div>
+		  </div>
+		</td>
+		<td>
+		  <div class="progress" style="margin-bottom: 0">
+		    <div class="progress-bar progress-bar-success result-bar"
+			 style="width: {{ (result.decompression_rate / bestDecompressionRate) * 100 }}%">
+		      {{ result.decompression_rate | formatSpeed }}
+		    </div>
+		  </div>
+		</td>
+	      </tr>
+	    </tbody>
+	  </table>
+	</div>
+
+	<div class="panel panel-primary">
+	  <div class="panel-heading">
+	    <h3 class="panel-title">Compression Ratio vs. Compression Speed</h3>
+	  </div>
+
+	  <div class="embed-responsive embed-responsive-16by9">
+	    <div id="ratio-compression-chart" class="embed-responsive-item panel-body"></div>
+	  </div>
+	</div>
+
+	<div class="panel panel-primary">
+	  <div class="panel-heading">
+	    <h3 class="panel-title">Compression Ratio vs. Decompression Speed</h3>
+	  </div>
+
+
+	  <div class="embed-responsive embed-responsive-16by9">
+	    <div id="ratio-decompression-chart" class="embed-responsive-item panel-body"></div>
+	  </div>
+	</div>
+
+	<div class="panel panel-primary">
+	  <div class="panel-heading">
+	    <h3 class="panel-title">Compression Speed vs. Decompression Speed</h3>
+	  </div>
+
+	  <div class="embed-responsive embed-responsive-16by9">
+	    <div id="compression-decompression-chart" class="embed-responsive-item panel-body"></div>
+	  </div>
+	</div>
+
+      </div>
+    </div>
+
+    <script src="squash-benchmark.js"></script>
+  </body>
+</html>
