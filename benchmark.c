@@ -40,11 +40,7 @@
 
 #define SQUASH_BENCHMARK_MIN_EXEC_TIME 5.0
 
-#if defined(__MINGW32__)
-#define squash_tmpfile() tmpfile()
-#else
 static FILE* squash_tmpfile (void);
-#if !defined(_WIN32)
 static FILE*
 squash_tmpfile (void) {
   char template[] = "squash-benchmark-XXXXXX";
@@ -58,14 +54,6 @@ squash_tmpfile (void) {
 
   return res;
 }
-#else
-static FILE*
-squash_tmpfile (void) {
-  FILE* res = NULL;
-  return tmpfile_s (&res) == 0 ? res : NULL;
-}
-#endif /* !defined(_WIN32) */
-#endif /* defined(__MINGW32__) */
 
 static void
 print_help_and_exit (int argc, char** argv, int exit_code) {
@@ -103,7 +91,6 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
   bool success = false;
   SquashStatus res = SQUASH_OK;
 
-#if !defined(_WIN32)
   char fifo_name[] = ".squash-benchmark-fifo-XXXXXX";
   int descriptor;
 
@@ -111,9 +98,6 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
 
   if (fork () == 0) {
     descriptor = open (fifo_name, O_WRONLY);
-#else
-  {
-#endif
     FILE* compressed = squash_tmpfile ();
     FILE* decompressed = squash_tmpfile ();
     SquashTimer* timer = squash_timer_new ();
@@ -185,9 +169,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
                      result.decompress_cpu,
                      result.decompress_wall);
 
-#if !defined(_WIN32)
             write (descriptor, &result, sizeof (SquashBenchmarkResult));
-#endif
           }
         }
       }
@@ -199,7 +181,6 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
     fclose (compressed);
     fclose (decompressed);
 
-#if !defined(_WIN32)
     close (descriptor);
     exit (0);
   } else {
@@ -207,10 +188,6 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
     size_t bytes_read = read (descriptor, &result, sizeof (SquashBenchmarkResult));
     wait (NULL);
     if (bytes_read != sizeof (SquashBenchmarkResult)) {
-#else
-  } {
-    if (res != SQUASH_OK) {
-#endif
       fputs ("Failed.\n", stderr);
     } else {
       if (context->csv != NULL) {
@@ -244,10 +221,8 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
 
       success = true;
     }
-#if !defined(_WIN32)
     unlink (fifo_name);
     close (descriptor);
-#endif
   }
 
   return success;
