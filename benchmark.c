@@ -292,7 +292,7 @@ int main (int argc, char** argv) {
         strncpy (context.machine_name, optarg, sizeof(context.machine_name));
         break;
       case 'o':
-        context.csv = fopen (optarg, "w+");
+        context.csv = fopen (optarg, "w+b");
         if (context.csv == NULL) {
           perror ("Unable to open output file");
           return -1;
@@ -318,7 +318,7 @@ int main (int argc, char** argv) {
 
   while ( optind < argc ) {
     context.input_name = argv[optind];
-    context.input = fopen (context.input_name, "r");
+    context.input = fopen (context.input_name, "r+b");
     if (context.input == NULL) {
       perror ("Unable to open input data");
       return -1;
