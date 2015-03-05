@@ -104,4 +104,4 @@ benchmark: benchmark.c timer.c
 	$(CC) `pkg-config --libs --cflags squash-0.1` -o benchmark $^
 
 data.csv: benchmark $(DATA)
-	./benchmark -o $@ $(DATA)
+	./benchmark -o $@ $(DATA) 2>&1 | tee result.log
