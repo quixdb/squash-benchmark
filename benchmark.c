@@ -64,7 +64,6 @@ print_help_and_exit (int argc, char** argv, int exit_code) {
   fprintf (stderr, "\t-h            Print this help screen and exit.\n");
   fprintf (stderr, "\t-c codec      Benchmark the specified codec and exit.\n");
   fprintf (stderr, "\t-o outfile    JSON output file.\n");
-  fprintf (stderr, "\t-n name       Name of this machine (defaults to gethostname()).\n");
 
   exit (exit_code);
 }
@@ -74,7 +73,6 @@ struct BenchmarkContext {
   FILE* csv;
   char* input_name;
   long input_size;
-  char machine_name[256];
 };
 
 typedef struct {
@@ -192,25 +190,21 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
     } else {
       if (context->csv != NULL) {
         if (level >= 0) {
-          fprintf (context->csv, "%s,%s,%s,%s,%d,%ld,%ld,%f,%f,%f,%f\n",
-		   context->machine_name,
+          fprintf (context->csv, "%s,%s,%s,%d,%ld,%f,%f,%f,%f\n",
                    context->input_name,
                    squash_plugin_get_name (squash_codec_get_plugin (codec)),
                    squash_codec_get_name (codec),
                    level,
-                   context->input_size,
                    result.compressed_size,
                    result.compress_cpu,
                    result.compress_wall,
                    result.decompress_cpu,
                    result.decompress_wall);
         } else {
-          fprintf (context->csv, "%s,%s,%s,%s,,%ld,%ld,%f,%f,%f,%f\n",
-		   context->machine_name,
+          fprintf (context->csv, "%s,%s,%s,,%ld,%f,%f,%f,%f\n",
                    context->input_name,
                    squash_plugin_get_name (squash_codec_get_plugin (codec)),
                    squash_codec_get_name (codec),
-                   context->input_size,
                    result.compressed_size,
                    result.compress_cpu,
                    result.compress_wall,
@@ -281,15 +275,10 @@ int main (int argc, char** argv) {
   int optc = 0;
   SquashCodec* codec = NULL;
 
-  gethostname(context.machine_name, sizeof (context.machine_name));
-
   while ( (opt = getopt(argc, argv, "hc:j:o:n:")) != -1 ) {
     switch ( opt ) {
       case 'h':
         print_help_and_exit (argc, argv, 0);
-        break;
-      case 'n':
-        strncpy (context.machine_name, optarg, sizeof(context.machine_name));
         break;
       case 'o':
         context.csv = fopen (optarg, "w+b");
@@ -315,6 +304,8 @@ int main (int argc, char** argv) {
     fputs ("No input files specified.\n", stderr);
     return -1;
   }
+
+  fprintf (context.csv, "dataset,plugin,codec,level,compressed_size,compress_cpu,compress_wall,decompress_cpu,decompress_wall\n");
 
   while ( optind < argc ) {
     context.input_name = argv[optind];
