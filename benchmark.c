@@ -238,7 +238,7 @@ benchmark_codec (SquashCodec* codec, void* data) {
 
   umask (0100);
 
-  fprintf (stderr, "%s:%s\n",
+  fprintf (stderr, "  %s:%s\n",
            squash_plugin_get_name (squash_codec_get_plugin (codec)),
            squash_codec_get_name (codec));
 
