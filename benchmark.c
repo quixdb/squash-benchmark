@@ -161,7 +161,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
 
           if (ftell (decompressed) != context->input_size) {
             /* Should never happen. */
-            fprintf (stderr, "Failed (size mismatch; expected %zu, got %ld.\n", context->input_size, ftell (decompressed));
+            fprintf (stderr, "Failed (size mismatch; expected %ld, got %ld.\n", context->input_size, ftell (decompressed));
           } else {
             fprintf (stderr, "decompressed (%.6f CPU, %.6f wall).\n",
                      result.decompress_cpu,
