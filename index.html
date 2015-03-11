@@ -124,7 +124,11 @@
 	    This benchmark is run against many standard datasets.
 	    Hopefully one of them is interesting for you, but if not
 	    don't worry—you can use Squash to easily run your own
-	    benchmark with whatever data you want.
+	    benchmark with whatever data you want.  That said, if you
+	    think you have a somewhat common use case,
+	    please <a href="https://github.com/quixdb/squash-benchmark/issues">let
+	    us know</a>—we may be interested in adding the data to
+	    this benchmark.
 	  </p>
 
 	  <table class="table table-striped">
@@ -353,6 +357,195 @@
 
       </div>
     </div>
+
+    <div id="faq" class="container">
+      <h1>FAQ</h1>
+
+      <p>
+	Well, okay, I'm writing this before I publish the URL, so not
+	so much &quot;frequently asked questions&quot; as &quot;things
+	I thought you might be wondering&quot;, but if I called this
+	section &quot;TITYMBW&quot; the first thing I would have to
+	answer would be &quot;WTF is 'TITYMBW'?&quot;
+      </p>
+
+      <dl>
+	<dt>Is time CPU time or wall-clock?</dt>
+	<dd>
+	  CPU time.  Wall-clock data is actually captured but not
+	  presented.  I'm willing to consider pull requests if you can
+	  find a good way to display it, as well as a good reason.
+	</dd>
+
+	<dt>What about multi-threading?</dt>
+	<dd>
+	  <p>
+	    That's a tricky question.  For one thing it would explode
+	    the number of data points (for example, LZMA would have 4
+	    codecs with 9 levels, multiplied the number the number of
+	    cores).  Obviously this would make generating the
+	    benchmark even slower, but the main problem is presenting
+	    the data in a way which doesn't destroy the usability for
+	    people who are interested in single-threaded
+	    compression/decompression.
+	  </p>
+	</dd>
+
+	<dt>What about memory usage?</dt>
+	<dd>
+	  <p>
+	    I would really like to include that data.  If you have a
+	    way to integrate that data on the C side (in benchmark.c)
+	    I would be very happy to merge it.
+	  </p>
+	</dd>
+
+	<dt>Can you switch the graphs to use a logarithmic scale?</dt>
+	<dd>
+	  <p>
+	    <em>You</em> can.  Just click on the label for either axis
+	    and it will toggle between linear and logarithmic.  I know
+	    this isn't obvious—I'd be happy to merge
+	    a <abbr title="Pull Request">PR</abbr> if you can improve
+	    that.
+	  </p>
+	</dd>
+
+	<dt>Why isn't <var>«insert compression codec»</var> benchmarked?</dt>
+	<dd>
+	  <p>
+	    Because there isn't
+	    a <a href="https://quixdb.github.io/squash">Squash</a>
+	    plugin for it, and/or it doesn't work on the machine you
+	    selected.
+	  </p>
+	</dd>
+
+	<dt>Can you add a plugin for <var>«insert compression codec»</var>?</dt>
+	<dd>
+	  <p>
+	    Maybe.  If the codec is reliable (it has to pass Squash's
+	    unit tests), works on Linux, accessible from C or C++, and
+	    open source the odds are good I would willing to write a
+	    plugin or, at the very least, merge a pull request.
+	  </p>
+
+	  <p>
+	    If the codec doesn't meet the above critera I still might
+	    be willing to merge a pull request, but keep in mind that
+	    all the machines I run this on are running Linux with
+	    various architectures, so even if there is a plugin for a
+	    Windows-only, x86-only, etc. it probably will not show up
+	    for every machine.  For example, I would like
+	    to <a href="https://github.com/quixdb/squash/issues/54">add
+	    a Windows API plugin</a>, but it will not show up on any
+	    of the Linux machines.
+	  </p>
+	</dd>
+
+	<dt>Can you add a feature (chart, table, <i>etc.</i>) to the bencmark?</dt>
+	<dd>
+	  <p>
+	    No promises, but I'm willing to at least listen to the
+	    request.
+	    Please <a href="https://github.com/quixdb/squash-benchmark/issues">file
+	    an issue</a>.
+	  </p>
+	</dd>
+
+	<dt>There are a lot of low-end machines, but what about high-end machines?</dt>
+	<dd>
+	  <p>
+	    Low-end machines are cheaper, and I have a bunch of them
+	    sitting around.
+	  </p>
+	</dd>
+
+	<dt>Can you add  <var>«insert machine, CPU, architecture, OS, etc.»</var>?</dt>
+	<dd>
+	  <p>
+	    Only if I have, or at least have access to, a machine
+	    which fits that description.
+	  </p>
+	</dd>
+
+	<dt>This doesn't work in my browser.</dt>
+	<dd>
+	  <p>
+	    I'm sorry, but if you're using an old browser (probably
+	    Internet Explorer) you'll have to upgrade.  I'm willing to
+	    consider patches, but I will not be putting in any effort
+	    to make this page display in older browsers unless someone
+	    wants to pay me to do it—and it's not something I enjoy,
+	    so they would have to pay pretty well.
+	  </p>
+	</dd>
+
+	<dt>Are there any better benchmarks?</dt>
+	<dd>
+	  <p>
+	    There are different benchmarks, which may or may not be
+	    better, depending on what you're interested in.  Most
+	    benchmarks use command line programs instead of libraries,
+	    which is a bit easier so they tend to include many more
+	    codecs, but usually don't include nearly as many different
+	    machines.  Those benchmarks include:
+	  </p>
+
+	  <ul>
+	    <li><a href="http://mattmahoney.net/dc/text.html">Large Text Compression Benchmark</a></li>
+	    <li><a href="http://www.squeezechart.com/">Squeeze Chart</a></li>
+	    <li><a href="http://www.maximumcompression.com/">Maximum Compression</a></li>
+	    <li><a href="http://heartofcomp.altervista.org/MOC/MOCA.htm">World Compression Challenge</a></li>
+	  </ul>
+
+	  <p>
+	    The only other benchmark I'm aware of focusing on
+	    libraries
+	    is <a href="http://encode.ru/threads/1371-Filesystem-benchmark">fsbench</a>.
+	    It includes more compression codecs (though fewer total
+	    options), as well as hash functions (cryptographic and
+	    non-cryptographic) and some other cryptographic functions.
+	    It is run on a few different machines against a tarball of
+	    Silesa with all files truncated to 1 MiB.
+	  </p>
+
+	  <p>
+	    If I'm missing any (modern, up-to-date) benchmarks please
+	    let me know.
+	  </p>
+	</dd>
+
+	<dt>Can I get the raw data?</dt>
+	<dd>
+	  <p>
+	    Sure.  The <abbr title="Comma-separated value">CSV</abbr>s
+	    are in
+	    the <a href="https://github.com/quixdb/squash-benchmark/tree/gh-pages">gh-pages
+	    branch</a> of
+	    the <a href="https://github.com/quixdb/squash-benchmark/">squash-benchmark</a>
+	    repository.
+	  </p>
+
+	  <p>
+	    Have fun.  If you do something cool with it please let me know.
+	  </p>
+	</dd>
+      </dl>
+    </div>
+
+    <footer class="bg-primary" style="padding: 2em 0">
+      <div class="container">
+	<p>
+	  Generated
+	  by <a href="https://github.com/quixdb/squash-benchmark">squash-benchmark</a>
+	  using <a href="https://quixdb.github.io/squash">Squash</a>.
+	  Please file bug reports and feature requests
+	  in <a href="https://github.com/quixdb/squash-benchmark/issues">our
+	  issue tracker</a>.
+	</p>
+      </div>
+    </footer>
 
     <script src="squash-benchmark.js"></script>
   </body>
