@@ -144,7 +144,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
           fseek (decompressed, 0, SEEK_SET);
 
           squash_timer_start (timer);
-          res = squash_codec_decompress_file_with_options (codec, decompressed, compressed, opts);
+          res = squash_codec_decompress_file_with_options (codec, decompressed, context->input_size, compressed, opts);
           squash_timer_stop (timer);
 
           if (res != SQUASH_OK) {
