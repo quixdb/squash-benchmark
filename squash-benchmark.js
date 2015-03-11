@@ -195,7 +195,7 @@ var machines = [
       cpu: "Intel® Xeon® Processor E3-1225 v3",
       cpuUrl: "http://ark.intel.com/products/75461/",
       architecture: "x86_64",
-      speed: 3200,
+      speed: 3200 * 1000000,
       memory: 1024 * 20,
       platform: "Lenovo ThinkServer TS140",
       platformUrl: "http://shop.lenovo.com/us/en/servers/thinkserver/ts-series/ts140/",
@@ -205,7 +205,7 @@ var machines = [
     //   cpu: "Intel® Core™ i7-2630QM",
     //   cpuUrl: "http://ark.intel.com/products/52219",
     //   architecture: "x86_64",
-    //   speed: 2000,
+    //   speed: 2000 * 1000000,
     //   memory: 1024 * 6,
     //   platform: "Toshiba Satellite A660-X",
     //   platformUrl: "http://support.toshiba.com/support/modelHome?freeText=PSAW6U-02100C",
@@ -215,27 +215,27 @@ var machines = [
     //   cpu: "Intel® Atom™ D525",
     //   cpuUrl: "http://ark.intel.com/products/49490",
     //   architecture: "x86_64",
-    //   speed: 1800,
+    //   speed: 1800 * 1000000,
     //   memory: 1024 * 4,
     //   platform: "Asus AT5NM10T-I",
     //   platformUrl: "http://www.asus.com/Motherboards/AT5NM10TI/",
     //   distro: "Fedora 21",
     //   kernel: "3.18.7" },
-    // { name: "s-desktop",
-    //   cpu: "Intel® Core™ i5-2400",
-    //   cpuUrl: "http://ark.intel.com/products/52207",
-    //   architecture: "x86_64",
-    //   speed: 3100,
-    //   memory: 0,
-    //   platform: "Asus P8Z68-V",
-    //   platformUrl: "http://www.asus.com/Motherboards/P8Z68V/",
-    //   distro: "Fedora 21",
-    //   kernel: "3.18.7" },
+    { name: "s-desktop",
+      cpu: "Intel® Core™ i5-2400",
+      cpuUrl: "http://ark.intel.com/products/52207",
+      architecture: "x86_64",
+      speed: 3100 * 1000000,
+      memory: 1024 * 4,
+      platform: "Asus P8Z68-V",
+      platformUrl: "http://www.asus.com/Motherboards/P8Z68V/",
+      distro: "Fedora 21",
+      kernel: "3.18.7" },
     // { name: "e-desktop",
     //   cpu: "Intel® Core™ i3-2105",
     //   cpuUrl: "http://ark.intel.com/products/55448",
     //   architecture: "x86_64",
-    //   speed: 3100,
+    //   speed: 3100 * 1000000,
     //   memory: 1024 * 8,
     //   platform: "Asus P8H61-H",
     //   platformUrl: "http://www.asus.com/Motherboards/P8H61M/",
@@ -245,7 +245,7 @@ var machines = [
     //   cpu: "Broadcom BCM2835",
     //   cpuUrl: "http://www.broadcom.com/products/BCM2835",
     //   architecture: "armv6l",
-    //   speed: 700,
+    //   speed: 700 * 1000000,
     //   memory: 512,
     //   platform: "Raspberry Pi Model B+",
     //   platformUrl: "http://www.raspberrypi.org/products/model-b-plus/",
@@ -255,7 +255,7 @@ var machines = [
     //   cpu: "Texas Instruments OMAP4460",
     //   cpuUrl: "http://www.ti.com/product/omap4460",
     //   architecture: "armv7l",
-    //   speed: 1200,
+    //   speed: 1200 * 1000000,
     //   memory: 1024,
     //   platform: "PandaBoard ES revision B1",
     //   platformUrl: "http://pandaboard.org/node/300/#PandaES",
@@ -265,7 +265,7 @@ var machines = [
     //   cpu: "Texas Instruments DM3730",
     //   cpuUrl: "http://www.ti.com/product/dm3730",
     //   architecture: "armv7l",
-    //   speed: 1000,
+    //   speed: 1000 * 1000000,
     //   memory: 512,
     //   platform: "BeagleBoard-xM revision B",
     //   platformUrl: "http://localhost:8080/",
@@ -275,21 +275,41 @@ var machines = [
     //   cpu: "Amlogic S805",
     //   cpuUrl: "http://www.amlogic.com/product03.htm",
     //   architecture: "armv7l",
-    //   speed: 1500,
+    //   speed: 1500 * 1000000,
     //   memory: 1024,
     //   platform: "ODROID-C1",
     //   platformUrl: "http://www.hardkernel.com/main/products/prdt_info.php?g_code=G141578608433",
     //   distro: "Ubuntu 14.04.2",
-    //   kernel: "3.10.70-74" },
+    //   kernel: "3.10.70" },
     // { name: "igepv5",
     //   cpu: "Texas Instruments OMAP5432",
     //   cpuUrl: "http://www.ti.com/product/omap5432",
     //   architecture: "armv7l",
-    //   speed: 1500,
+    //   speed: 1500 * 1000000,
     //   memory: 4096,
     //   platform: "ISEE IGEPv5",
     //   platformUrl: "https://isee.biz/products/igep-processor-boards/igepv5-omap5432",
     //   distro: "Ubuntu",
+    //   kernel: "" },
+    // { name: "edison",
+    //   cpu: "",
+    //   cpuUrl: "",
+    //   architecture: "x86_64",
+    //   speed: 500 * 1000000,
+    //   memory: 1024,
+    //   platform: "Intel® Edison Compute Module",
+    //   platformUrl: "http://ark.intel.com/products/84572/Intel-Edison-Compute-Module-IoT",
+    //   distro: "Yocto",
+    //   kernel: "" },
+    // { name: "satellite-a205",
+    //   cpu: "Intel® Celeron® Processor 540",
+    //   cpuUrl: "http://ark.intel.com/products/30774/Intel-Celeron-Processor-540-1M-Cache-1_86-GHz-533-MHz-FSB",
+    //   architecture: "x86_64",
+    //   speed: 1860 * 1000000,
+    //   memory: 1024,
+    //   platform: "Toshiba Satellite A205-S5805",
+    //   platformUrl: "",
+    //   distro: "Fedora 21",
     //   kernel: "" },
 ];
 
@@ -446,16 +466,64 @@ var plugins = [
       ] }
 ];
 
-function formatSpeed(speed) {
-    if (speed < 1024) {
-	return speed + " B/s";
-    } else if (speed < (1024 * 1024)) {
-	return Math.round10(speed / 1024, -2) + " KiB/s";
-    } else if (speed < (1024 * 1024 * 1024)) {
-	return Math.round10(speed / (1024 * 1024), -2) + " MiB/s";
+function formatSize(size, precision) {
+    if (precision == undefined)
+	precision = -2;
+
+    if (size < 1024) {
+	return size + " B";
+    } else if (size < (1024 * 1024)) {
+	return Math.round10(size / 1024, precision) + " KiB";
+    } else if (size < (1024 * 1024 * 1024)) {
+	return Math.round10(size / (1024 * 1024), precision) + " MiB";
+    } else if (size < (1024 * 1024 * 1024 * 1024)) {
+	return Math.round10(size / (1024 * 1024 * 1024), precision) + " GiB";
     } else {
-	return Math.round10(speed / (1024 * 1024 * 1024), -2) + " GiB/s";
+	return Math.round10(size / (1024 * 1024 * 1024 * 1024), precision) + " TiB";
     }
+}
+
+function formatSpeed(speed, precision) {
+    return formatSize(speed, precision) + "/s";
+}
+
+function formatFrequency(size, precision) {
+    if (precision == undefined)
+	precision = -2;
+
+    if (size < 1000) {
+	return size + " Hz";
+    } else if (size < 1000000) {
+	return Math.round10(size / 1000, precision) + " KHz";
+    } else if (size < 1000000000) {
+	return Math.round10(size / 1000000, precision) + " MHz";
+    } else if (size < 1000000000000) {
+	return Math.round10(size / 1000000000, precision) + " GHz";
+    } else {
+	return Math.round10(size / 1000000000000, precision) + " THz";
+    }
+}
+
+function formatDuration(seconds) {
+    var res = "";
+    var w = false;
+
+    function zeroPad (n, width, z) {
+	n = n + '';
+	return n.length >= width ? n : new Array(width - n.length + 1).join(z || '0') + n;
+    }
+
+    [60*60*24, 60*60, 60, 1].forEach (function (d) {
+	if ((seconds >= d) || w) {
+	    x = Math.floor (seconds / d);
+	    console.log ([x, seconds % d]);
+	    seconds -= d * x;
+	    res += (w ? ':' : '') + zeroPad (x, 2);
+	    w = true;
+	}
+    });
+
+    return res;
 }
 
 var squashBenchmarkApp = angular.module("squashBenchmark", []);
@@ -490,8 +558,26 @@ squashBenchmarkApp.factory('squashBenchmarkData', function($q) {
 });
 
 squashBenchmarkApp.filter('formatSpeed', function() {
+    return function(input, precision) {
+	return formatSpeed(input, precision);
+    };
+})
+
+squashBenchmarkApp.filter('formatSize', function() {
+    return function(input, precision) {
+	return formatSize(input, precision);
+    };
+})
+
+squashBenchmarkApp.filter('formatFrequency', function() {
+    return function(input, precision) {
+	return formatFrequency(input, precision);
+    };
+})
+
+squashBenchmarkApp.filter('formatDuration', function() {
     return function(input) {
-	return formatSpeed(input);
+	return formatDuration(input);
     };
 })
 

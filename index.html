@@ -17,6 +17,7 @@
 
     <style type="text/css">
       .result-bar {
+        font-weight: bold;
         padding-left: 1em;
         color: black;
         white-space: nowrap;
@@ -90,13 +91,13 @@
 	  The Squash Benchmark currently consists of {{ datasets.length }}
 	  datasets, each of which is tested against {{ plugins.length }}
 	  plugins containing {{ codecs.length }} codecs on {{ machines.length }}
-	  different computers.  Each algortihm is tested at every
+	  different computers.  Each codec is tested at every
 	  compression level it offers—the number varies by codec, but
-	  there are in total {{ data_points_per_machine }}, yielding
+	  there are {{ data_points_per_machine }} in total, yielding
 	  {{ machines.length * data_points_per_machine }} individual
-	  pieces of data (minus a handful of failures for
-	  resource-intensive codecs on underpowered machines, such as
-	  higher LZMA levels on the Raspberry Pi Model B).
+	  results (less a few failures for resource-intensive codecs
+	  on underpowered machines, codecs which don't work on all
+	  architectures, etc.).
 	</p>
 
 	<p>
@@ -163,7 +164,7 @@
 		</td>
 		<td><a ng-href="{{corpus.sourceUrl}}" ng-bind="corpus.source"></a></td>
 		<td ng-bind="corpus.description"></td>
-		<td ng-bind="corpus.size">}</td>
+		<td ng-bind="corpus.size | formatSize">}</td>
 	      </tr>
 	    </tbody>
 	  </table>
@@ -201,11 +202,11 @@
 		  <i ng-if="machineSort == 'architecture'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
 		</th>
 		<th ng-click="machineSortReverse = (machineSort == 'speed') ? !machineSortReverse : false; machineSort = 'speed'">
-		  Clock Speed (MHz)
+		  Clock Speed
 		  <i ng-if="machineSort == 'speed'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
 		</th>
 		<th ng-click="machineSortReverse = (machineSort == 'memory') ? !machineSortReverse : false; machineSort = 'memory'">
-		  Memory (MB)
+		  Memory
 		  <i ng-if="machineSort == 'memory'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
 		</th>
 		<th ng-click="machineSortReverse = (machineSort == 'platform') ? !machineSortReverse : false; machineSort = 'platform'">
@@ -224,12 +225,12 @@
 	    </thead>
 	    <tbody>
 	      <tr ng-repeat="system in machines | orderBy:machineSort:machineSortReverse">
-		<td><input type="radio" name="system" id="dataset-{{system.name}}" value="{{system.name}}"></td>
+		<td><input type="radio" name="system" id="dataset-{{system.name}}" value="{{system.name}}" ng-model="$parent.machine"></td>
 		<td><label for="dataset-{{system.name}}" ng-bind="system.name"></label></td>
 		<td><a ng-href="{{ system.cpuUrl }}" ng-bind="system.cpu"></a></td>
 		<td ng-bind="system.architecture"></td>
-		<td ng-bind="system.speed"></td>
-		<td ng-bind="system.memory"></td>
+		<td ng-bind="system.speed | formatFrequency"></td>
+		<td ng-bind="system.memory * 1024 * 1024 | formatSize"></td>
 		<td><a href="{{ system.platformUrl }}" ng-bind="system.platform"></a></td>
 		<td ng-bind="system.distro"></td>
 		<td ng-bind="system.kernel"></td>
@@ -411,6 +412,16 @@
 	  </p>
 	</dd>
 
+	<dt>Can you make it easier to compare machines (instead of codecs)?</dt>
+	<dd>
+	  <p>
+	    I plan to.  That said, it is probably going to require
+	    downloading all the data from all the machines (around
+	    {{ machines.length * 266006 | formatSize:1 }}, though HTTP
+	    compression should help).
+	  </p>
+	</dd>
+
 	<dt>Why isn't <var>«insert compression codec»</var> benchmarked?</dt>
 	<dd>
 	  <p>
@@ -427,7 +438,7 @@
 	    Maybe.  If the codec is reliable (it has to pass Squash's
 	    unit tests), works on Linux, accessible from C or C++, and
 	    open source the odds are good I would willing to write a
-	    plugin or, at the very least, merge a pull request.
+	    plugin, or at least merge a pull request.
 	  </p>
 
 	  <p>
@@ -435,11 +446,11 @@
 	    be willing to merge a pull request, but keep in mind that
 	    all the machines I run this on are running Linux with
 	    various architectures, so even if there is a plugin for a
-	    Windows-only, x86-only, etc. it probably will not show up
-	    for every machine.  For example, I would like
+	    Windows-only, x86-only, etc., library it probably will not
+	    show up for every machine.  For example, I would like
 	    to <a href="https://github.com/quixdb/squash/issues/54">add
 	    a Windows API plugin</a>, but it will not show up on any
-	    of the Linux machines.
+	    of the Linux machine's benchmarks.
 	  </p>
 	</dd>
 
@@ -461,7 +472,7 @@
 	  </p>
 	</dd>
 
-	<dt>Can you add  <var>«insert machine, CPU, architecture, OS, etc.»</var>?</dt>
+	<dt>Can you add <var>«insert machine, CPU, architecture, OS, etc.»</var>?</dt>
 	<dd>
 	  <p>
 	    Only if I have, or at least have access to, a machine
@@ -478,6 +489,12 @@
 	    to make this page display in older browsers unless someone
 	    wants to pay me to do it—and it's not something I enjoy,
 	    so they would have to pay pretty well.
+	  </p>
+
+	  <p>
+	    If your browser is up to date, make sure JavaScript is
+	    enabled.  Cookies, Flash, etc. aren't necessary, but JS
+	    definitely is.
 	  </p>
 	</dd>
 
@@ -519,11 +536,9 @@
 	<dt>Can I get the raw data?</dt>
 	<dd>
 	  <p>
-	    Sure.  The <abbr title="Comma-separated value">CSV</abbr>s
-	    are in
-	    the <a href="https://github.com/quixdb/squash-benchmark/tree/gh-pages">gh-pages
-	    branch</a> of
-	    the <a href="https://github.com/quixdb/squash-benchmark/">squash-benchmark</a>
+	    Sure.  The <abbr title="Comma-separated value">CSV</abbr>s are in the
+	    <a href="https://github.com/quixdb/squash-benchmark/tree/gh-pages">gh-pages branch</a>
+	    of the <a href="https://github.com/quixdb/squash-benchmark/">squash-benchmark</a>
 	    repository.
 	  </p>
 
@@ -539,7 +554,7 @@
 	<p>
 	  Generated
 	  by <a href="https://github.com/quixdb/squash-benchmark">squash-benchmark</a>
-	  using <a href="https://quixdb.github.io/squash">Squash</a>.
+	  using <a href="https://quixdb.github.io/squash">Squash</a>.<br/>
 	  Please file bug reports and feature requests
 	  in <a href="https://github.com/quixdb/squash-benchmark/issues">our
 	  issue tracker</a>.
