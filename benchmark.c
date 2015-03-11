@@ -132,7 +132,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
       squash_timer_reset (timer);
 
       if (result.compressed_size == 0) {
-        fprintf (stderr, "error (%s)... ", squash_status_to_string (res));
+        fprintf (stderr, "failed (%s [%d]). ", squash_status_to_string (res), res);
       } else {
         fprintf (stderr, "compressed (%.4f CPU, %.4f wall, %ld bytes)... ",
                  result.compress_cpu,
@@ -153,7 +153,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
         }
 
         if (res != SQUASH_OK) {
-          fprintf (stderr, "error (%s)... ", squash_status_to_string (res));
+          fprintf (stderr, "Failed (%s [%d]).\n", squash_status_to_string (res), res);
         } else {
           result.decompress_cpu = squash_timer_get_elapsed_cpu (timer) / iterations;
           result.decompress_wall = squash_timer_get_elapsed_wall (timer) / iterations;
@@ -161,7 +161,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
 
           if (ftell (decompressed) != context->input_size) {
             /* Should never happen. */
-            fputs ("Size mismatch.\n", stderr);
+            fprintf (stderr, "Failed (size mismatch; expected %zu, got %ld.\n", context->input_size, ftell (decompressed));
           } else {
             fprintf (stderr, "decompressed (%.6f CPU, %.6f wall).\n",
                      result.decompress_cpu,
@@ -185,9 +185,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
     descriptor = open (fifo_name, O_RDONLY);
     size_t bytes_read = read (descriptor, &result, sizeof (SquashBenchmarkResult));
     wait (NULL);
-    if (bytes_read != sizeof (SquashBenchmarkResult)) {
-      fputs ("Failed.\n", stderr);
-    } else {
+    if (bytes_read == sizeof (SquashBenchmarkResult)) {
       if (context->csv != NULL) {
         if (level >= 0) {
           fprintf (context->csv, "%s,%s,%s,%d,%ld,%f,%f,%f,%f\n",
