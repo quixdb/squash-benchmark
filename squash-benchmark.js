@@ -158,7 +158,7 @@ var datasets = [
       sourceUrl: 'http://corpus.canterbury.ac.nz/descriptions/#cantrbry',
       description: 'SPARC Executable',
       size: 38240 },
-    { id: 'urls.10k',
+    { id: 'urls.10K',
       source: 'Snappy',
       sourceUrl: 'https://github.com/google/snappy/tree/master/testdata',
       description: 'List of 10000 URLs',
@@ -483,8 +483,6 @@ squashBenchmarkApp.factory('squashBenchmarkData', function($q) {
 			compression_rate: input_size / val.compress_cpu,
 			decompression_rate: input_size / val.decompress_cpu
 		    };
-
-		    return val;
 		}));
 	    });
 	});
