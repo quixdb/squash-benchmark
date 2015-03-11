@@ -65,13 +65,14 @@
       </div>
     </div>
 
-    <div style="background: #f99; padding: 3em" class="container">
+    <div style="padding: 3em" class="container bg-danger">
       <h1>WORK IN PROGRESS</h1>
 
       <p style="font-size: larger">
 	This isn't fisished yet.  It should be done in mid to late
 	March—please don't spread the link around until it is ready.
-	Right now it is just a partial run on one machine.
+	Right now it is just a partial run on {{ machines.length }}
+	machines.
       </p>
     </div>
 
@@ -87,11 +88,15 @@
 
 	<p>
 	  The Squash Benchmark currently consists of {{ datasets.length }}
-	  datasets, each of which is tested against 39 different
-	  compression algorithms on {{ machines.length }} different
-	  computers.  Each algortihm is tested at every compression
-	  level it offers, yielding over {{ machines.length * 3500 }}
-	  individual pieces of data.
+	  datasets, each of which is tested against {{ plugins.length }}
+	  plugins containing {{ codecs.length }} codecs on {{ machines.length }}
+	  different computers.  Each algortihm is tested at every
+	  compression level it offers—the number varies by codec, but
+	  there are in total {{ data_points_per_machine }}, yielding
+	  {{ machines.length * data_points_per_machine }} individual
+	  pieces of data (minus a handful of failures for
+	  resource-intensive codecs on underpowered machines, such as
+	  higher LZMA levels on the Raspberry Pi Model B).
 	</p>
 
 	<p>
