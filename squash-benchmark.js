@@ -364,6 +364,10 @@ var plugins = [
       codecs: [
 	  { name: "lzg",
 	    levels: [1, 2, 3, 4, 5, 6, 7, 8, 9] } ] },
+    { id: "lzf",
+      name: "liblzf",
+      libraryUrl: "http://oldhome.schmorp.de/marc/liblzf.html",
+      codecs: [ { name: "lzf" } ] },
     { id: "lzham",
       name: "LZHAM",
       libraryUrl: "https://github.com/richgel999/lzham_codec/",
@@ -417,6 +421,12 @@ var plugins = [
       name: "QuickLZ",
       libraryUrl: "http://www.quicklz.com/",
       codecs: [ { name: "quicklz" } ] },
+    { id: "pithy",
+      name: "Pithy",
+      libraryUrl: "https://github.com/johnezang/pithy",
+      codecs: [
+          { name: "pithy" },
+      ] },
     { id: "snappy",
       name: "Snappy",
       libraryUrl: "https://code.google.com/p/snappy/",
@@ -516,7 +526,6 @@ function formatDuration(seconds) {
     [60*60*24, 60*60, 60, 1].forEach (function (d) {
 	if ((seconds >= d) || w) {
 	    x = Math.floor (seconds / d);
-	    console.log ([x, seconds % d]);
 	    seconds -= d * x;
 	    res += (w ? ':' : '') + zeroPad (x, 2);
 	    w = true;
@@ -902,21 +911,9 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	}
     });
 
-    $scope.$watchGroup (['data', 'speedChartSort', 'speedChartScale'], function (newData, oldData, scope) {
+    $scope.$watchGroup (['data'], function (newData, oldData, scope) {
 	if (newData[0] != undefined) {
-	    updateChart ();
-	}
-    })
-
-    $scope.$watchGroup (['data', 'ratioChartSort', 'ratioChartScale'], function (newData, oldData, scope) {
-	if (newData[0] != undefined) {
-	    // drawRatioChart ();
-	}
-    })
-
-    $scope.$watchGroup (['data', 'ratioCompressionChartScale'], function (newData, oldData, scope) {
-	if (newData[0] != undefined) {
-	    // drawRatioCompressionChart ();
+            updateChart ();
 	}
     })
 });

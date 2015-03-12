@@ -90,14 +90,13 @@
 	<p>
 	  The Squash Benchmark currently consists of {{ datasets.length }}
 	  datasets, each of which is tested against {{ plugins.length }}
-	  plugins containing {{ codecs.length }} codecs on {{ machines.length }}
-	  different computers.  Each codec is tested at every
-	  compression level it offers—the number varies by codec, but
+	  plugins containing {{ codecs.length }} codecs at every
+	  compression level they offer—the number varies by codec, but
 	  there are {{ data_points_per_machine }} in total, yielding
-	  {{ machines.length * data_points_per_machine }} individual
-	  results (less a few failures for resource-intensive codecs
-	  on underpowered machines, codecs which don't work on all
-	  architectures, etc.).
+	  {{ datasets.length * machines.length * data_points_per_machine | number}}
+	  individual results (less a few failures for
+	  resource-intensive codecs on underpowered machines, codecs
+	  which don't work on all architectures, etc.).
 	</p>
 
 	<p>
@@ -383,8 +382,9 @@
 	  <p>
 	    That's a tricky question.  For one thing it would explode
 	    the number of data points (for example, LZMA would have 4
-	    codecs with 9 levels, multiplied the number the number of
-	    cores).  Obviously this would make generating the
+	    codecs with 9 levels each, multiplied the number the
+	    number of cores—that's 288 different configurations on an
+	    8-core machine).  Obviously this would make generating the
 	    benchmark even slower, but the main problem is presenting
 	    the data in a way which doesn't destroy the usability for
 	    people who are interested in single-threaded
@@ -396,8 +396,10 @@
 	<dd>
 	  <p>
 	    I would really like to include that data.  If you have a
-	    way to integrate that data on the C side (in benchmark.c)
-	    I would be very happy to merge it.
+	    good way to capture that data on the C side
+	    (in <a href="https://github.com/quixdb/squash-benchmark/blob/master/benchmark.c">benchmark.c</a>)
+	    I would be very happy to merge it, and integrate it into
+	    the results.
 	  </p>
 	</dd>
 
@@ -410,15 +412,23 @@
 	    a <abbr title="Pull Request">PR</abbr> if you can improve
 	    that.
 	  </p>
+
+	  <p>
+	    I don't want to switch the defauld because I think that
+	    linear is probably better for most people.  Logarithmic
+	    tends to be better if all you care about is compression
+	    ratio, not speed.
+	  </p>
 	</dd>
 
 	<dt>Can you make it easier to compare machines (instead of codecs)?</dt>
 	<dd>
 	  <p>
 	    I plan to.  That said, it is probably going to require
-	    downloading all the data from all the machines (around
-	    {{ machines.length * 266006 | formatSize:1 }}, though HTTP
-	    compression should help).
+	    downloading all the data from all the machines, which is
+	    around {{ machines.length * 266006 | formatSize:1 }},
+	    though HTTP compression should help (oh, the irony of
+	    being stuck with zlib).
 	  </p>
 	</dd>
 
@@ -464,19 +474,18 @@
 	  </p>
 	</dd>
 
-	<dt>There are a lot of low-end machines, but what about high-end machines?</dt>
-	<dd>
-	  <p>
-	    Low-end machines are cheaper, and I have a bunch of them
-	    sitting around.
-	  </p>
-	</dd>
-
 	<dt>Can you add <var>«insert machine, CPU, architecture, OS, etc.»</var>?</dt>
 	<dd>
 	  <p>
 	    Only if I have, or at least have access to, a machine
 	    which fits that description.
+	  </p>
+
+	  <p>
+	    In general I include what I have available.  That tends to
+	    be some newish Intel CPUs, some older Intel CPUs that
+	    haven't yet found their way to the electronics recycler,
+	    and some ARM SBCs.
 	  </p>
 	</dd>
 
@@ -528,8 +537,9 @@
 	  </p>
 
 	  <p>
-	    If I'm missing any (modern, up-to-date) benchmarks please
-	    let me know.
+	    If I'm missing any modern, up-to-date benchmarks please
+	    <a href="https://github.com/quixdb/squash-benchmark/issues">let
+	    me know</a>.
 	  </p>
 	</dd>
 
@@ -543,16 +553,17 @@
 	  </p>
 
 	  <p>
-	    Have fun.  If you do something cool with it please let me know.
+	    Have fun.  If you do something cool with it please let me
+	    know (not a requirement, just a request).
 	  </p>
 	</dd>
 
 	<dt>How long does it take to run the benchmark?</dt>
 	<dd>
 	  <p>
-	    A long time—exactly how long depends on the machine.  I
-	    probably will not remember to update this every time, but
-	    it should give you an idea:
+	    A long time—how long depends on the machine.  I probably
+	    will not remember to update this every time, but it should
+	    give you an idea:
 	  </p>
 
 	  <p>
