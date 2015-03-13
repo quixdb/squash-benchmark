@@ -156,7 +156,7 @@
 	    <tbody>
 	      <tr ng-repeat="corpus in datasets | orderBy:datasetSort:datasetSortReverse">
 		<td>
-		  <input type="radio" name="corpus" ng-value="corpus.id" ng-model="$parent.dataset">
+		  <input type="radio" name="corpus" ng-value="corpus.id" ng-model="$parent.dataset" id="dataset-{{corpus.id}}">
 		</td>
 		<td>
 		  <label for="dataset-{{corpus.id}}" ng-bind="corpus.id"></label>
