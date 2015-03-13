@@ -88,11 +88,13 @@
 	</p>
 
 	<p>
-	  The Squash Benchmark currently consists of {{ datasets.length }}
-	  datasets, each of which is tested against {{ plugins.length }}
-	  plugins containing {{ codecs.length }} codecs at every
-	  compression level they offer—the number varies by codec, but
-	  there are {{ data_points_per_machine }} in total, yielding
+	  The Squash Benchmark currently consists of {{
+	  datasets.length }} datasets, each of which is tested against
+
+	  {{ plugins.length }} plugins containing {{ codecs.length }}
+	  codecs at every compression level they offer—the number
+	  varies by codec, but there are {{ data_points_per_machine }}
+	  in total, on {{ machines.length }} different machines—yielding
 	  {{ datasets.length * machines.length * data_points_per_machine | number}}
 	  individual results (less a few failures for
 	  resource-intensive codecs on underpowered machines, codecs
@@ -292,9 +294,9 @@
 
 	    <tbody>
 	      <tr ng-repeat="result in data | orderBy:rawSort:rawSortReverse">
-		<td style="width: 1px; vertical-align: middle" ng-bind="result.plugin"></td>
-		<td style="width: 1px; vertical-align: middle" ng-bind="result.codec"></td>
-		<td style="width: 1px; vertical-align: middle" ng-bind="result.level"></td>
+		<td style="width: 1px; vertical-align: middle; white-space: nowrap" ng-bind="result.plugin"></td>
+		<td style="width: 1px; vertical-align: middle; white-space: nowrap" ng-bind="result.codec"></td>
+		<td style="width: 1px; vertical-align: middle; white-space: nowrap" ng-bind="result.level"></td>
 		<td>
 		  <div class="progress" style="margin-bottom: 0">
 		    <div class="progress-bar progress-bar-warning result-bar"
@@ -387,10 +389,10 @@
 	    the number of data points (for example, LZMA would have 4
 	    codecs with 9 levels each, multiplied the number the
 	    number of cores—that's 288 different configurations on an
-	    8-core machine).  Obviously this would make generating the
-	    benchmark even slower, but the main problem is presenting
-	    the data in a way which doesn't destroy the usability for
-	    people who are interested in single-threaded
+	    8-core machine per dataset).  Obviously this would make
+	    generating the benchmark even slower, but the main problem
+	    is presenting the data in a way which doesn't destroy the
+	    usability for people who are interested in single-threaded
 	    compression/decompression.
 	  </p>
 	</dd>
@@ -463,7 +465,7 @@
 	    show up for every machine.  For example, I would like
 	    to <a href="https://github.com/quixdb/squash/issues/54">add
 	    a Windows API plugin</a>, but it will not show up on any
-	    of the Linux machine's benchmarks.
+	    of the Linux machines' benchmarks.
 	  </p>
 	</dd>
 
@@ -559,109 +561,6 @@
 	    Have fun.  If you do something cool with it please let me
 	    know (not a requirement, just a request).
 	  </p>
-	</dd>
-
-	<dt>How long does it take to run the benchmark?</dt>
-	<dd>
-	  <p>
-	    A long time—how long depends on the machine.  I probably
-	    will not remember to update this every time, but it should
-	    give you an idea:
-	  </p>
-
-	  <p>
-	    <em class="text-danger">Warning: do not use this
-	    information to try to compare systems.</em>  Each test
-	    (single compression or decompression) is repeated until 5
-	    seconds has elapsed, then the average time is used.  This
-	    helps make the data more reliable but it means that faster
-	    machines end up doing a lot more work but take the same
-	    amount of time.  Comparing machines based on this
-	    information is extremely unfair.
-	  </p>
-
-	  <table class="table table-striped">
-	    <thead>
-	      <tr>
-		<th>Machine</th>
-		<th>Real</th>
-		<th>User</th>
-		<th>System</th>
-	      </tr>
-	    </thead>
-
-	    <tbody>
-	      <!-- <tr> -->
-	      <!-- 	<th>peltast</th> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- </tr> -->
-	      <!-- <tr> -->
-	      <!-- 	<th>hoplite</th> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- </tr> -->
-	      <!-- <tr> -->
-	      <!-- 	<th>phalanx</th> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- </tr> -->
-	      <tr>
-	      	<th>s-desktop</th>
-	      	<td ng-bind="43780.37 | formatDuration"></td>
-	      	<td ng-bind="8406.43 | formatDuration"></td>
-	      	<td ng-bind="56344 | formatDuration"></td>
-	      </tr>
-	      <!-- <tr> -->
-	      <!-- 	<th>e-desktop</th> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- </tr> -->
-	      <!-- <tr> -->
-	      <!-- 	<th>raspberry-pi-bplus</th> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- </tr> -->
-	      <!-- <tr> -->
-	      <!-- 	<th>pandaboard-es</th> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- </tr> -->
-	      <!-- <tr> -->
-	      <!-- 	<th>beagleboard-xm</th> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- </tr> -->
-	      <!-- <tr> -->
-	      <!-- 	<th>odroid-c1</th> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- </tr> -->
-	      <!-- <tr> -->
-	      <!-- 	<th>igepv5</th> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- 	<td ng-bind="0 | formatDuration"></td> -->
-	      <!-- </tr> -->
-	    </tbody>
-
-	    <tfoot>
-	      <tr>
-		<th>Total</th>
-		<td ng-bind="0 | formatDuration"></td>
-		<td ng-bind="0 | formatDuration"></td>
-		<td ng-bind="0 | formatDuration"></td>
-	      </tr>
-	    </tfoot>
-	  </table>
 	</dd>
       </dl>
     </div>

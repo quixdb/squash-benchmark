@@ -301,16 +301,16 @@ var machines = [
     //   platformUrl: "http://ark.intel.com/products/84572/Intel-Edison-Compute-Module-IoT",
     //   distro: "Yocto",
     //   kernel: "" },
-    // { name: "satellite-a205",
-    //   cpu: "Intel® Celeron® Processor 540",
-    //   cpuUrl: "http://ark.intel.com/products/30774/Intel-Celeron-Processor-540-1M-Cache-1_86-GHz-533-MHz-FSB",
-    //   architecture: "x86_64",
-    //   speed: 1860 * 1000000,
-    //   memory: 1024,
-    //   platform: "Toshiba Satellite A205-S5805",
-    //   platformUrl: "",
-    //   distro: "Fedora 21",
-    //   kernel: "" },
+    { name: "satellite-a205",
+      cpu: "Intel® Celeron® Processor 540",
+      cpuUrl: "http://ark.intel.com/products/30774/Intel-Celeron-Processor-540-1M-Cache-1_86-GHz-533-MHz-FSB",
+      architecture: "x86_64",
+      speed: 1860 * 1000000,
+      memory: 1024,
+      platform: "Toshiba Satellite A205-S5805",
+      platformUrl: "",
+      distro: "Fedora 21",
+      kernel: "3.18.8" },
 ];
 
 var plugins = [
@@ -594,6 +594,9 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
     $scope.datasets = datasets;
     $scope.machines = machines;
     $scope.plugins = plugins;
+
+    $scope.datasetSort = 'id';
+    $scope.machineSort = 'name';
 
     $scope.data_points_per_machine = 0;
     $scope.codec_plugin_map = {};
