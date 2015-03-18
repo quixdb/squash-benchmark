@@ -357,7 +357,9 @@ var plugins = [
       libraryUrl: "https://code.google.com/p/lz4/",
       codecs: [
 	  { name: "lz4",
-	    levels: [1, 9] } ] },
+	    levels: [1, 9] },
+	  { name: "lz4f",
+	    levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16] } ] },
     { id: "lzg",
       name: "liblzg",
       libraryUrl: "http://liblzg.bitsnbites.eu/",
