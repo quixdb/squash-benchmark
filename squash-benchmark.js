@@ -334,6 +334,12 @@ var plugins = [
       codecs: [
 	  { name: "crush",
 	    levels: [0, 1, 2] } ] },
+    { id: "density",
+      name: "DENSITY",
+      libraryUrl: "https://github.com/centaurean/density",
+      codecs: [
+	  { name: "density",
+	    levels: [1, 9] } ] },
     { id: "doboz",
       name: "Doboz",
       libraryUrl: "https://bitbucket.org/attila_afra/doboz",
@@ -596,6 +602,9 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
     $scope.datasets = datasets;
     $scope.machines = machines;
     $scope.plugins = plugins;
+
+    $scope.machine = 'peltast';
+    $scope.dataset = 'enwik8';
 
     $scope.datasetSort = 'id';
     $scope.machineSort = 'name';
@@ -900,9 +909,6 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	    });
 	}
     }
-
-    $scope.machine = 'peltast';
-    $scope.dataset = 'enwik8';
 
     $scope.$watchGroup (Array('machine', 'dataset'), function(newValues, oldValues) {
 	if (dataCache[newValues[0]] != undefined) {
