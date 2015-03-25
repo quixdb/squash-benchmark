@@ -128,17 +128,18 @@
 	</p>
 
 	<p>
-	  The Squash Benchmark currently consists of {{
-	  datasets.length }} datasets, each of which is tested against
-
-	  {{ plugins.length }} plugins containing {{ codecs.length }}
-	  codecs at every compression level they offer—the number
-	  varies by codec, but there are {{ data_points_per_machine }}
-	  in total, on {{ machines.length }} different machines—yielding
-	  {{ datasets.length * machines.length * data_points_per_machine | number}}
-	  individual results (less a few failures for
-	  resource-intensive codecs on underpowered machines, codecs
-	  which don't work on all architectures, etc.).
+	  The Squash Benchmark currently consists of
+	  {{datasets.length|number}} datasets, each of which is tested
+	  against {{plugins.length}} plugins containing
+	  {{codecs.length|number}} codecs at every compression level
+	  they offer—the number varies by codec, but there are
+	  {{data_points_per_machine|number}} in total, yielding
+	  {{data_points_per_machine*datasets.length|number}} different
+	  settings.  The benchmark is currently run on
+	  {{machines.length|number}} different machines, for a grand
+	  total of
+	  {{datasets.length*machines.length*data_points_per_machine|number}}
+	  configurations.
 	</p>
 
 	<p>
@@ -601,21 +602,6 @@
 	    If I'm missing any modern, up-to-date benchmarks please
 	    <a href="https://github.com/quixdb/squash-benchmark/issues">let
 	    me know</a>.
-	  </p>
-	</dd>
-
-	<dt>Can I get the raw data?</dt>
-	<dd>
-	  <p>
-	    Sure.  The <abbr title="Comma-separated value">CSV</abbr>s are in the
-	    <a href="https://github.com/quixdb/squash-benchmark/tree/gh-pages">gh-pages branch</a>
-	    of the <a href="https://github.com/quixdb/squash-benchmark/">squash-benchmark</a>
-	    repository.
-	  </p>
-
-	  <p>
-	    Have fun.  If you do something cool with it please let me
-	    know (not a requirement, just a request).
 	  </p>
 	</dd>
 
