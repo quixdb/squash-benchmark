@@ -24,6 +24,44 @@
         text-align: left;
         text-shadow: 0px 0px 1px white;
       }
+
+      .bs-callout {
+        margin: 20px 0;
+        padding: 15px 30px 15px 15px;
+        border-left: 5px solid #eee;
+      }
+      .bs-callout h4 {
+        margin-top: 0;
+      }
+      .bs-callout p:last-child {
+        margin-bottom: 0;
+      }
+      .bs-callout code,
+      .bs-callout .highlight {
+        background-color: #fff;
+      }
+
+      .bs-callout-danger {
+        background-color: #fcf2f2;
+        border-color: #dFb5b4;
+      }
+      .bs-callout-warning {
+        background-color: #fefbed;
+        border-color: #f1e7bc;
+      }
+      .bs-callout-info {
+        background-color: #f0f7fd;
+        border-color: #d0e3f0;
+      }
+      .bs-callout-danger h4 {
+        color: #B94A48;
+      }
+      .bs-callout-warning h4 {
+        color: #C09853;
+      }
+      .bs-callout-info h4 {
+        color: #3A87AD;
+      }
     </style>
   </head>
   <body ng-controller="SquashBenchmarkCtrl">
@@ -133,6 +171,13 @@
 	    this benchmark.
 	  </p>
 
+	  <div ng-if="random_dataset" class="bs-callout bs-callout-info">
+	    <h4>Note</h4>
+	    <p>
+	      The default dataset is selected randomly.
+	    </p>
+	  </div>
+
 	  <table class="table table-striped">
 	    <thead>
 	      <tr>
@@ -185,6 +230,13 @@
 	    machines I have access to—this happens to be fairly recent
 	    Intel CPUs, and a mix of ARM SBCs.
 	  </p>
+
+	  <div ng-if="random_machine" class="bs-callout bs-callout-info">
+	    <h4>Note</h4>
+	    <p>
+	      The default machine is selected randomly.
+	    </p>
+	  </div>
 
 	  <table class="table table-condensed table-striped">
 	    <thead>
@@ -560,6 +612,16 @@
 	  <p>
 	    Have fun.  If you do something cool with it please let me
 	    know (not a requirement, just a request).
+	  </p>
+	</dd>
+
+	<dt>Can I link to a specific dataset or machine?</dt>
+	<dd>
+	  <p>
+	    Append
+	    &quot;?dataset=<var>foo</var>&amp;machine=<var>bar</var>&quot;
+	    to the URL.  Or just one of them if you still want the
+	    other to be chosen randomly.
 	  </p>
 	</dd>
       </dl>

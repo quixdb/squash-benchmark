@@ -323,6 +323,11 @@ var machines = [
       kernel: "3.18.8" },
 ];
 
+var machine_map = {};
+machines.forEach (function (e, i, a) {
+    machine_map[e.name] = e;
+});
+
 var plugins = [
     { id: "brotli",
       name: "Brotli",
@@ -613,8 +618,40 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
     $scope.machines = machines;
     $scope.plugins = plugins;
 
-    $scope.machine = 'peltast';
-    $scope.dataset = 'enwik8';
+    $scope.query_string = function () {
+	// http://stackoverflow.com/a/979995
+	var query_string = {};
+	var query = window.location.search.substring(1);
+	var vars = query.split("&");
+	for (var i=0;i<vars.length;i++) {
+	    var pair = vars[i].split("=");
+	    if (typeof query_string[pair[0]] === "undefined") {
+		query_string[pair[0]] = pair[1];
+	    } else if (typeof query_string[pair[0]] === "string") {
+		var arr = [ query_string[pair[0]], pair[1] ];
+		query_string[pair[0]] = arr;
+	    } else {
+		query_string[pair[0]].push(pair[1]);
+	    }
+	}
+	return query_string;
+    } ();
+
+    $scope.random_dataset = true;
+    if ($scope.query_string.dataset != undefined && dataset_map[$scope.query_string.dataset] != undefined) {
+	$scope.dataset = $scope.query_string.dataset;
+	$scope.random_dataset = false;
+    } else {
+	$scope.dataset = datasets[Math.floor (Math.random () * datasets.length)].id;
+    }
+
+    $scope.random_machine = true;
+    if ($scope.query_string.machine != undefined && machine_map[$scope.query_string.machine] != undefined) {
+	$scope.machine = $scope.query_string.machine;
+	$scope.random_machine = false;
+    } else {
+	$scope.machine = machines[Math.floor (Math.random () * machines.length)].name;
+    }
 
     $scope.datasetSort = 'id';
     $scope.machineSort = 'name';
