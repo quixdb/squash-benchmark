@@ -251,6 +251,16 @@ var machines = [
     //   platformUrl: "http://www.raspberrypi.org/products/model-b-plus/",
     //   distro: "Raspbian",
     //   kernel: "" },
+    // { name: "raspberry-pi-2",
+    //   cpu: "Broadcom BCM2709",
+    //   cpuUrl: "http://www.broadcom.com/products/BCM2709",
+    //   architecture: "armv7l",
+    //   speed: 900 * 1000000,
+    //   memory: 1024,
+    //   platform: "Raspberry Pi 2 Model B",
+    //   platformUrl: "http://www.raspberrypi.org/products/raspberry-pi-2-model-b/",
+    //   distro: "Raspbian",
+    //   kernel: "3.18.7" },
     // { name: "pandaboard-es",
     //   cpu: "Texas Instruments OMAP4460",
     //   cpuUrl: "http://www.ti.com/product/omap4460",
@@ -259,8 +269,8 @@ var machines = [
     //   memory: 1024,
     //   platform: "PandaBoard ES revision B1",
     //   platformUrl: "http://pandaboard.org/node/300/#PandaES",
-    //   distro: "Ubuntu",
-    //   kernel: "" },
+    //   distro: "Ubuntu 14.10",
+    //   kernel: "3.18.3" },
     // { name: "beagleboard-xm",
     //   cpu: "Texas Instruments DM3730",
     //   cpuUrl: "http://www.ti.com/product/dm3730",
@@ -269,8 +279,8 @@ var machines = [
     //   memory: 512,
     //   platform: "BeagleBoard-xM revision B",
     //   platformUrl: "http://localhost:8080/",
-    //   distro: "Ubuntu",
-    //   kernel: "" },
+    //   distro: "Ubuntu 14.10",
+    //   kernel: "3.18.3" },
     { name: "odroid-c1",
       cpu: "Amlogic S805",
       cpuUrl: "http://www.amlogic.com/product03.htm",
@@ -280,7 +290,7 @@ var machines = [
       platform: "ODROID-C1",
       platformUrl: "http://www.hardkernel.com/main/products/prdt_info.php?g_code=G141578608433",
       distro: "Ubuntu 14.04.2",
-      kernel: "3.10.70" },
+      kernel: "3.10.72" },
     // { name: "igepv5",
     //   cpu: "Texas Instruments OMAP5432",
     //   cpuUrl: "http://www.ti.com/product/omap5432",
@@ -676,7 +686,6 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		}
             },
             series: chartData.map(function (e, i, a) {
-		var colors = d3.scale.category20().range();
 		return {
 		    name: e.plugin,
 		    color: colors[i % colors.length],
@@ -752,7 +761,6 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		}
             },
             series: chartData.map(function (e, i, a) {
-		var colors = d3.scale.category20().range();
 		return {
 		    name: e.plugin,
 		    color: colors[i % colors.length],
