@@ -198,7 +198,7 @@
 		  <i ng-if="datasetSort == 'description'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
 		</th>
 		<th ng-click="datasetSortReverse = (datasetSort == 'size') ? !datasetSortReverse : false; datasetSort = 'size'">
-		  Size (bytes)
+		  Size
 		  <i ng-if="datasetSort == 'size'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
 		</th>
 	      </tr>
@@ -246,7 +246,7 @@
 	      <tr>
 		<th></th>
 		<th ng-click="machineSortReverse = (machineSort == 'name') ? !machineSortReverse : false; machineSort = 'name'">
-		  Hostname
+		  Name
 		  <i ng-if="machineSort == 'name'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
 		</th>
 		<th ng-click="machineSortReverse = (machineSort == 'cpu') ? !machineSortReverse : false; machineSort = 'cpu'">
@@ -476,7 +476,7 @@
 	  </p>
 
 	  <p>
-	    I don't want to switch the defauld because I think that
+	    I don't want to switch the default because I think that
 	    linear is probably better for most people.  Logarithmic
 	    tends to be better if all you care about is compression
 	    ratio, not speed.
@@ -488,7 +488,7 @@
 	  <p>
 	    I plan to.  That said, it is probably going to require
 	    downloading all the data from all the machines, which is
-	    around {{ machines.length * 266006 | formatSize:1 }},
+	    around {{ machines.length * 321332 | formatSize:-1 }},
 	    though HTTP compression should help (oh, the irony of
 	    being stuck with zlib).
 	  </p>
@@ -548,6 +548,27 @@
 	    be some newish Intel CPUs, some older Intel CPUs that
 	    haven't yet found their way to the electronics recycler,
 	    and some ARM SBCs.
+	  </p>
+	</dd>
+
+	<dt>What compiler, compiler version, and compiler flags, were used?</dt>
+	<dd>
+	  <p>
+	    Currently GCC is used on all machines.  The version varies
+	    a bit because the operating systems are different, but
+	    various revisions of version 4.9.
+	  </p>
+
+	  <p>
+	    Flags are a bit more complicated since different plugins
+	    require different flags, but as far as performance related
+	    flags are concerned, plugins are currently compiled
+	    with <code>-O3</code>, though this will likely change
+	    to <code>-O2</code> soon since, AFAIK, most Linux
+	    distributions don't allow software compiled with unsafe
+	    optimizations.  However, I do plan to experiment with
+	    adding flags which are safe in the future
+	    (<code>-flto</code> is the first candidate).
 	  </p>
 	</dd>
 
