@@ -43,16 +43,17 @@
 static FILE* squash_tmpfile (void);
 static FILE*
 squash_tmpfile (void) {
-  char template[] = "squash-benchmark-XXXXXX";
-  int fd = mkstemp (template);
-  FILE* res = NULL;
+  /* char template[] = "squash-benchmark-XXXXXX"; */
+  /* int fd = mkstemp (template); */
+  /* FILE* res = NULL; */
 
-  if (fd != -1) {
-    unlink (template);
-    res = fdopen (fd, "w+b");
-  }
+  /* if (fd != -1) { */
+  /*   unlink (template); */
+  /*   res = fdopen (fd, "w+b"); */
+  /* } */
 
-  return res;
+  /* return res; */
+  return tmpfile ();
 }
 
 static void
@@ -89,13 +90,18 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
   bool success = false;
   SquashStatus res = SQUASH_OK;
 
+#if !defined(SQUASH_BENCHMARK_NO_FORK)
   char fifo_name[] = ".squash-benchmark-fifo-XXXXXX";
-  int descriptor;
 
   assert (mkfifo (mktemp (fifo_name), 0600) == 0);
 
   if (fork () == 0) {
-    descriptor = open (fifo_name, O_WRONLY);
+    int out_descriptor = open (fifo_name, O_WRONLY);
+#else
+    int descriptors[2];
+    assert (pipe (descriptors) == 0);
+    int out_descriptor = descriptors[1];
+#endif
     FILE* compressed = squash_tmpfile ();
     FILE* decompressed = squash_tmpfile ();
     SquashTimer* timer = squash_timer_new ();
@@ -132,7 +138,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
       squash_timer_reset (timer);
 
       if (result.compressed_size == 0) {
-        fprintf (stderr, "failed (%s [%d]). ", squash_status_to_string (res), res);
+        fprintf (stderr, "failed (0 byte output, %s [%d]).\n", squash_status_to_string (res), res);
       } else {
         fprintf (stderr, "compressed (%.4f CPU, %.4f wall, %ld bytes)... ",
                  result.compress_cpu,
@@ -167,7 +173,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
                      result.decompress_cpu,
                      result.decompress_wall);
 
-            write (descriptor, &result, sizeof (SquashBenchmarkResult));
+            write (out_descriptor, &result, sizeof (SquashBenchmarkResult));
           }
         }
       }
@@ -179,11 +185,15 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
     fclose (compressed);
     fclose (decompressed);
 
-    close (descriptor);
+    close (out_descriptor);
+#if !defined(SQUASH_BENCHMARK_NO_FORK)
     exit (0);
   } else {
-    descriptor = open (fifo_name, O_RDONLY);
-    size_t bytes_read = read (descriptor, &result, sizeof (SquashBenchmarkResult));
+    int in_descriptor = open (fifo_name, O_RDONLY);
+#else
+    int in_descriptor = descriptors[0];
+#endif
+    size_t bytes_read = read (in_descriptor, &result, sizeof (SquashBenchmarkResult));
     wait (NULL);
     if (bytes_read == sizeof (SquashBenchmarkResult)) {
       if (context->csv != NULL) {
@@ -213,9 +223,11 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
 
       success = true;
     }
+    close (in_descriptor);
+#if !defined(SQUASH_BENCHMARK_NO_FORK)
     unlink (fifo_name);
-    close (descriptor);
   }
+#endif
 
   return success;
 }
