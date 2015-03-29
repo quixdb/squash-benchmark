@@ -318,7 +318,7 @@ var machines = [
       speed: 1860 * 1000000,
       memory: 1024,
       platform: "Toshiba Satellite A205-S5805",
-      platformUrl: "",
+      platformUrl: "http://support.toshiba.com/support/modelHome?freeText=1909175",
       distro: "Fedora 21",
       kernel: "3.18.8" },
 ];
