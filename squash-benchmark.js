@@ -682,7 +682,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 
 	var chart = $("#ratio-compression-chart").highcharts({
             chart: { type: 'scatter' },
-            title: { text: 'Compression Ratio vs. Compression Speed' },
+            title: { text: null },
             xAxis: {
 		title: {
                     enabled: true,
@@ -757,7 +757,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 
 	var chart = $("#ratio-decompression-chart").highcharts({
             chart: { type: 'scatter' },
-            title: { text: 'Compression Ratio vs. Decompression Speed' },
+            title: { text: null },
             xAxis: {
 		title: {
                     enabled: true,
@@ -832,7 +832,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 
 	var chart = $("#compression-decompression-chart").highcharts({
             chart: { type: 'scatter' },
-            title: { text: 'Compression Speed vs. Decompression Speed' },
+            title: { text: null },
             xAxis: {
 		title: {
                     enabled: true,
