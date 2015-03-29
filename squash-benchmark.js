@@ -352,7 +352,13 @@ var machines = [
       platform: "Toshiba Satellite A205-S5805",
       platformUrl: "http://support.toshiba.com/support/modelHome?freeText=1909175",
       distro: "Fedora 21",
-      kernel: "3.18.8" },
+      kernel: "3.18.8",
+      failures: [{
+          dataset: "x-ray",
+          plugin: "brotli",
+	  codec: "brotli",
+          issue: "https://github.com/google/brotli/issues/46"
+      }] },
 ];
 
 var machine_map = {};
