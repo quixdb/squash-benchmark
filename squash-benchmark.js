@@ -42,6 +42,32 @@
     }
 })();
 
+$(function () {
+    $('.failure-popover').popover({
+        html: true,
+        content: function() {
+            var contents = '';
+            var failures = jQuery.parseJSON($(this).attr('data-failures'));
+            failures.forEach (function (e, i, a) {
+                var issue;
+                if (e.issue == 'OOM')
+                    issue = '<abbr title="Out Of Memory">OOM</abbr>';
+                else
+                    issue = '<a href="' + e.issue + '"><i class="fa fa-bug"></i></a>';
+
+                contents +=
+                    '<tr>' +
+                        '<td>' + e.plugin + '</td>' +
+                        '<td>' + e.codec + '</td>' +
+                        '<td>' + e.dataset + '</td>' +
+                        '<td style="text-align: center">' + issue + '</td>' +
+                    '</tr>';
+            });
+            return $("<table class='table table-striped'><thead><th>Plugin</th><th>Codec</th><th>Dataset</th><th>Issue</th></thead><tbody>" + contents + "</tdody></table>");
+        }
+    });
+})
+
 var datasets = [
     { id: 'alice29.txt',
       source: 'Canterbury Corpus',
@@ -290,7 +316,13 @@ var machines = [
       platform: "ODROID-C1",
       platformUrl: "http://www.hardkernel.com/main/products/prdt_info.php?g_code=G141578608433",
       distro: "Ubuntu 14.04.2",
-      kernel: "3.10.72" },
+      kernel: "3.10.72",
+      failures: [{
+          dataset: "x-ray",
+          plugin: "brotli",
+	  codec: "brotli",
+          issue: "https://github.com/google/brotli/issues/46"
+      }] },
     // { name: "igepv5",
     //   cpu: "Texas Instruments OMAP5432",
     //   cpuUrl: "http://www.ti.com/product/omap5432",
