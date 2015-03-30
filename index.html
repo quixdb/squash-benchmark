@@ -104,19 +104,6 @@
       </div>
     </div>
 
-    <div style="padding: 3em" class="container bg-danger">
-      <h1>WORK IN PROGRESS</h1>
-
-      <p style="font-size: larger">
-	This isn't fisished yet.  It should be done in mid to late
-	March—please don't spread the link around until it is ready.
-	Right now it is just a <em>partial</em> run (some datasets are
-	missing from some machines) on a fraction of the machines
-	(currently {{ machines.length }} machines, there should be
-	10-15 soon).
-      </p>
-    </div>
-
     <div class="container">
       <div class="page-header jumbotron">
 	<h1>Squash Benchmark</h1>
@@ -136,8 +123,8 @@
 	  {{data_points_per_machine|number}} in total, yielding
 	  {{data_points_per_machine*datasets.length|number}} different
 	  settings.  The benchmark is currently run on
-	  {{machines.length|number}} different machines, for a grand
-	  total of
+	  {{machines.length|number}} different machines (with more
+	  coming soon!) for a current grand total of
 	  {{datasets.length*machines.length*data_points_per_machine|number}}
 	  configurations.
 	</p>
