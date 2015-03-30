@@ -131,7 +131,7 @@
 
 	<p>
 	  <a href="#results" class="btn btn-primary btn-lg">Skip to results (pretty pictures!)</a>
-	  <a href="https://quixdb.github.com/squash" class="btn btn-default btn-lg">Learn more about Squash</a>
+	  <a href="https://quixdb.github.com/squash" class="btn btn-default btn-lg" target="_new">Learn more about Squash <i class="fa fa-external-link"></i></a>
 	</p>
       </div>
 
@@ -423,7 +423,7 @@
       </p>
 
       <dl>
-	<dt>Is time CPU time or wall-clock?</dt>
+	<dt id="faq-wall-clock-or-cpu">Is time CPU time or wall-clock?</dt>
 	<dd>
 	  <p>
 	    CPU time.  Wall-clock data is actually captured but not
@@ -433,7 +433,7 @@
 	  </p>
 	</dd>
 
-	<dt>What about multi-threading?</dt>
+	<dt id="faq-multi-threading">What about multi-threading?</dt>
 	<dd>
 	  <p>
 	    That's a tricky question.  For one thing it would explode
@@ -448,7 +448,7 @@
 	  </p>
 	</dd>
 
-	<dt>What about memory usage?</dt>
+	<dt id="faq-memory-usage">What about memory usage?</dt>
 	<dd>
 	  <p>
 	    I would really like to include that data.  If you have a
@@ -459,7 +459,7 @@
 	  </p>
 	</dd>
 
-	<dt>Can you switch the graphs to use a logarithmic scale?</dt>
+	<dt id="faq-logarithmic">Can you switch the graphs to use a logarithmic scale?</dt>
 	<dd>
 	  <p>
 	    <em>You</em> can.  Just click on the label for either axis
@@ -477,7 +477,7 @@
 	  </p>
 	</dd>
 
-	<dt>Can you make it easier to compare machines (instead of codecs)?</dt>
+	<dt id="faq-compare-machines">Can you make it easier to compare machines (instead of codecs)?</dt>
 	<dd>
 	  <p>
 	    I plan to.  That said, it is probably going to require
@@ -488,7 +488,7 @@
 	  </p>
 	</dd>
 
-	<dt>Why isn't <var>«insert compression codec»</var> benchmarked?</dt>
+	<dt id="faq-additional-codecs">Why isn't <var>«insert compression codec»</var> benchmarked?</dt>
 	<dd>
 	  <p>
 	    Because there isn't
@@ -496,14 +496,11 @@
 	    plugin for it, and/or it doesn't work on the machine you
 	    selected.
 	  </p>
-	</dd>
 
-	<dt>Can you add a plugin for <var>«insert compression codec»</var>?</dt>
-	<dd>
 	  <p>
-	    Maybe.  If the codec is reliable (it has to pass Squash's
-	    unit tests), works on Linux, accessible from C or C++, and
-	    open source the odds are good I would willing to write a
+	    If the codec is reliable (it has to pass Squash's unit
+	    tests), works on Linux, accessible from C or C++, and open
+	    source the odds are good I would willing to write a
 	    plugin, or at least merge a pull request.
 	  </p>
 
@@ -512,25 +509,31 @@
 	    be willing to merge a pull request, but keep in mind that
 	    all the machines I run this on are running Linux with
 	    various architectures, so even if there is a plugin for a
-	    Windows-only, x86-only, etc., library it probably will not
-	    show up for every machine.  For example, I would like
+	    Windows-only, or x86-only, etc., library it probably will
+	    not show up for every machine.  For example, I would like
 	    to <a href="https://github.com/quixdb/squash/issues/54">add
 	    a Windows API plugin</a>, but it will not show up on any
-	    of the Linux machines' benchmarks.
+	    of the Linux machines' results.
+	  </p>
+
+	  <p>
+	    If there is a specific codec you're interested in,
+	    please <a href="https://github.com/quixdb/squash/issues">file
+	    an issue against Squash</a>.
 	  </p>
 	</dd>
 
-	<dt>Can you add a feature (chart, table, <i>etc.</i>) to the bencmark?</dt>
+	<dt id="faq-additional-features">Can you add a feature (chart, table, <i>etc.</i>) to the bencmark?</dt>
 	<dd>
 	  <p>
-	    No promises, but I'm willing to at least listen to the
-	    request.
+	    No promises, but I am looking for ideas—I'm certainly
+	    willing to at least listen to the request.
 	    Please <a href="https://github.com/quixdb/squash-benchmark/issues">file
 	    an issue</a>.
 	  </p>
 	</dd>
 
-	<dt>Can you add <var>«insert machine, CPU, architecture, OS, etc.»</var>?</dt>
+	<dt id="faq-additional-machine">Can you add <var>«insert machine, CPU, architecture, OS, etc.»</var>?</dt>
 	<dd>
 	  <p>
 	    Only if I have, or at least have access to, a machine
@@ -545,7 +548,7 @@
 	  </p>
 	</dd>
 
-	<dt>What compiler, compiler version, and compiler flags, were used?</dt>
+	<dt id="faq-compiler">What compiler, compiler version, and compiler flags, were used?</dt>
 	<dd>
 	  <p>
 	    Currently GCC is used on all machines.  The version varies
@@ -566,7 +569,7 @@
 	  </p>
 	</dd>
 
-	<dt>This doesn't work in my browser.</dt>
+	<dt id="faq-browser-compatibility">This doesn't work in my browser.</dt>
 	<dd>
 	  <p>
 	    I'm sorry, but if you're using an old browser (probably
@@ -584,7 +587,7 @@
 	  </p>
 	</dd>
 
-	<dt>Are there any better benchmarks?</dt>
+	<dt id="faq-other-benchmarks">Are there any better benchmarks?</dt>
 	<dd>
 	  <p>
 	    There are different benchmarks, which may or may not be
@@ -620,13 +623,18 @@
 	  </p>
 	</dd>
 
-	<dt>Can I link to a specific dataset or machine?</dt>
+	<dt id="faq-direct-linking">Can I link to a specific dataset or machine?</dt>
 	<dd>
 	  <p>
 	    Append
 	    &quot;?dataset=<var>foo</var>&amp;machine=<var>bar</var>&quot;
 	    to the URL.  Or just one of them if you still want the
 	    other to be chosen randomly.
+	  </p>
+
+	  <p>
+	    Note that this isn't necessarily stable—we may change the
+	    format when adding new features to the benchmark.
 	  </p>
 	</dd>
       </dl>

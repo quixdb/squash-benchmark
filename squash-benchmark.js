@@ -310,7 +310,7 @@ var machines = [
     //   speed: 1000 * 1000000,
     //   memory: 512,
     //   platform: "BeagleBoard-xM revision B",
-    //   platformUrl: "http://localhost:8080/",
+    //   platformUrl: "http://beagleboard.org/beagleboard-xm",
     //   distro: "Ubuntu 14.10",
     //   kernel: "3.18.3" },
     { name: "odroid-c1",
