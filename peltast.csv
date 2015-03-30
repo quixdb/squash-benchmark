@@ -1,3 +1,4 @@
+dataset,plugin,codec,level,compressed_size,compress_cpu,compress_wall,decompress_cpu,decompress_wall
 alice29.txt,brotli,brotli,,50096,0.121184,0.121584,0.001110,0.001447
 alice29.txt,bsc,bsc,,40558,0.012881,0.013183,0.008016,0.008816
 alice29.txt,bzip2,bzip2,1,45995,0.012125,0.012116,0.004359,0.004356
@@ -532,7 +533,6 @@ cp.html,zpaq,zpaq,3,8143,0.006565,0.006541,0.004587,0.004569
 cp.html,zpaq,zpaq,4,6754,0.018787,0.018754,0.019197,0.019166
 cp.html,zpaq,zpaq,5,6711,0.093507,0.093416,0.094085,0.093987
 cp.html,zstd,zstd,,8969,0.000854,0.001205,0.001052,0.001456
-dataset,plugin,codec,level,compressed_size,compress_cpu,compress_wall,decompress_cpu,decompress_wall
 dickens,brotli,brotli,,3163834,7.763481,7.757766,0.039850,0.040157
 dickens,bsc,bsc,,2268066,1.040366,1.040013,0.688260,0.688134
 dickens,bzip2,bzip2,1,3302765,0.761784,0.761181,0.298179,0.297943
