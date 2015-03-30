@@ -424,6 +424,58 @@
       </p>
 
       <dl>
+
+	<dt id="faq-additional-codecs">Please add <var>«insert compression codec»</var></dt>
+	<dd>
+	  <p>
+	    In order to be included the benchmark the software must be
+	    supported
+	    by <a href="https://quixdb.github.io/squash/">Squash</a>.
+	    If there is a specific codec you're interested in,
+	    please <a href="https://github.com/quixdb/squash/issues">file
+	    an issue against Squash</a>.
+	  </p>
+
+	  <p>
+	    If the codec is reliable (it has to pass Squash's unit
+	    tests), works on Linux, accessible from C or C++, and open
+	    source the odds are good I would willing to write a
+	    plugin, or at least merge a pull request.
+	  </p>
+
+	  <p>
+	    If the codec doesn't meet <em>all</em> the above critera I
+	    still be willing to accept a pull request for a plugin,
+	    but keep in mind that all the machines I run this on are
+	    running Linux with various architectures, so even if there
+	    is a plugin for a Windows-only, or x86-only, etc., library
+	    it probably will not show up for every machine.  For
+	    example, I would like
+	    to <a href="https://github.com/quixdb/squash/issues/54">add
+	    a Windows API plugin</a>, but it will not show up on any
+	    of the Linux machines' results.
+	  </p>
+
+	  <p>
+	  </p>
+	</dd>
+
+	<dt id="faq-memory-usage">What about memory usage?</dt>
+	<dd>
+	  <p>
+	    I would really like to include that data.  If you have a
+	    good way to capture that data on the C side
+	    (in <a href="https://github.com/quixdb/squash-benchmark/blob/master/benchmark.c">benchmark.c</a>)
+	    I would be very happy to merge it, and integrate it into
+	    the results.
+	  </p>
+	  <p>
+	    Please
+	    use <a href="https://github.com/quixdb/squash-benchmark/issues/2">issue
+	    #2</a> to discuss this.
+	  </p>
+	</dd>
+
 	<dt id="faq-wall-clock-or-cpu">Is time CPU time or wall-clock?</dt>
 	<dd>
 	  <p>
@@ -446,17 +498,6 @@
 	    is presenting the data in a way which doesn't destroy the
 	    usability for people who are interested in single-threaded
 	    compression/decompression.
-	  </p>
-	</dd>
-
-	<dt id="faq-memory-usage">What about memory usage?</dt>
-	<dd>
-	  <p>
-	    I would really like to include that data.  If you have a
-	    good way to capture that data on the C side
-	    (in <a href="https://github.com/quixdb/squash-benchmark/blob/master/benchmark.c">benchmark.c</a>)
-	    I would be very happy to merge it, and integrate it into
-	    the results.
 	  </p>
 	</dd>
 
@@ -486,41 +527,6 @@
 	    around {{ machines.length * 321332 | formatSize:-1 }},
 	    though HTTP compression should help (oh, the irony of
 	    being stuck with zlib).
-	  </p>
-	</dd>
-
-	<dt id="faq-additional-codecs">Why isn't <var>«insert compression codec»</var> benchmarked?</dt>
-	<dd>
-	  <p>
-	    Because there isn't
-	    a <a href="https://quixdb.github.io/squash">Squash</a>
-	    plugin for it, and/or it doesn't work on the machine you
-	    selected.
-	  </p>
-
-	  <p>
-	    If the codec is reliable (it has to pass Squash's unit
-	    tests), works on Linux, accessible from C or C++, and open
-	    source the odds are good I would willing to write a
-	    plugin, or at least merge a pull request.
-	  </p>
-
-	  <p>
-	    If the codec doesn't meet the above critera I still might
-	    be willing to merge a pull request, but keep in mind that
-	    all the machines I run this on are running Linux with
-	    various architectures, so even if there is a plugin for a
-	    Windows-only, or x86-only, etc., library it probably will
-	    not show up for every machine.  For example, I would like
-	    to <a href="https://github.com/quixdb/squash/issues/54">add
-	    a Windows API plugin</a>, but it will not show up on any
-	    of the Linux machines' results.
-	  </p>
-
-	  <p>
-	    If there is a specific codec you're interested in,
-	    please <a href="https://github.com/quixdb/squash/issues">file
-	    an issue against Squash</a>.
 	  </p>
 	</dd>
 
