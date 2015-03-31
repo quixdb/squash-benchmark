@@ -1006,7 +1006,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		    color: colors[i % colors.length],
 		    data: e.values.map (function (p) {
 			return { y: p.ratio,
-				 x: p.input_size / (p.compress_cpu + p.decompress_cpu),
+				 x: (2 * p.input_size) / (p.compress_cpu + p.decompress_cpu),
 				 compression_rate: p.compression_rate,
 				 decompression_rate: p.decompression_rate,
 				 codec: p.codec,
