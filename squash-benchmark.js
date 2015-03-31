@@ -948,6 +948,84 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	});
     }
 
+    function drawRTTRatioChart (xAxis, yAxis) {
+	if (xAxis == undefined)
+	    xAxis = 'linear';
+	if (yAxis == undefined)
+	    yAxis = 'linear';
+
+	var chart = $("#rtt-ratio-chart").highcharts({
+            chart: { type: 'scatter' },
+            title: { text: null },
+            xAxis: {
+		title: {
+                    enabled: true,
+                    text: 'Round Trip Speed'
+		},
+		endOnTick: true,
+		min: (xAxis == 'logarithmic') ? undefined : 0,
+		labels: {
+		    rotation: -45,
+		    formatter: function() { return formatSpeed(this.value); }
+		},
+		type: xAxis
+            },
+            yAxis: {
+		title: {
+                    text: 'Compression Ratio'
+		},
+		startOnTick: true,
+		endOnTick: true,
+		min: (yAxis == 'logarithmic') ? undefined : 1,
+		type: yAxis
+            },
+            legend: {
+		layout: 'vertical',
+		align: 'right',
+		verticalAlign: 'top'
+            },
+            plotOptions: {
+		scatter: {
+                    tooltip: {
+			headerFormat: '<b>{series.name}</b>',
+			pointFormatter: function () {
+			    res = ":<b>" + this.codec + "</b><hr/><br/>";
+			    if (this.level != "")
+			    	res += "Level: " + this.level + "<br/>";
+			    res += "Ratio: " + Math.round10(this.y, -2) + "<br/>";
+			    res += "Compression speed: " + formatSpeed(this.compression_rate) + "<br/>";
+			    res += "Decompression speed: " + formatSpeed(this.decompression_rate) + "<br/>";
+			    return res;
+			}
+                    }
+		}
+            },
+            series: chartData.map(function (e, i, a) {
+		return {
+		    name: e.plugin,
+		    color: colors[i % colors.length],
+		    data: e.values.map (function (p) {
+			return { y: p.ratio,
+				 x: p.input_size / (p.compress_cpu + p.decompress_cpu),
+				 compression_rate: p.compression_rate,
+				 decompression_rate: p.decompression_rate,
+				 codec: p.codec,
+				 level: p.level };
+		    })
+		};
+	    })
+	}).highcharts();
+
+	$("#rtt-ratio-chart .highcharts-xaxis-title").click(function (e) {
+	    drawRTTRatioChart(chart.userOptions.xAxis.type == "linear" ? "logarithmic" : "linear",
+			      chart.userOptions.yAxis.type);
+	});
+	$("#rtt-ratio-chart .highcharts-yaxis-title").click(function (e) {
+	    drawRTTRatioChart(chart.userOptions.xAxis.type,
+			      chart.userOptions.yAxis.type == "linear" ? "logarithmic" : "linear");
+	});
+    }
+
     var updateChart = function () {
 	chartData = [];
 	var dataIdx = {};
@@ -962,13 +1040,17 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		level: e.level,
 		ratio: e.ratio,
 		compression_rate: e.compression_rate,
-		decompression_rate: e.decompression_rate
+		decompression_rate: e.decompression_rate,
+		compress_cpu: e.compress_cpu,
+		decompress_cpu: e.decompress_cpu,
+		input_size: e.input_size
 	    });
 	});
 
 	drawRatioCompressionChart();
 	drawRatioDecompressionChart();
 	drawCompressionDecompressionChart();
+	drawRTTRatioChart();
     };
 
     dataCache = [];
