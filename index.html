@@ -172,42 +172,44 @@
 	    </p>
 	  </div>
 
-	  <table class="table table-responsive table-striped">
-	    <thead>
-	      <tr>
-		<th></th>
-		<th ng-click="datasetSortReverse = (datasetSort == 'id') ? !datasetSortReverse : false; datasetSort = 'id'">
-		  Name
-		  <i ng-if="datasetSort == 'id'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-		<th ng-click="datasetSortReverse = (datasetSort == 'source') ? !datasetSortReverse : false; datasetSort = 'source'">
-		  Source
-		  <i ng-if="datasetSort == 'source'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-		<th ng-click="datasetSortReverse = (datasetSort == 'description') ? !datasetSortReverse : false; datasetSort = 'description'">
-		  Description
-		  <i ng-if="datasetSort == 'description'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-		<th ng-click="datasetSortReverse = (datasetSort == 'size') ? !datasetSortReverse : false; datasetSort = 'size'">
-		  Size
-		  <i ng-if="datasetSort == 'size'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-	      </tr>
-	    </thead>
-	    <tbody>
-	      <tr ng-repeat="corpus in datasets | orderBy:datasetSort:datasetSortReverse">
-		<td>
-		  <input type="radio" name="corpus" ng-value="corpus.id" ng-model="$parent.dataset" id="dataset-{{corpus.id}}">
-		</td>
-		<td>
-		  <label for="dataset-{{corpus.id}}" ng-bind="corpus.id"></label>
-		</td>
-		<td><a ng-href="{{corpus.sourceUrl}}" ng-bind="corpus.source"></a></td>
-		<td ng-bind="corpus.description"></td>
-		<td ng-bind="corpus.size | formatSize">}</td>
-	      </tr>
-	    </tbody>
-	  </table>
+          <div class="table-responsive">
+	    <table class="table table-striped">
+	      <thead>
+	        <tr>
+		  <th></th>
+		  <th ng-click="datasetSortReverse = (datasetSort == 'id') ? !datasetSortReverse : false; datasetSort = 'id'">
+		    Name
+		    <i ng-if="datasetSort == 'id'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="datasetSortReverse = (datasetSort == 'source') ? !datasetSortReverse : false; datasetSort = 'source'">
+		    Source
+		    <i ng-if="datasetSort == 'source'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="datasetSortReverse = (datasetSort == 'description') ? !datasetSortReverse : false; datasetSort = 'description'">
+		    Description
+		    <i ng-if="datasetSort == 'description'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="datasetSortReverse = (datasetSort == 'size') ? !datasetSortReverse : false; datasetSort = 'size'">
+		    Size
+		    <i ng-if="datasetSort == 'size'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+	        </tr>
+	      </thead>
+	      <tbody>
+	        <tr ng-repeat="corpus in datasets | orderBy:datasetSort:datasetSortReverse">
+		  <td>
+		    <input type="radio" name="corpus" ng-value="corpus.id" ng-model="$parent.dataset" id="dataset-{{corpus.id}}">
+		  </td>
+		  <td>
+		    <label for="dataset-{{corpus.id}}" ng-bind="corpus.id"></label>
+		  </td>
+		  <td><a ng-href="{{corpus.sourceUrl}}" ng-bind="corpus.source"></a></td>
+		  <td ng-bind="corpus.description"></td>
+		  <td ng-bind="corpus.size | formatSize">}</td>
+	        </tr>
+	      </tbody>
+	    </table>
+          </div>
 	</form>
 
 	<div>
@@ -232,67 +234,69 @@
 	    </p>
 	  </div>
 
-	  <table class="table table-responsive table-condensed table-striped">
-	    <thead>
-	      <tr>
-		<th></th>
-		<th ng-click="machineSortReverse = (machineSort == 'name') ? !machineSortReverse : false; machineSort = 'name'">
-		  Name
-		  <i ng-if="machineSort == 'name'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-		<th>Status</th>
-		<th ng-click="machineSortReverse = (machineSort == 'cpu') ? !machineSortReverse : false; machineSort = 'cpu'">
-		  CPU/SoC
-		  <i ng-if="machineSort == 'cpu'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-		<th ng-click="machineSortReverse = (machineSort == 'architecture') ? !machineSortReverse : false; machineSort = 'architecture'">
-		  Architecture
-		  <i ng-if="machineSort == 'architecture'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-		<th ng-click="machineSortReverse = (machineSort == 'speed') ? !machineSortReverse : false; machineSort = 'speed'">
-		  Clock Speed
-		  <i ng-if="machineSort == 'speed'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-		<th ng-click="machineSortReverse = (machineSort == 'memory') ? !machineSortReverse : false; machineSort = 'memory'">
-		  Memory
-		  <i ng-if="machineSort == 'memory'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-		<th ng-click="machineSortReverse = (machineSort == 'platform') ? !machineSortReverse : false; machineSort = 'platform'">
-		  Platform
-		  <i ng-if="machineSort == 'platform'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-		<th ng-click="machineSortReverse = (machineSort == 'distro') ? !machineSortReverse : false; machineSort = 'distro'">
-		  Distro
-		  <i ng-if="machineSort == 'distro'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-		<th ng-click="machineSortReverse = (machineSort == 'kernel') ? !machineSortReverse : false; machineSort = 'kernel'">
-		  Kernel
-		  <i ng-if="machineSort == 'kernel'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-		<th>CSV</th>
-	      </tr>
-	    </thead>
-	    <tbody>
-	      <tr ng-repeat="system in machines | orderBy:machineSort:machineSortReverse">
-		<td><input type="radio" name="system" id="dataset-{{system.name}}" value="{{system.name}}" ng-model="$parent.machine"></td>
-		<td><label for="dataset-{{system.name}}" ng-bind="system.name"></label></td>
-		<td style="text-align: center" ng-switch="system.failures">
-		  <i ng-switch-when="undefined" class="fa fa-check"></i>
-		  <span ng-switch-default class="failure-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" title="Failures" data-failures="{{system.failures}}">
-		    <i class="fa fa-exclamation"></i>
-		  </span>
-		</td>
-		<td><a ng-href="{{ system.cpuUrl }}" ng-bind="system.cpu"></a></td>
-		<td ng-bind="system.architecture"></td>
-		<td ng-bind="system.speed | formatFrequency"></td>
-		<td ng-bind="system.memory * 1024 * 1024 | formatSize"></td>
-		<td><a href="{{ system.platformUrl }}" ng-bind="system.platform"></a></td>
-		<td ng-bind="system.distro"></td>
-		<td ng-bind="system.kernel"></td>
-		<td style="text-align: center"><a href="https://github.com/quixdb/squash-benchmark/blob/gh-pages/{{ system.name }}.csv"><i class="fa fa-table"></i></a></td>
-	      </tr>
-	    </tbody>
-	  </table>
+          <div class="table-responsive">
+	    <table class="table table-condensed table-striped">
+	      <thead>
+	        <tr>
+		  <th></th>
+		  <th ng-click="machineSortReverse = (machineSort == 'name') ? !machineSortReverse : false; machineSort = 'name'">
+		    Name
+		    <i ng-if="machineSort == 'name'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th>Status</th>
+		  <th ng-click="machineSortReverse = (machineSort == 'cpu') ? !machineSortReverse : false; machineSort = 'cpu'">
+		    CPU/SoC
+		    <i ng-if="machineSort == 'cpu'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="machineSortReverse = (machineSort == 'architecture') ? !machineSortReverse : false; machineSort = 'architecture'">
+		    Architecture
+		    <i ng-if="machineSort == 'architecture'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="machineSortReverse = (machineSort == 'speed') ? !machineSortReverse : false; machineSort = 'speed'">
+		    Clock Speed
+		    <i ng-if="machineSort == 'speed'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="machineSortReverse = (machineSort == 'memory') ? !machineSortReverse : false; machineSort = 'memory'">
+		    Memory
+		    <i ng-if="machineSort == 'memory'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="machineSortReverse = (machineSort == 'platform') ? !machineSortReverse : false; machineSort = 'platform'">
+		    Platform
+		    <i ng-if="machineSort == 'platform'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="machineSortReverse = (machineSort == 'distro') ? !machineSortReverse : false; machineSort = 'distro'">
+		    Distro
+		    <i ng-if="machineSort == 'distro'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="machineSortReverse = (machineSort == 'kernel') ? !machineSortReverse : false; machineSort = 'kernel'">
+		    Kernel
+		    <i ng-if="machineSort == 'kernel'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th>CSV</th>
+	        </tr>
+	      </thead>
+	      <tbody>
+	        <tr ng-repeat="system in machines | orderBy:machineSort:machineSortReverse">
+		  <td><input type="radio" name="system" id="dataset-{{system.name}}" value="{{system.name}}" ng-model="$parent.machine"></td>
+		  <td><label for="dataset-{{system.name}}" ng-bind="system.name"></label></td>
+		  <td style="text-align: center" ng-switch="system.failures">
+		    <i ng-switch-when="undefined" class="fa fa-check"></i>
+		    <span ng-switch-default class="failure-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" title="Failures" data-failures="{{system.failures}}">
+		      <i class="fa fa-exclamation"></i>
+		    </span>
+		  </td>
+		  <td><a ng-href="{{ system.cpuUrl }}" ng-bind="system.cpu"></a></td>
+		  <td ng-bind="system.architecture"></td>
+		  <td ng-bind="system.speed | formatFrequency"></td>
+		  <td ng-bind="system.memory * 1024 * 1024 | formatSize"></td>
+		  <td><a href="{{ system.platformUrl }}" ng-bind="system.platform"></a></td>
+		  <td ng-bind="system.distro"></td>
+		  <td ng-bind="system.kernel"></td>
+		  <td style="text-align: center"><a href="https://github.com/quixdb/squash-benchmark/blob/gh-pages/{{ system.name }}.csv"><i class="fa fa-table"></i></a></td>
+	        </tr>
+	      </tbody>
+	    </table>
+          </div>
 	</div>
       </div>
 
@@ -316,69 +320,71 @@
 	    </div>
 	  </div>
 
-	  <table class="table table-responsive table-condensed table-striped">
-	    <thead>
-	      <tr>
-		<!-- <th>Show</th> -->
-		<th ng-click="rawSortReverse = (rawSort == 'plugin') ? !rawSortReverse : false; rawSort = 'plugin'">
-		  Plugin
-		  <i ng-if="rawSort == 'plugin'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-		<th ng-click="rawSortReverse = (rawSort == 'codec') ? !rawSortReverse : false; rawSort = 'codec'">
-		  Codec
-		  <i ng-if="rawSort == 'codec'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-		<th ng-click="rawSortReverse = (rawSort == 'level') ? !rawSortReverse : false; rawSort = 'level'">
-		  Level
-		  <i ng-if="rawSort == 'level'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-		<th ng-click="rawSortReverse = (rawSort == 'compressed_size') ? !rawSortReverse : false; rawSort = 'compressed_size'">
-		  Compression Ratio
-		  <i ng-if="rawSort == 'compressed_size'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-		<th ng-click="rawSortReverse = (rawSort == 'compress_cpu') ? !rawSortReverse : false; rawSort = 'compress_cpu'">
-		  Compression Speed
-		  <i ng-if="rawSort == 'compress_cpu'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-		<th ng-click="rawSortReverse = (rawSort == 'decompress_cpu') ? !rawSortReverse : false; rawSort = 'decompress_cpu'">
-		  Decompression Speed
-		  <i ng-if="rawSort == 'decompress_cpu'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
-		</th>
-	      </tr>
-	    </thead>
+          <div class="table-responsive">
+	    <table class="table table-condensed table-striped">
+	      <thead>
+	        <tr>
+		  <!-- <th>Show</th> -->
+		  <th ng-click="rawSortReverse = (rawSort == 'plugin') ? !rawSortReverse : false; rawSort = 'plugin'">
+		    Plugin
+		    <i ng-if="rawSort == 'plugin'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="rawSortReverse = (rawSort == 'codec') ? !rawSortReverse : false; rawSort = 'codec'">
+		    Codce
+		    <i ng-if="rawSort == 'codec'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="rawSortReverse = (rawSort == 'level') ? !rawSortReverse : false; rawSort = 'level'">
+		    Level
+		    <i ng-if="rawSort == 'level'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="rawSortReverse = (rawSort == 'compressed_size') ? !rawSortReverse : false; rawSort = 'compressed_size'">
+		    Compression Ratio
+		    <i ng-if="rawSort == 'compressed_size'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="rawSortReverse = (rawSort == 'compress_cpu') ? !rawSortReverse : false; rawSort = 'compress_cpu'">
+		    Compression Speed
+		    <i ng-if="rawSort == 'compress_cpu'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="rawSortReverse = (rawSort == 'decompress_cpu') ? !rawSortReverse : false; rawSort = 'decompress_cpu'">
+		    Decompression Speed
+		    <i ng-if="rawSort == 'decompress_cpu'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+	        </tr>
+	      </thead>
 
-	    <tbody>
-	      <tr ng-repeat="result in data | orderBy:rawSort:rawSortReverse">
-		<td class="nowrap-xs" style="width: 1px; vertical-align: middle" ng-bind="result.plugin"></td>
-		<td class="nowrap-xs" style="width: 1px; vertical-align: middle" ng-bind="result.codec"></td>
-		<td class="nowrap-xs" style="width: 1px; vertical-align: middle" ng-bind="result.level"></td>
-		<td>
-		  <div class="progress" style="margin-bottom: 0">
-		    <div class="progress-bar progress-bar-warning result-bar"
-			 style="width: {{ ((result.ratio - 1) / (bestRatio - 1)) * 100 }}%">
-		      {{ result.ratio | number:2 }}
+	      <tbody>
+	        <tr ng-repeat="result in data | orderBy:rawSort:rawSortReverse">
+		  <td class="nowrap-xs" style="width: 1px; vertical-align: middle" ng-bind="result.plugin"></td>
+		  <td class="nowrap-xs" style="width: 1px; vertical-align: middle" ng-bind="result.codec"></td>
+		  <td class="nowrap-xs" style="width: 1px; vertical-align: middle" ng-bind="result.level"></td>
+		  <td>
+		    <div class="progress" style="margin-bottom: 0">
+		      <div class="progress-bar progress-bar-warning result-bar"
+			   style="width: {{ ((result.ratio - 1) / (bestRatio - 1)) * 100 }}%">
+		        {{ result.ratio | number:2 }}
+		      </div>
 		    </div>
-		  </div>
-		</td>
-		<td>
-		  <div class="progress" style="margin-bottom: 0">
-		    <div class="progress-bar progress-bar-info result-bar"
-			 style="width: {{ (result.compression_rate / bestCompressionRate) * 100 }}%">
-		      {{ result.compression_rate | formatSpeed }}
+		  </td>
+		  <td>
+		    <div class="progress" style="margin-bottom: 0">
+		      <div class="progress-bar progress-bar-info result-bar"
+			   style="width: {{ (result.compression_rate / bestCompressionRate) * 100 }}%">
+		        {{ result.compression_rate | formatSpeed }}
+		      </div>
 		    </div>
-		  </div>
-		</td>
-		<td>
-		  <div class="progress" style="margin-bottom: 0">
-		    <div class="progress-bar progress-bar-success result-bar"
-			 style="width: {{ (result.decompression_rate / bestDecompressionRate) * 100 }}%">
-		      {{ result.decompression_rate | formatSpeed }}
+		  </td>
+		  <td>
+		    <div class="progress" style="margin-bottom: 0">
+		      <div class="progress-bar progress-bar-success result-bar"
+			   style="width: {{ (result.decompression_rate / bestDecompressionRate) * 100 }}%">
+		        {{ result.decompression_rate | formatSpeed }}
+		      </div>
 		    </div>
-		  </div>
-		</td>
-	      </tr>
-	    </tbody>
-	  </table>
+		  </td>
+	        </tr>
+	      </tbody>
+	    </table>
+          </div>
 	</div>
 
 	<div class="panel panel-primary">
