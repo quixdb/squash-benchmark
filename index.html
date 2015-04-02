@@ -24,10 +24,6 @@
         text-shadow: 0px 0px 1px white;
       }
 
-      @media (min-width: 768px) {
-        .nowrap-xs { white-space: nowrap; }
-      }
-
       .bs-callout {
         margin: 20px 0;
         padding: 15px 30px 15px 15px;
@@ -356,13 +352,13 @@
 
 	      <tbody>
 	        <tr ng-repeat="result in data | orderBy:rawSort:rawSortReverse">
-		  <td class="nowrap-xs" style="width: 1px; vertical-align: middle" ng-bind="result.plugin"></td>
-		  <td class="nowrap-xs" style="width: 1px; vertical-align: middle" ng-bind="result.codec"></td>
-		  <td class="nowrap-xs" style="width: 1px; vertical-align: middle" ng-bind="result.level"></td>
+		  <td class="nowrap-xs" style="width: 1px; vertical-align: middle; white-space: nowrap" ng-bind="result.plugin"></td>
+		  <td class="nowrap-xs" style="width: 1px; vertical-align: middle; white-space: nowrap" ng-bind="result.codec"></td>
+		  <td class="nowrap-xs" style="width: 1px; vertical-align: middle; white-space: nowrap" ng-bind="result.level"></td>
 		  <td>
 		    <div class="progress" style="margin-bottom: 0">
 		      <div class="progress-bar progress-bar-warning result-bar"
-			   style="width: {{ ((result.ratio - 1) / (bestRatio - 1)) * 100 }}%">
+			   style="white-space: nowrap; width: {{ ((result.ratio - 1) / (bestRatio - 1)) * 100 }}%">
 		        {{ result.ratio | number:2 }}
 		      </div>
 		    </div>
@@ -370,7 +366,7 @@
 		  <td>
 		    <div class="progress" style="margin-bottom: 0">
 		      <div class="progress-bar progress-bar-info result-bar"
-			   style="width: {{ (result.compression_rate / bestCompressionRate) * 100 }}%">
+			   style="white-space: nowrap; width: {{ (result.compression_rate / bestCompressionRate) * 100 }}%">
 		        {{ result.compression_rate | formatSpeed }}
 		      </div>
 		    </div>
@@ -378,7 +374,7 @@
 		  <td>
 		    <div class="progress" style="margin-bottom: 0">
 		      <div class="progress-bar progress-bar-success result-bar"
-			   style="width: {{ (result.decompression_rate / bestDecompressionRate) * 100 }}%">
+			   style="white-space: nowrap; width: {{ (result.decompression_rate / bestDecompressionRate) * 100 }}%">
 		        {{ result.decompression_rate | formatSpeed }}
 		      </div>
 		    </div>
