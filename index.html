@@ -120,11 +120,11 @@
 	  The Squash Benchmark currently consists of
 	  {{datasets.length|number}} datasets, each of which is tested
 	  against {{plugins.length}} plugins containing
-	  {{codecs.length|number}} codecs at every compression level
-	  they offer—the number varies by codec, but there are
-	  {{data_points_per_machine|number}} in total, yielding
-	  {{data_points_per_machine*datasets.length|number}} different
-	  settings.  The benchmark is currently run on
+	  {{codecs.length-1|number}} compression codecs at every
+	  compression level they offer—the number varies by codec, but
+	  there are {{data_points_per_machine|number}} in total,
+	  yielding {{data_points_per_machine*datasets.length|number}}
+	  different settings.  The benchmark is currently run on
 	  {{machines.length|number}} different machines (with more
 	  coming soon!) for a current grand total of
 	  {{datasets.length*machines.length*data_points_per_machine|number}}

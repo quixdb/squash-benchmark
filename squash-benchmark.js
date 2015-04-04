@@ -393,6 +393,9 @@ var plugins = [
       codecs: [
 	  { name: "bzip2",
 	    levels: [1, 2, 3, 4, 5, 6, 7, 8, 9] } ] },
+    { id: "copy",
+      name: "copy",
+      codecs: [ { name: "copy" } ] },
     { id: "crush",
       name: "CRUSH",
       libraryUrl: "http://compressme.net/",
