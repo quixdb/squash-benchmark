@@ -441,7 +441,7 @@
 
       <dl>
 
-	<dt id="faq-additional-codecs">Please add <var>«insert compression codec»</var></dt>
+	<dt id="faq-additional-codecs">Will you add <var>«insert compression codec»</var>?</dt>
 	<dd>
 	  <p>
 	    In order to be included the benchmark the software must be
@@ -583,12 +583,8 @@
 	    Flags are a bit more complicated since different plugins
 	    require different flags, but as far as performance related
 	    flags are concerned, plugins are currently compiled
-	    with <code>-O3</code>, though this will likely change
-	    to <code>-O2</code> soon since, AFAIK, most Linux
-	    distributions don't allow software compiled with unsafe
-	    optimizations.  However, I do plan to experiment with
-	    adding flags which are safe in the future
-	    (<code>-flto</code> is the first candidate).
+	    with <code>-O3 -flto</code>.  However, I do plan to
+	    experiment with adding flags which are safe in the future.
 	  </p>
 	</dd>
 
