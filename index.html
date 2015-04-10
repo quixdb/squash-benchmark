@@ -429,6 +429,53 @@
     </div>
 
     <div id="faq" class="container">
+      <h1>Codec Details</h1>
+
+      <div class="table-responsive">
+	<table class="table table-condensed table-striped">
+	  <thead>
+	    <tr>
+	      <th>Library Name</th>
+	      <th>Version</th>
+	      <th>License</th>
+	      <th>Plugin</th>
+	      <th>Codec</th>
+	      <th>Levels</th>
+	    </tr>
+	  </thead>
+	  <tbody ng-repeat="plugin in plugins">
+	    <tr ng-repeat="codec in plugin.codecs">
+	      <td ng-if="$first" rowspan="{{plugin.codecs.length}}">
+		<a ng-if="plugin.libraryUrl != undefined" ng-href="{{plugin.libraryUrl}}" target="_new">
+		  <span ng-bind="plugin.name"></span>
+		  <i class="fa fa-external-link"></i>
+		</a>
+	      </td>
+
+	      <td ng-if="$first" rowspan="{{plugin.codecs.length}}">
+		<span ng-if="plugin.version" ng-bind="plugin.version"></span>
+		<span ng-if="plugin.revision" ng-bind="plugin.revision.slice(0,8)"></span>
+	      </td>
+
+	      <td ng-if="$first" rowspan="{{plugin.codecs.length}}" ng-bind="plugin.license"></td>
+
+	      <td ng-if="$first" rowspan="{{plugin.codecs.length}}"">
+		<a ng-href="https://quixdb.github.io/squash/api/c/md_plugins_{{plugin.id}}_{{plugin.id}}.html">
+		  <span ng-bind="plugin.id"></span>
+		  <i class="fa fa-external-link"></i>
+		</a>
+	      </td>
+
+	      <td ng-bind="codec.name"></td>
+
+	      <td ng-bind="codec.levels.join(', ')"></td>
+	    </tr>
+	  </tbody>
+	</table>
+      </div>
+    </div>
+
+    <div id="faq" class="container">
       <h1>FAQ</h1>
 
       <p>
