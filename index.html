@@ -523,6 +523,34 @@
 	  </p>
 	</dd>
 
+	<dt id="faq-calculation">How are the values calculated?</dt>
+	<dd>
+	  <p>
+	    The benchmark collects the compressed size, compression
+	    time, and decompression time.  Those are then used to
+	    calculate the values used in the benchmark:
+	  </p>
+	  <dl class="dl-horizontal" style="margin-left: 2em">
+	    <dt>Ratio</dt>
+	    <dd><p><var>uncompressed size<var> ÷ <var>compressed size</var></p></dd>
+
+	    <dt>Compression Speed</dt>
+	    <dd><p><var>uncompressed size<var> ÷ <var>compression time</var></p></dd>
+
+	    <dt>Decompression Speed</dt>
+	    <dd><p><var>uncompressed size<var> ÷ <var>decompression time</var></p></dd>
+
+	    <dt>Round Trip Speed</dt>
+	    <dd><p>(2 × <var>uncompressed size<var>) ÷ (<var>compression time</var> + <var>decompression time</var>)</p></dd>
+	  </dl>
+
+	  <p>
+	    Sizes are presented
+	    using <a href="https://en.wikipedia.org/wiki/Binary_prefix">binary
+	    prefixes</a>—1 KiB is 1024 bytes, 1 MiB is 1024 KiB, and so on.
+	  </p>
+	</dd>
+
 	<dt id="faq-memory-usage">What about memory usage?</dt>
 	<dd>
 	  <p>
@@ -693,7 +721,7 @@
 	<dd>
 	  <p>
 	    Append
-	    &quot;?dataset=<var ng-bind="dataset">foo</var ng-bind="machine">&amp;machine=<var>bar</var>&quot;
+	    &quot;?dataset=<var ng-bind="dataset">foo</var>&amp;machine=<var ng-bind="machine">bar</var>&quot;
 	    to the URL.  Or just one of them if you still want the
 	    other to be chosen randomly.
 	  </p>
