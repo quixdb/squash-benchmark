@@ -198,7 +198,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
     if (bytes_read == sizeof (SquashBenchmarkResult)) {
       if (context->csv != NULL) {
         if (level >= 0) {
-          fprintf (context->csv, "%s,%s,%s,%d,%ld,%f,%f,%f,%f\n",
+          fprintf (context->csv, "%s,%s,%s,%d,%ld,%f,%f,%f,%f\r\n",
                    context->input_name,
                    squash_plugin_get_name (squash_codec_get_plugin (codec)),
                    squash_codec_get_name (codec),
@@ -209,7 +209,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
                    result.decompress_cpu,
                    result.decompress_wall);
         } else {
-          fprintf (context->csv, "%s,%s,%s,,%ld,%f,%f,%f,%f\n",
+          fprintf (context->csv, "%s,%s,%s,,%ld,%f,%f,%f,%f\r\n",
                    context->input_name,
                    squash_plugin_get_name (squash_codec_get_plugin (codec)),
                    squash_codec_get_name (codec),
@@ -315,7 +315,7 @@ int main (int argc, char** argv) {
     return -1;
   }
 
-  fprintf (context.csv, "dataset,plugin,codec,level,compressed_size,compress_cpu,compress_wall,decompress_cpu,decompress_wall\n");
+  fprintf (context.csv, "dataset,plugin,codec,level,compressed_size,compress_cpu,compress_wall,decompress_cpu,decompress_wall\r\n");
 
   while ( optind < argc ) {
     context.input_name = argv[optind];
