@@ -48,7 +48,7 @@ all: data.csv
 	squash -kdc xz $^ $@
 
 benchmark: benchmark.c timer.c
-	$(CC) -g -o benchmark $^ `pkg-config --libs --cflags squash-0.5`
+	$(CC) -g -o benchmark $^ `pkg-config --libs --cflags squash-0.6`
 
 data.csv: benchmark $(DATA)
 	./benchmark -o $@ $(sort $(DATA)) 2>&1 | tee result.log
