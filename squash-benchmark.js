@@ -226,7 +226,8 @@ var machines = [
       platform: "Lenovo ThinkServer TS140",
       platformUrl: "http://shop.lenovo.com/us/en/servers/thinkserver/ts-series/ts140/",
       distro: "Fedora 21",
-      kernel: "3.18.7" },
+      kernel: "4.1.4",
+      compiler: "gcc-5.1.1" },
     { name: "hoplite",
       cpu: "Intel® Core™ i7-2630QM",
       cpuUrl: "http://ark.intel.com/products/52219",
@@ -236,7 +237,7 @@ var machines = [
       platform: "Toshiba Satellite A660-X",
       platformUrl: "http://support.toshiba.com/support/modelHome?freeText=PSAW6U-02100C",
       distro: "Fedora 21",
-      kernel: "3.18.7" },
+      kernel: "4.1.4" },
     { name: "phalanx",
       cpu: "Intel® Atom™ D525",
       cpuUrl: "http://ark.intel.com/products/49490",
@@ -285,8 +286,9 @@ var machines = [
       memory: 1024,
       platform: "Raspberry Pi 2 Model B",
       platformUrl: "http://www.raspberrypi.org/products/raspberry-pi-2-model-b/",
-      distro: "Raspbian (testing)",
-      kernel: "3.18.7",
+      distro: "Raspbian Jessie",
+      kernel: "3.18.11",
+      compiler: "gcc-4.9.2",
       failures: [{
           dataset: "x-ray",
           plugin: "brotli",
@@ -311,8 +313,9 @@ var machines = [
       memory: 512,
       platform: "BeagleBoard-xM revision B",
       platformUrl: "http://beagleboard.org/beagleboard-xm",
-      distro: "Ubuntu 14.10",
-      kernel: "3.18.3",
+      distro: "Ubuntu 15.04",
+      kernel: "4.1.5",
+      compiler: "gcc-4.9.2",
       failures: [{
           dataset: "x-ray",
           plugin: "brotli",
@@ -327,8 +330,9 @@ var machines = [
       memory: 1024,
       platform: "ODROID-C1",
       platformUrl: "http://www.hardkernel.com/main/products/prdt_info.php?g_code=G141578608433",
-      distro: "Ubuntu 14.04.2",
-      kernel: "3.10.72",
+      distro: "Ubuntu 14.04.4",
+      kernel: "3.10.80",
+      compiler: "gcc-4.9.2",
       failures: [{
           dataset: "x-ray",
           plugin: "brotli",
@@ -344,16 +348,6 @@ var machines = [
     //   platform: "ISEE IGEPv5",
     //   platformUrl: "https://isee.biz/products/igep-processor-boards/igepv5-omap5432",
     //   distro: "Ubuntu",
-    //   kernel: "" },
-    // { name: "edison",
-    //   cpu: "",
-    //   cpuUrl: "",
-    //   architecture: "x86_64",
-    //   speed: 500 * 1000000,
-    //   memory: 1024,
-    //   platform: "Intel® Edison Compute Module",
-    //   platformUrl: "http://ark.intel.com/products/84572/Intel-Edison-Compute-Module-IoT",
-    //   distro: "Yocto",
     //   kernel: "" },
     { name: "satellite-a205",
       cpu: "Intel® Celeron® Processor 540",
@@ -383,8 +377,9 @@ var plugins = [
       name: "Brotli",
       libraryUrl: "https://github.com/google/brotli",
       license: "Apache 2.0",
-      revision: "570c29500781a297a67a189dda00c934ed0ce0db",
-      codecs: [ { name: "brotli" } ] },
+      revision: "d811b186c5037b434d56ddb831ceccdf5a954687",
+      codecs: [ { name: "brotli",
+		  levels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] } ] },
     { id: "bsc",
       name: "bsc",
       libraryUrl: "http://libbsc.com/",
@@ -414,14 +409,14 @@ var plugins = [
       name: "CSC",
       libraryUrl: "https://github.com/fusiyuan2010/CSC",
       license: "MIT",
-      revision: "c9f051bc7a10e60949240ac33e303c3981c2af54",
+      revision: "c8f1580bd765c8e77d6cffb6bf900bf70e31aa0c",
       codecs: [ { name: "csc",
 		  levels: [1, 2, 3, 4, 5] } ] },
     { id: "density",
       name: "DENSITY",
       libraryUrl: "https://github.com/centaurean/density",
       license: "3-clause BSD",
-      version: "0.12.1",
+      revesion: "dbc43e83295df18f650ed54fc423778ecacad4bd",
       codecs: [
 	  { name: "density",
 	    levels: [1, 7, 9] } ] },
@@ -447,16 +442,16 @@ var plugins = [
       name: "Gipfeli",
       libraryUrl: "https://github.com/google/gipfeli",
       license: "3-clause BSD",
-      revision: "009c4f0a6ae5870247011af67d6d832369c1069a",
+      revision: "65b9721308a357f6aa261c11d0af291d10d0b96c",
       codecs: [ { name: "gipfeli" } ] },
     { id: "lz4",
       name: "LZ4",
       libraryUrl: "https://code.google.com/p/lz4/",
       license: "3-clause BSD",
-      version: "r128",
+      revision: "d86dc916771c126afb797637dda9f6421c0cb998",
       codecs: [
 	  { name: "lz4",
-	    levels: [7, 8, 9, 10, 11, 12, 13, 14] },
+	    levels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14] },
 	  { name: "lz4f",
 	    levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16] } ] },
     { id: "lzf",
@@ -525,7 +520,7 @@ var plugins = [
       name: "ms-compress",
       libraryUrl: "https://github.com/coderforlife/ms-compress/",
       license: "GPLv3+",
-      revision: "1cfac269a8e9c640b0bd2af40bf92c6a494da554",
+      revision: "a179b8d46c76048872470ba449f672aa064131e6",
       codecs: [
     	  { name: "lznt1" },
     	  { name: "xpress" },
@@ -566,6 +561,7 @@ var plugins = [
     // { id: "wflz",
     //   name: "wfLZ",
     //   libraryUrl: "https://code.google.com/p/wflz/",
+    //   revision: "cfbb02d7a87ab3e39c6a4394da2281744a671ed2",
     //   codecs: [
     // 	  { name: "wflz",
     // 	    levels: [1, 2] },
@@ -575,6 +571,7 @@ var plugins = [
     { id: "yalz77",
       name: "yalz77",
       libraryUrl: "https://bitbucket.org/tkatchev/yalz77",
+      revision: "a5078995ded6c74e98aed279c0ed8b6e7c5e35ff",
       codecs: [
 	  { name: "yalz77" },
       ] },
@@ -602,7 +599,7 @@ var plugins = [
       name: "ZPAQ",
       libraryUrl: "http://mattmahoney.net/dc/zpaq.html",
       license: "Public Domain",
-      version: "7.04",
+      version: "7.05",
       codecs: [
     	  { name: "zpaq",
     	    levels: [1, 2, 3, 4, 5] },
@@ -611,7 +608,7 @@ var plugins = [
       name: "Zstandard",
       libraryUrl: "https://github.com/Cyan4973/zstd",
       license: "2-clause BSD",
-      revision: "765207c54934d478488c236749b01c7d6fc63d70",
+      revision: "1eca5f52994434d3b0427c9014403cf01495f54a",
       codecs: [
     	  { name: "zstd" },
       ] }
@@ -691,6 +688,8 @@ squashBenchmarkApp.factory('squashBenchmarkData', function($q) {
 			level: val.level,
 
 			input_size: input_size,
+			compressed_size: parseInt(val.compressed_size),
+
 			compressed_size: parseInt(val.compressed_size),
 			compress_cpu: parseFloat(val.compress_cpu),
 			compress_wall: parseFloat(val.compress_wall),
@@ -784,6 +783,12 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	    $scope.data_points_per_machine += (codec.levels == undefined) ? 1 : codec.levels.length;
 	});
     });
+
+    $scope.transferSpeed = 1000;
+    $scope.transferSpeedUnits = "Mibit/s";
+    $scope.transferProcessVisible = 125;
+    $scope.transferProcessSort = "time";
+    $scope.transferProcessDirection = "decompress";
 
     var colors = d3.scale.category20().range()
 	.concat (d3.scale.category20b().range(),
@@ -1098,11 +1103,176 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	});
     }
 
+    var transferProcessingRowState = {};
+    plugins.forEach (function (plugin) {
+	transferProcessingRowState[plugin.id] = {};
+	plugin.codecs.forEach (function (codec) {
+	    var levels = {};
+	    if (codec.levels == undefined)
+		levels["default"] = true;
+	    else {
+		codec.levels.forEach (function (level) {
+		    levels[level] = true;
+		});
+	    }
+	    transferProcessingRowState[plugin.id][codec.name] = levels;
+	});
+    });
+
+    function drawTransferDecompressionChart () {
+	var transferSpeed = $scope.transferSpeed;
+	switch ($scope.transferSpeedUnits) {
+  	case "Kibit/s":
+	    transferSpeed = (transferSpeed * 1024) / 8;
+	    break;
+  	case "Mibit/s":
+	    transferSpeed = (transferSpeed * 1048576) / 8;
+	    break;
+  	case "Gibit/s":
+	    transferSpeed = (transferSpeed * 1073741824) / 8;
+	    break;
+	}
+
+	var uncompressedSize = dataset_map[$scope.dataset].size;
+	var cutoff = 0;
+	if ($scope.transferProcessVisible != 0)
+	    cutoff = (uncompressedSize / transferSpeed) * ($scope.transferProcessVisible / 100);
+
+	seriesData = [
+	    {
+		name: 'Decompression',
+		data: [0]
+	    }, {
+		name: 'Transfer',
+		data: [uncompressedSize / transferSpeed]
+	    }
+	];
+	categoriesData = ["No compression"];
+
+	var sortedData = [];
+	chartData.forEach (function (plugin) {
+	    plugin.values.forEach (function (value) {
+		var desc = plugin.plugin + ":" + value.codec;
+		if (plugin.values.length > 1)
+		    desc += " | " + value.level;
+
+		sortedData.push ({
+		    name: desc,
+		    plugin: plugin.plugin,
+		    codec: value.codec,
+		    level: value.level,
+		    ratio: value.ratio,
+		    transferTime: value.compressed_size / transferSpeed,
+		    decompressTime: value.decompress_cpu,
+		    decompressTotalTime: (value.compressed_size / transferSpeed) + value.decompress_cpu,
+		    compressTime: value.compress_cpu,
+		    compressTotalTime: (value.compressed_size / transferSpeed) + value.compress_cpu
+		});
+	    });
+	});
+
+	if ($scope.transferProcessSort == "time") {
+	    sortedData.sort (function (a, b) {
+		var field = $scope.transferProcessDirection == "decompress" ? "decompressTotalTime" : "compressTotalTime";
+		return a[field] - b[field];
+	    });
+	}
+
+	sortedData.forEach (function (e) {
+	    var enabled = transferProcessingRowState[e.plugin][e.codec][e.level == '' ? 'default' : e.level];
+
+	    if (cutoff > 0 && e[($scope.transferProcessDirection == "decompress" ? "decompress" : "compress") + "TotalTime"] > cutoff) {
+	    	return;
+	    }
+
+	    categoriesData.push (e.name);
+	    seriesData[0].data.push ({
+		y: e[$scope.transferProcessDirection == "decompress" ? "decompressTime" : "compressTime"],
+		data: e
+	    });
+	    seriesData[1].data.push ({
+		y: e.transferTime,
+		data: e
+	    });
+	});
+
+	$("#transfer-decompression-chart").height (100 + (categoriesData.length * 20));
+
+	var chart = $("#transfer-decompression-chart").highcharts({
+            chart: { type: 'bar' },
+            title: { text: null },
+            xAxis: {
+	    	title: {
+                    enabled: false
+	    	},
+		categories: categoriesData
+            },
+            yAxis: {
+		title: {
+                    text: 'Transfer + Decompression Time'
+		},
+		min: 0
+            },
+	    tooltip: {
+		headerFormat: "",
+		pointFormatter: function () {
+		    if (this.data == undefined) {
+			var res = "<b>No compression</b>";
+			res += "Size: " + formatSize (dataset_map[$scope.dataset].size) + "<br/>";
+			res += "Total time: <b>" + Math.round10(dataset_map[$scope.dataset].size / transferSpeed, -4) + " seconds</b><br/>";
+			return res;
+		    }
+
+		    var res = this.data.plugin + ":" + this.data.codec;
+		    if (this.data.level != "")
+			res += " level " + this.data.level;
+		    res += '<br/>';
+
+		    if (this.data.level != "")
+		    	res += "Level: " + this.data.level + "<br/>";
+		    res += "Ratio: " + Math.round10(this.data.ratio, -2) + "<br/>";
+		    res += "Transfer time: " + Math.round10(this.data.transferTime, -4) + " seconds<br/>";
+		    res += "Decompression time: " + Math.round10 (this.data.decompressTime, -4) + " seconds<br/>";
+		    res += "Compression time: " + Math.round10 (this.data.compressTime, -4) + " seconds<br/>";
+		    if ($scope.transferProcessDirection == "decompress") {
+			res += "Total decompression time: <b>" + Math.round10(this.data.decompressTotalTime, -4) + " seconds</b><br/>";
+			res += "Total compression time: " + Math.round10(this.data.compressTotalTime, -4) + " seconds<br/>";
+		    } else {
+			res += "Total decompression time: " + Math.round10(this.data.decompressTotalTime, -4) + " seconds<br/>";
+			res += "Total compression time: <b>" + Math.round10(this.data.compressTotalTime, -4) + " seconds</b><br/>";
+		    }
+		    return res;
+		}
+	    },
+            plotOptions: {
+		series: {
+		    stacking: 'normal'
+		}
+            },
+	    series: seriesData
+	}).highcharts();
+
+	$("#transfer-decompression-chart .highcharts-xaxis-labels > text").click(function (e) {
+	    var target = $(e.currentTarget);
+	    var res = target.text().match (/([a-zA-Z0-9\-]+)\:([a-zA-Z0-9\-]+)( \| ([0-9]+))?/);
+	    var codec = transferProcessingRowState[res[1]][res[2]];
+	    var level = res[4] == undefined ? 'default' : res[4];
+	    codec[level] = !codec[level];
+
+	    drawTransferDecompressionChart ();
+	});
+    }
+
+    $scope.drawTransferDecompressionChart = drawTransferDecompressionChart;
+
     var updateChart = function () {
 	chartData = [];
 	var dataIdx = {};
 
 	$scope.data.forEach (function (e, i, a) {
+	    if (e.plugin == "copy")
+		return;
+
 	    if (dataIdx[e.plugin] == undefined) {
 		dataIdx[e.plugin] = chartData.length;
 		chartData.push ({ plugin: e.plugin, values: [] });
@@ -1115,7 +1285,8 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		decompression_rate: e.decompression_rate,
 		compress_cpu: e.compress_cpu,
 		decompress_cpu: e.decompress_cpu,
-		input_size: e.input_size
+		input_size: e.input_size,
+		compressed_size: e.compressed_size
 	    });
 	});
 
@@ -1123,6 +1294,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	drawRatioDecompressionChart();
 	drawCompressionDecompressionChart();
 	drawRTTRatioChart();
+	drawTransferDecompressionChart();
     };
 
     dataCache = [];
@@ -1140,12 +1312,14 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	    $scope.data = data.filter (function(element, index, arr) {
 		if (element.dataset == $scope.dataset) {
 
-		    if (element.compression_rate > $scope.bestCompressionRate)
-			$scope.bestCompressionRate = element.compression_rate;
-		    if (element.decompression_rate > $scope.bestDecompressionRate)
-			$scope.bestDecompressionRate = element.decompression_rate;
-		    if (element.ratio > $scope.bestRatio)
-			$scope.bestRatio = element.ratio;
+		    if (!(element.plugin == "copy" && element.codec == "copy")) {
+			if (element.compression_rate > $scope.bestCompressionRate)
+			    $scope.bestCompressionRate = element.compression_rate;
+			if (element.decompression_rate > $scope.bestDecompressionRate)
+			    $scope.bestDecompressionRate = element.decompression_rate;
+			if (element.ratio > $scope.bestRatio)
+			    $scope.bestRatio = element.ratio;
+		    }
 
 		    return true;
 		} else {

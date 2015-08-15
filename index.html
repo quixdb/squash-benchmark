@@ -24,6 +24,10 @@
         text-shadow: 0px 0px 1px white;
       }
 
+      .alert a {
+        text-decoration: underline;
+      }
+
       .bs-callout {
         margin: 20px 0;
         padding: 15px 30px 15px 15px;
@@ -108,8 +112,6 @@
       <div class="page-header jumbotron">
 	<h1>Squash Benchmark</h1>
 
-        <iframe src="https://ghbtns.com/github-btn.html?user=quixdb&repo=squash&type=star&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
-
 	<p>
 	  Squash is an abstraction layer for compression algorithms,
 	  making it trivial to switch between them… or write a
@@ -134,6 +136,30 @@
 	<p>
 	  <a href="#results" class="btn btn-primary btn-lg">Skip to results (pretty pictures!)</a>
 	  <a href="https://quixdb.github.com/squash" class="btn btn-default btn-lg" target="_new">Learn more about Squash <i class="fa fa-external-link"></i></a>
+	</p>
+      </div>
+
+      <div class="alert alert-info" role="alert">
+	<h2 style="margin-top: 0">Help Wanted</h2>
+
+	<p>
+	  There are a lot
+	  of <a href="https://github.com/quixdb/squash-benchmark/labels/web-site">cool
+	  things</a> someone with some interest in data visualizations
+	  and/or JavaScript could do
+	  with <a href="https://github.com/quixdb/squash-benchmark/tree/gh-pages">this
+	  data</a>, and that person isn't me!  I like dealing with the
+	  Squash library and the C side of things, but design and
+	  JavaScript just isn't fun for me.
+	</p>
+
+	<p>
+	  If you're interested in helping out (or taking over), I'd
+	  love
+	  to <a href="https://github.com/quixdb/squash-benchmark/labels/web-site">hear
+	  from you</a>.  <abbr title="For What It's Worth">FWIW</abbr>
+	  I'm not attached to the current code or libraries; feel free
+	  to throw it out and start over if you think that's best.
 	</p>
       </div>
 
@@ -270,6 +296,10 @@
 		    Kernel
 		    <i ng-if="machineSort == 'kernel'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
 		  </th>
+		  <th ng-click="machineSortReverse = (machineSort == 'compiler') ? !machineSortReverse : false; machineSort = 'compiler'">
+		    Compiler
+		    <i ng-if="machineSort == 'compiler'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
 		  <th>CSV</th>
 	        </tr>
 	      </thead>
@@ -290,6 +320,7 @@
 		  <td><a href="{{ system.platformUrl }}" ng-bind="system.platform"></a></td>
 		  <td ng-bind="system.distro"></td>
 		  <td ng-bind="system.kernel"></td>
+		  <td ng-bind="system.compiler"></td>
 		  <td style="text-align: center"><a href="https://github.com/quixdb/squash-benchmark/blob/gh-pages/{{ system.name }}.csv"><i class="fa fa-table"></i></a></td>
 	        </tr>
 	      </tbody>
@@ -339,6 +370,103 @@
 
 	  <div class="embed-responsive embed-responsive-16by9">
 	    <div id="rtt-ratio-chart" class="embed-responsive-item panel-body"></div>
+	  </div>
+	</div>
+
+	<div class="panel panel-primary">
+	  <div class="panel-heading">
+	    <h3 class="panel-title">Transfer + Processing</h3>
+	  </div>
+
+	  <div>
+	    <div class="panel-body">
+	      <p>
+		Sometimes all you care about is how long something
+		takes to load or save, and how much disk space or
+		bandwidth is used doesn't really matter.  For example,
+		if you have a file that would take 1 second to load if
+		uncompressed and you could cut the file size in half
+		by compressing it, as long as decompression takes less
+		than half a second the content is available sooner
+		than it would have been without compression.  This is
+		commonly the motivation for compressing data in games.
+	      </p>
+
+	      <form class="form-horizontal">
+		<div class="form-group">
+		  <label for="transferSpeed" class="col-sm-2 control-label">Transfer Speed</label>
+
+		  <div class="input-group col-sm-4">
+		    <div class="input-group-btn">
+		      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Presets <span class="caret"></span></button>
+		      <ul class="dropdown-menu dropdown-menu-right">
+			<li><a href="" ng-click="transferSpeed = 60; transferSpeedUnits = 'Mibit/s'; drawTransferDecompressionChart()">Cable Internet</a></li>
+		      </ul>
+		    </div><!-- /btn-group -->
+		    <input type="number" class="form-control" ng-value="transferSpeed" id="transferSpeed">
+		    <div class="input-group-btn">
+		      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span ng-bind="transferSpeedUnits"></span> <span class="caret"></span></button>
+		      <ul class="dropdown-menu dropdown-menu-right">
+			<li><a href="" ng-click="transferSpeedUnits = 'Kibit/s'">Kibit/s</a></li>
+			<li><a href="" ng-click="transferSpeedUnits = 'Mibit/s'">Mibit/s</a></li>
+			<li><a href="" ng-click="transferSpeedUnits = 'Gibit/s'">Gibit/s</a></li>
+		      </ul>
+		    </div>
+		  </div>
+		</div>
+
+		<div class="form-group">
+		  <label for="transferSpeed" class="col-sm-2 control-label">Visible Items</label>
+
+		  <div class="input-group col-sm-4">
+		    <select class="form-control" ng-model="transferProcessVisible">
+		      <option value="50">More than 50% faster than no compression</option>
+		      <option value="75">More than 25% faster than no compression</option>
+		      <option value="90">More than 10% faster than no compression</option>
+		      <option value="100">Faster than no compression</option>
+		      <option value="110">Within 10% of no compression</option>
+		      <option value="125">Within 25% of no compression</option>
+		      <option value="150">Within 50% of no compression</option>
+		      <option value="0">All</option>
+		    </select>
+		  </div>
+		</div>
+
+		<div class="form-group">
+		  <label class="col-sm-2 control-label">Sort</label>
+
+		  <div class="input-group col-sm-4">
+		    <label class="radio-inline">
+		      <input type="radio" name="transferProcessSort" value="time" ng-model="transferProcessSort"> Total time
+		    </label>
+		    <label class="radio-inline">
+		      <input type="radio" name="transferProcessSort" value="name" ng-model="transferProcessSort"> Name
+		    </label>
+		  </div>
+		</div>
+
+		<div class="form-group">
+		  <label class="col-sm-2 control-label">Direction</label>
+
+		  <div class="input-group col-sm-4">
+		    <label class="radio-inline">
+		      <input type="radio" name="transferProcessDirection" value="decompress" ng-model="transferProcessDirection"> Decompression
+		    </label>
+		    <label class="radio-inline">
+		      <input type="radio" name="transferProcessDirection" value="compress" ng-model="transferProcessDirection"> Compression
+		    </label>
+		  </div>
+		</div>
+
+		<div class="form-group">
+		  <div class="col-sm-offset-2 col-sm-10">
+		    <button type="submit" class="btn btn-primary" ng-click="drawTransferDecompressionChart()">Draw</button>
+		  </div>
+		</div>
+	      </form>
+
+	      <div id="transfer-decompression-chart"></div>
+	    </div>
 	  </div>
 	</div>
 
@@ -396,24 +524,33 @@
 		  <td class="nowrap-xs" style="width: 1px; vertical-align: middle; white-space: nowrap" ng-bind="result.plugin"></td>
 		  <td class="nowrap-xs" style="width: 1px; vertical-align: middle; white-space: nowrap" ng-bind="result.codec"></td>
 		  <td class="nowrap-xs" style="width: 1px; vertical-align: middle; white-space: nowrap" ng-bind="result.level"></td>
-		  <td>
-		    <div class="progress" style="margin-bottom: 0">
+		  <td ng-switch on="result.plugin">
+		    <div ng-switch-when="copy">
+		      {{ result.ratio | number:2 }}
+		    </div>
+		    <div ng-switch-default class="progress" style="margin-bottom: 0">
 		      <div class="progress-bar progress-bar-warning result-bar"
 			   style="white-space: nowrap; width: {{ ((result.ratio - 1) / (bestRatio - 1)) * 100 }}%">
 		        {{ result.ratio | number:2 }}
 		      </div>
 		    </div>
 		  </td>
-		  <td>
-		    <div class="progress" style="margin-bottom: 0">
+		  <td ng-switch on="result.plugin">
+		    <div ng-switch-when="copy">
+		      {{ result.compression_rate | formatSpeed }}
+		    </div>
+		    <div ng-switch-default class="progress" class="progress" style="margin-bottom: 0">
 		      <div class="progress-bar progress-bar-info result-bar"
 			   style="white-space: nowrap; width: {{ (result.compression_rate / bestCompressionRate) * 100 }}%">
 		        {{ result.compression_rate | formatSpeed }}
 		      </div>
 		    </div>
 		  </td>
-		  <td>
-		    <div class="progress" style="margin-bottom: 0">
+		  <td ng-switch on="result.plugin">
+		    <div ng-switch-when="copy">
+		      {{ result.decompression_rate | formatSpeed }}
+		    </div>
+		    <div ng-switch-default class="progress" class="progress" style="margin-bottom: 0">
 		      <div class="progress-bar progress-bar-success result-bar"
 			   style="white-space: nowrap; width: {{ (result.decompression_rate / bestDecompressionRate) * 100 }}%">
 		        {{ result.decompression_rate | formatSpeed }}
@@ -508,18 +645,16 @@
 
 	  <p>
 	    If the codec doesn't meet <em>all</em> the above critera I
-	    still be willing to accept a pull request for a plugin,
-	    but keep in mind that all the machines I run this on are
-	    running Linux with various architectures, so even if there
-	    is a plugin for a Windows-only, or x86-only, etc., library
-	    it probably will not show up for every machine.  For
-	    example, I would like
+	    still <em>may</em> be willing to accept a pull request for
+	    a plugin, but keep in mind that all the machines I run
+	    this on are running Linux with various architectures, so
+	    even if there is a plugin for a Windows-only, or x86-only,
+	    etc., library it probably will not show up for every
+	    machine.  For example, I would like
 	    to <a href="https://github.com/quixdb/squash/issues/54">add
 	    a Windows API plugin</a>, but it will not show up on any
-	    of the Linux machines' results.
-	  </p>
-
-	  <p>
+	    of the Linux machines' results.  Ditto for OS X (e.g., for
+	    LZFSE).
 	  </p>
 	</dd>
 
@@ -610,10 +745,13 @@
 	  </p>
 	</dd>
 
-	<dt id="faq-compare-machines">Can you make it easier to compare machines (instead of codecs)?</dt>
+	<dt id="faq-compare-machines">Can you make it easier to compare machines or datasets (instead of codecs)?</dt>
 	<dd>
 	  <p>
-	    I plan to.  That said, it is probably going to require
+	    I would like to (see
+	    issues <a href="https://github.com/quixdb/squash-benchmark/issues/10">#10</a>
+	    and <a href="https://github.com/quixdb/squash-benchmark/issues/11">#11</a>
+	    for discussion).  It is probably going to require
 	    downloading all the data from all the machines, which is
 	    around {{ machines.length * 321332 | formatSize:-1 }},
 	    though HTTP compression should help (oh, the irony of
@@ -628,6 +766,22 @@
 	    willing to at least listen to the request.
 	    Please <a href="https://github.com/quixdb/squash-benchmark/issues">file
 	    an issue</a>.
+	  </p>
+	</dd>
+
+	<dt id="faq-additional-machine">My library isn't performing as well as I think it should!</dt>
+	<dd>
+	  <p>
+	    Sorry.  I am trying to keep conditions as fair and as
+	    close to real-world as I can, but I'm certainly willing to
+	    discuss any concerns you have with methodology.
+	  </p>
+
+	  <p>
+	    I'm willing to provide SSH access to most of the machines
+	    to people working on open source libraries.  If you would
+	    like access to one to help you optimize your code just let
+	    me know.
 	  </p>
 	</dd>
 
@@ -646,20 +800,22 @@
 	  </p>
 	</dd>
 
-	<dt id="faq-compiler">What compiler, compiler version, and compiler flags, were used?</dt>
+	<dt id="faq-compiler-flags">What compiler flags were used?</dt>
 	<dd>
 	  <p>
-	    Currently GCC is used on all machines.  The version varies
-	    a bit because the operating systems are different, but
-	    various revisions of version 4.9.
+	    Flags vary a bit since different plugins require different
+	    flags, but as far as performance related flags are
+	    concerned, plugins are currently compiled with <code>-O3
+	    -flto</code>.
 	  </p>
 
 	  <p>
-	    Flags are a bit more complicated since different plugins
-	    require different flags, but as far as performance related
-	    flags are concerned, plugins are currently compiled
-	    with <code>-O3 -flto</code>.  However, I do plan to
-	    experiment with adding flags which are safe in the future.
+	    If you are the author of one of the libraries and would
+	    like for your plugin to use different flags when compiled
+	    as part of Squash,
+	    please <a href="https://github.com/quixdb/squash-benchmark/issues">file
+	    an issue</a>.  As long as the flags are safe, we will
+	    respect your wishes.
 	  </p>
 	</dd>
 
