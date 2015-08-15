@@ -1263,6 +1263,140 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	});
     }
 
+    function drawOptimalCodecChart (xAxis, yAxis) {
+	if (xAxis == undefined)
+	    xAxis = 'linear';
+	if (yAxis == undefined)
+	    yAxis = 'linear';
+
+	var seriesData = [
+	    {
+		name: "Compression",
+		data: []
+	    }, {
+		name: "Decompression",
+		data: []
+	    }, {
+		name: "Average",
+		data: []
+	    },
+	];
+
+	var compressionPoints = [];
+	var decompressionPoints = [];
+	var averagePoints = [];
+
+	chartData.forEach (function (plugin) {
+	    plugin.values.forEach (function (value) {
+		compressionPoints.push ({
+		    plugin: plugin.plugin,
+		    data: value,
+		    y: value.ratio,
+		    x: value.compression_rate
+		});
+		decompressionPoints.push ({
+		    plugin: plugin.plugin,
+		    data: value,
+		    y: value.ratio,
+		    x: value.decompression_rate
+		});
+		averagePoints.push ({
+		    plugin: plugin.plugin,
+		    data: value,
+		    y: value.ratio,
+		    x: (value.decompression_rate + value.compression_rate) / 2
+		});
+	    });
+	});
+
+	function sortCb (a, b) {
+	    if (a.y == b.y) {
+		return b.x - a.x;
+	    }
+	    return b.y - a.y;
+	};
+
+	compressionPoints.sort (sortCb);
+	decompressionPoints.sort (sortCb);
+	averagePoints.sort (sortCb);
+
+	function runFilter (data) {
+	    var c = 0;
+	    return data.filter (function (value) {
+		if (value.x > c) {
+		    c = value.x;
+		    return true;
+		} else {
+		    return false;
+		}
+	    });
+	}
+
+	seriesData[0].data = runFilter (compressionPoints);
+	seriesData[1].data = runFilter (decompressionPoints);
+	seriesData[2].data = runFilter (averagePoints);
+
+	var chart = $("#optimal-codec-chart").highcharts({
+            title: { text: null },
+            xAxis: {
+		title: {
+                    enabled: true,
+                    text: 'Speed'
+		},
+		startOnTick: true,
+		endOnTick: true,
+		min: (xAxis == 'logarithmic') ? undefined : 0,
+		labels: {
+		    rotation: -45,
+		    formatter: function() { return formatSpeed(this.value); }
+		},
+		type: xAxis
+            },
+            yAxis: {
+		title: {
+                    text: 'Ratio'
+		},
+		type: yAxis
+            },
+            legend: {
+		layout: 'vertical',
+		align: 'right',
+		verticalAlign: 'top'
+            },
+	    plotOptions: {
+		series: {
+		    marker: {
+			enabled: true
+		    }
+		}
+	    },
+            tooltip: {
+		headerFormat: '',
+		pointFormatter: function () {
+		    res = "<b>" + this.plugin + ":" + this.data.codec;
+		    if (this.level != "")
+			res += " (level " + this.data.level + ")<br/>";
+		    res += "</b><br/>";
+		    res += "Ratio: " + Math.round10(this.y, -2) + "<br/>";
+		    res += "Compression speed: " + formatSpeed(this.data.compression_rate) + "<br/>";
+		    res += "Decompression speed: " + formatSpeed(this.data.decompression_rate) + "<br/>";
+		    res += "Average speed: " + formatSpeed((this.data.decompression_rate + this.data.compression_rate) / 2) + "<br/>";
+		    return res;
+		}
+            },
+            series: seriesData
+	}).highcharts();
+
+	$("#optimal-codec-chart .highcharts-xaxis-title").click(function (e) {
+	    drawOptimalCodecChart(chart.userOptions.xAxis.type == "linear" ? "logarithmic" : "linear",
+				  chart.userOptions.yAxis.type);
+	});
+	$("#optimal-codec-chart .highcharts-yaxis-title").click(function (e) {
+	    drawOptimalCodecChart(chart.userOptions.xAxis.type,
+				  chart.userOptions.yAxis.type == "linear" ? "logarithmic" : "linear");
+	});
+    }
+
     $scope.drawTransferDecompressionChart = drawTransferDecompressionChart;
 
     var updateChart = function () {
@@ -1295,6 +1429,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	drawCompressionDecompressionChart();
 	drawRTTRatioChart();
 	drawTransferDecompressionChart();
+	drawOptimalCodecChart();
     };
 
     dataCache = [];
