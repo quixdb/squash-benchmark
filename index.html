@@ -401,9 +401,11 @@
 		      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Presets <span class="caret"></span></button>
 		      <ul class="dropdown-menu dropdown-menu-right">
 			<li><a href="" ng-click="transferSpeed = 60; transferSpeedUnits = 'Mibit/s'; drawTransferDecompressionChart()">Cable Internet</a></li>
+			<li><a href="" ng-click="transferSpeed = 600; transferSpeedUnits = 'Mibit/s'; drawTransferDecompressionChart()">7200 RPM HDD</a></li>
+			<li><a href="" ng-click="transferSpeed = 4000; transferSpeedUnits = 'Mibit/s'; drawTransferDecompressionChart()">SSD</a></li>
 		      </ul>
 		    </div><!-- /btn-group -->
-		    <input type="number" class="form-control" ng-value="transferSpeed" id="transferSpeed">
+		    <input type="number" class="form-control" ng-model="transferSpeed" id="transferSpeed">
 		    <div class="input-group-btn">
 		      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span ng-bind="transferSpeedUnits"></span> <span class="caret"></span></button>
 		      <ul class="dropdown-menu dropdown-menu-right">
