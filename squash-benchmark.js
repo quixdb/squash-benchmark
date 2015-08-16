@@ -784,8 +784,8 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	});
     });
 
-    $scope.transferSpeed = 1000;
-    $scope.transferSpeedUnits = "Mibit/s";
+    $scope.transferSpeed = 125;
+    $scope.transferSpeedUnits = "MiB/s";
     $scope.transferProcessVisible = 125;
     $scope.transferProcessSort = "time";
     $scope.transferProcessDirection = "decompress";
@@ -1122,14 +1122,14 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
     function drawTransferDecompressionChart () {
 	var transferSpeed = $scope.transferSpeed;
 	switch ($scope.transferSpeedUnits) {
-  	case "Kibit/s":
-	    transferSpeed = (transferSpeed * 1024) / 8;
+  	case "KiB/s":
+	    transferSpeed = transferSpeed * 1024;
 	    break;
-  	case "Mibit/s":
-	    transferSpeed = (transferSpeed * 1048576) / 8;
+  	case "MiB/s":
+	    transferSpeed = transferSpeed * (1024 * 1024);
 	    break;
-  	case "Gibit/s":
-	    transferSpeed = (transferSpeed * 1073741824) / 8;
+  	case "GiB/s":
+	    transferSpeed = transferSpeed * (1024 * 1024 * 1024);
 	    break;
 	}
 

@@ -400,18 +400,18 @@
 		    <div class="input-group-btn">
 		      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Presets <span class="caret"></span></button>
 		      <ul class="dropdown-menu dropdown-menu-right">
-			<li><a href="" ng-click="transferSpeed = 60; transferSpeedUnits = 'Mibit/s'; drawTransferDecompressionChart()">Cable Internet</a></li>
-			<li><a href="" ng-click="transferSpeed = 600; transferSpeedUnits = 'Mibit/s'; drawTransferDecompressionChart()">7200 RPM HDD</a></li>
-			<li><a href="" ng-click="transferSpeed = 4000; transferSpeedUnits = 'Mibit/s'; drawTransferDecompressionChart()">SSD</a></li>
+			<li><a href="" ng-click="transferSpeed = 7680; transferSpeedUnits = 'KiB/s'; drawTransferDecompressionChart()">Cable Internet</a></li>
+			<li><a href="" ng-click="transferSpeed = 75; transferSpeedUnits = 'MiB/s'; drawTransferDecompressionChart()">7200 RPM HDD</a></li>
+			<li><a href="" ng-click="transferSpeed = 500; transferSpeedUnits = 'MiB/s'; drawTransferDecompressionChart()">SSD</a></li>
 		      </ul>
 		    </div><!-- /btn-group -->
 		    <input type="number" class="form-control" ng-model="transferSpeed" id="transferSpeed">
 		    <div class="input-group-btn">
 		      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span ng-bind="transferSpeedUnits"></span> <span class="caret"></span></button>
 		      <ul class="dropdown-menu dropdown-menu-right">
-			<li><a href="" ng-click="transferSpeedUnits = 'Kibit/s'">Kibit/s</a></li>
-			<li><a href="" ng-click="transferSpeedUnits = 'Mibit/s'">Mibit/s</a></li>
-			<li><a href="" ng-click="transferSpeedUnits = 'Gibit/s'">Gibit/s</a></li>
+			<li><a href="" ng-click="transferSpeedUnits = 'KiB/s'">KiB/s</a></li>
+			<li><a href="" ng-click="transferSpeedUnits = 'MiB/s'">MiB/s</a></li>
+			<li><a href="" ng-click="transferSpeedUnits = 'GiB/s'">GiB/s</a></li>
 		      </ul>
 		    </div>
 		  </div>
