@@ -1414,7 +1414,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		headerFormat: '',
 		pointFormatter: function () {
 		    res = "<b>" + this.plugin + ":" + this.data.codec;
-		    if (this.level != "")
+		    if (this.data.level != "")
 			res += " (level " + this.data.level + ")<br/>";
 		    res += "</b><br/>";
 		    res += "Ratio: " + Math.round10(this.y, -2) + "<br/>";
