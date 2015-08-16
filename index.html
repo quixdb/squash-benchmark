@@ -386,10 +386,9 @@
 		bandwidth is used doesn't really matter.  For example,
 		if you have a file that would take 1 second to load if
 		uncompressed and you could cut the file size in half
-		by compressing it, as long as decompression takes less
+		by compressing it, as long as decompressing- takes less
 		than half a second the content is available sooner
-		than it would have been without compression.  This is
-		commonly the motivation for compressing data in games.
+		than it would have been without compression.
 	      </p>
 
 	      <form class="form-horizontal">
@@ -456,6 +455,9 @@
 		    </label>
 		    <label class="radio-inline">
 		      <input type="radio" name="transferProcessDirection" value="compress" ng-model="transferProcessDirection"> Compression
+		    </label>
+		    <label class="radio-inline">
+		      <input type="radio" name="transferProcessDirection" value="both" ng-model="transferProcessDirection"> Both
 		    </label>
 		  </div>
 		</div>

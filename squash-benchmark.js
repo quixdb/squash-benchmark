@@ -1103,22 +1103,6 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	});
     }
 
-    var transferProcessingRowState = {};
-    plugins.forEach (function (plugin) {
-	transferProcessingRowState[plugin.id] = {};
-	plugin.codecs.forEach (function (codec) {
-	    var levels = {};
-	    if (codec.levels == undefined)
-		levels["default"] = true;
-	    else {
-		codec.levels.forEach (function (level) {
-		    levels[level] = true;
-		});
-	    }
-	    transferProcessingRowState[plugin.id][codec.name] = levels;
-	});
-    });
-
     function drawTransferDecompressionChart () {
 	var transferSpeed = $scope.transferSpeed;
 	switch ($scope.transferSpeedUnits) {
@@ -1133,10 +1117,12 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	    break;
 	}
 
+	var direction = $scope.transferProcessDirection;
 	var uncompressedSize = dataset_map[$scope.dataset].size;
+	var uncompressedTime = uncompressedSize / transferSpeed;
 	var cutoff = 0;
 	if ($scope.transferProcessVisible != 0)
-	    cutoff = (uncompressedSize / transferSpeed) * ($scope.transferProcessVisible / 100);
+	    cutoff = uncompressedTime * ($scope.transferProcessVisible / 100);
 
 	seriesData = [
 	    {
@@ -1145,6 +1131,9 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	    }, {
 		name: 'Transfer',
 		data: [uncompressedSize / transferSpeed]
+	    }, {
+		name: 'Compression',
+		data: [0]
 	    }
 	];
 	categoriesData = ["No compression"];
@@ -1166,35 +1155,67 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		    decompressTime: value.decompress_cpu,
 		    decompressTotalTime: (value.compressed_size / transferSpeed) + value.decompress_cpu,
 		    compressTime: value.compress_cpu,
-		    compressTotalTime: (value.compressed_size / transferSpeed) + value.compress_cpu
+		    compressTotalTime: (value.compressed_size / transferSpeed) + value.compress_cpu,
+		    totalTime: (value.compressed_size / transferSpeed) + value.compress_cpu + value.decompress_cpu
 		});
 	    });
 	});
 
 	if ($scope.transferProcessSort == "time") {
 	    sortedData.sort (function (a, b) {
-		var field = $scope.transferProcessDirection == "decompress" ? "decompressTotalTime" : "compressTotalTime";
+		var field;
+		switch (direction) {
+		case "decompress":
+		    field = "decompressTotalTime";
+		    break;
+		case "compress":
+		    field = "decompressTotalTime";
+		    break;
+		case "both":
+		    field = "totalTime";
+		    break;
+		}
 		return a[field] - b[field];
 	    });
 	}
 
 	sortedData.forEach (function (e) {
-	    var enabled = transferProcessingRowState[e.plugin][e.codec][e.level == '' ? 'default' : e.level];
-
-	    if (cutoff > 0 && e[($scope.transferProcessDirection == "decompress" ? "decompress" : "compress") + "TotalTime"] > cutoff) {
-	    	return;
+	    var value;
+	    switch (direction) {
+	    case "decompress":
+		value = e.decompressTotalTime;
+		break;
+	    case "compress":
+		value = e.compressTotalTime;
+		break;
+	    case "both":
+		value = e.totalTime;
+		break;
 	    }
 
-	    categoriesData.push (e.name);
-	    seriesData[0].data.push ({
-		y: e[$scope.transferProcessDirection == "decompress" ? "decompressTime" : "compressTime"],
-		data: e
-	    });
-	    seriesData[1].data.push ({
-		y: e.transferTime,
-		data: e
-	    });
+	    if (cutoff == 0 || value <= cutoff) {
+		categoriesData.push (e.name);
+		seriesData[2].data.push ({
+		    y: e.compressTime,
+		    data: e
+		});
+		seriesData[1].data.push ({
+		    y: e.transferTime,
+		    data: e
+		});
+		seriesData[0].data.push ({
+		    y: e.decompressTime,
+		    data: e
+		});
+	    }
 	});
+
+	if (direction != "both") {
+	    if (direction == "decompress")
+		seriesData = seriesData.slice (0, 2);
+	    else
+		seriesData = seriesData.slice (1, 3);
+	}
 
 	$("#transfer-decompression-chart").height (100 + (categoriesData.length * 20));
 
@@ -1217,7 +1238,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		headerFormat: "",
 		pointFormatter: function () {
 		    if (this.data == undefined) {
-			var res = "<b>No compression</b>";
+			var res = "No compression<br/>";
 			res += "Size: " + formatSize (dataset_map[$scope.dataset].size) + "<br/>";
 			res += "Total time: <b>" + Math.round10(dataset_map[$scope.dataset].size / transferSpeed, -4) + " seconds</b><br/>";
 			return res;
@@ -1228,19 +1249,48 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 			res += " level " + this.data.level;
 		    res += '<br/>';
 
-		    if (this.data.level != "")
-		    	res += "Level: " + this.data.level + "<br/>";
 		    res += "Ratio: " + Math.round10(this.data.ratio, -2) + "<br/>";
-		    res += "Transfer time: " + Math.round10(this.data.transferTime, -4) + " seconds<br/>";
-		    res += "Decompression time: " + Math.round10 (this.data.decompressTime, -4) + " seconds<br/>";
-		    res += "Compression time: " + Math.round10 (this.data.compressTime, -4) + " seconds<br/>";
-		    if ($scope.transferProcessDirection == "decompress") {
-			res += "Total decompression time: <b>" + Math.round10(this.data.decompressTotalTime, -4) + " seconds</b><br/>";
-			res += "Total compression time: " + Math.round10(this.data.compressTotalTime, -4) + " seconds<br/>";
+
+		    if (this.series.name == "Compression") {
+			res += "Compression time: <b>" + Math.round10(this.data.compressTime, -4) + " seconds</b><br/>";
 		    } else {
-			res += "Total decompression time: " + Math.round10(this.data.decompressTotalTime, -4) + " seconds<br/>";
-			res += "Total compression time: <b>" + Math.round10(this.data.compressTotalTime, -4) + " seconds</b><br/>";
+			res += "Compression time: " + Math.round10(this.data.compressTime, -4) + " seconds<br/>";
 		    }
+
+		    if (this.series.name == "Transfer") {
+			res += "Transfer time: <b>" + Math.round10(this.data.transferTime, -4) + " seconds</b><br/>";
+		    } else {
+			res += "Transfer time: " + Math.round10(this.data.transferTime, -4) + " seconds<br/>";
+		    }
+
+		    if (this.series.name == "Decompression") {
+			res += "Decompression time: <b>" + Math.round10(this.data.decompressTime, -4) + " seconds</b><br/>";
+		    } else {
+			res += "Decompression time: " + Math.round10(this.data.decompressTime, -4) + " seconds<br/>";
+		    }
+
+		    var totalTime;
+		    switch (direction) {
+		    case "decompress":
+			totalTime = this.data.decompressTotalTime;
+			break;
+		    case "compress":
+			totalTime = this.data.compressTotalTime;
+			break;
+		    case "both":
+			totalTime = this.data.totalTime;
+			break;
+		    }
+		    res += "Total time: " + Math.round10(totalTime, -4) + " seconds<br/>";
+
+		    if (totalTime < uncompressedTime) {
+			res += "Time savings: " + Math.round10(uncompressedTime - totalTime, -4) + " seconds (" +
+			    Math.round10(((uncompressedTime - totalTime) / uncompressedTime) * 100) + "%)";
+		    } else {
+			res += "Time lost: " + Math.round10(totalTime - uncompressedTime, -4) + " seconds (" +
+			    Math.round10(((totalTime / uncompressedTime) - 1.0) * 100) + "%)";
+		    }
+
 		    return res;
 		}
 	    },
@@ -1251,16 +1301,6 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
             },
 	    series: seriesData
 	}).highcharts();
-
-	$("#transfer-decompression-chart .highcharts-xaxis-labels > text").click(function (e) {
-	    var target = $(e.currentTarget);
-	    var res = target.text().match (/([a-zA-Z0-9\-]+)\:([a-zA-Z0-9\-]+)( \| ([0-9]+))?/);
-	    var codec = transferProcessingRowState[res[1]][res[2]];
-	    var level = res[4] == undefined ? 'default' : res[4];
-	    codec[level] = !codec[level];
-
-	    drawTransferDecompressionChart ();
-	});
     }
 
     function drawOptimalCodecChart (xAxis, yAxis) {
