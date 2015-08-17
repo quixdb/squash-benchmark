@@ -167,7 +167,7 @@
 	<h1>Configuration</h1>
 
 	<form>
-	  <h2>Choose a dataset</h2>
+	  <h2 id="choose-a-dataset">Choose a dataset</h2>
 
 	  <p>
 	    Different codecs can behave <em>very</em> differently with
@@ -184,7 +184,7 @@
 	    don't worry—you can use Squash to easily run your own
 	    benchmark with whatever data you want.  That said, if you
 	    think you have a somewhat common use case,
-	    please <a href="https://github.com/quixdb/squash-benchmark/issues">let
+	    please <a href="https://github.com/nemequ/squash-corpus/issues">let
 	    us know</a>—we may be interested in adding the data to
 	    this benchmark.
 	  </p>
@@ -237,18 +237,23 @@
 	</form>
 
 	<div>
-	  <h2>Choose a machine</h2>
+	  <h2 id="choose-a-machine">Choose a machine</h2>
 
 	  <p>
 	    If you think certain algorithms are always faster, you've
-	    got another thing coming!  Different CPUs can behave very
-	    differently with the same data.
+	    got another thing coming!  Different <abbr title="Centran
+	    Processing Unit">CPU</abbr>s can behave very differently
+	    with the same data.
 	  </p>
 
 	  <p>
 	    The Squash benchmark is currently run on many of the
 	    machines I have access to—this happens to be fairly recent
-	    Intel CPUs, and a mix of ARM SBCs.
+	    Intel <abbr>CPU</abbr>s, and a mix of
+	    ARM <abbr title="Single Board Computer">SBC</abbr>s.
+	    There
+	    is <a href="#faq-additional-machine">an <abbr title="Frequently
+	    Asked Question">FAQ</abbr></a> entry with more detials.
 	  </p>
 
 	  <div ng-if="random_machine" class="bs-callout bs-callout-info">
@@ -332,7 +337,23 @@
       <div id="results">
 	<h2>Results</h2>
 
-	<div class="panel panel-primary">
+	<ol>
+	  <li><a href="#ratio-vs-compression">Compression Ratio vs. Compression Speed</a></li>
+	  <li><a href="#ratio-vs-decompression">Compression Ratio vs.</a></li>
+	  <li><a href="#compression-vs-decompression">Compression Speed vs. Decompression Speed</a></li>
+	  <li><a href="#round-trip-vs-ratio">Round-Trip vs. Compression Ratio</a></li>
+	  <li><a href="#transfer-plus-processing">Transfer + Processing</a></li>
+	  <li><a href="#optimal-codecs">Optimal Codecs</a></li>
+	  <li><a href="#results-table">Results Table</a></li>
+	</ol>
+
+	<p>
+	  Note that we do provide <a href="#faq-raw-data">access to
+	  the raw data</a> if you would prefer to generate your own
+	  charts.
+	</p>
+
+	<div id="ratio-vs-compression" class="panel panel-primary">
 	  <div class="panel-heading">
 	    <h3 class="panel-title">Compression Ratio vs. Compression Speed</h3>
 	  </div>
@@ -342,7 +363,7 @@
 	  </div>
 	</div>
 
-	<div class="panel panel-primary">
+	<div id="ratio-vs-decompression" class="panel panel-primary">
 	  <div class="panel-heading">
 	    <h3 class="panel-title">Compression Ratio vs. Decompression Speed</h3>
 	  </div>
@@ -353,7 +374,7 @@
 	  </div>
 	</div>
 
-	<div class="panel panel-primary">
+	<div id="compression-vs-decompression" class="panel panel-primary">
 	  <div class="panel-heading">
 	    <h3 class="panel-title">Compression Speed vs. Decompression Speed</h3>
 	  </div>
@@ -363,7 +384,7 @@
 	  </div>
 	</div>
 
-	<div class="panel panel-primary">
+	<div id="round-trip-vs-ratio" class="panel panel-primary">
 	  <div class="panel-heading">
 	    <h3 class="panel-title">Round Trip Speed vs. Compression Ratio</h3>
 	  </div>
@@ -373,7 +394,7 @@
 	  </div>
 	</div>
 
-	<div class="panel panel-primary">
+	<div id="transfer-plus-processing" class="panel panel-primary">
 	  <div class="panel-heading">
 	    <h3 class="panel-title">Transfer + Processing</h3>
 	  </div>
@@ -386,7 +407,7 @@
 		bandwidth is used doesn't really matter.  For example,
 		if you have a file that would take 1 second to load if
 		uncompressed and you could cut the file size in half
-		by compressing it, as long as decompressing- takes less
+		by compressing it, as long as decompressing takes less
 		than half a second the content is available sooner
 		than it would have been without compression.
 	      </p>
@@ -403,7 +424,7 @@
 			<li><a href="" ng-click="transferSpeed = 75; transferSpeedUnits = 'MiB/s'; drawTransferDecompressionChart()">7200 RPM HDD</a></li>
 			<li><a href="" ng-click="transferSpeed = 500; transferSpeedUnits = 'MiB/s'; drawTransferDecompressionChart()">SSD</a></li>
 		      </ul>
-		    </div><!-- /btn-group -->
+		    </div>
 		    <input type="number" class="form-control" ng-model="transferSpeed" id="transferSpeed">
 		    <div class="input-group-btn">
 		      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span ng-bind="transferSpeedUnits"></span> <span class="caret"></span></button>
@@ -474,7 +495,7 @@
 	  </div>
 	</div>
 
-	<div class="panel panel-primary">
+	<div id="optimal-codecs" class="panel panel-primary">
 	  <div class="panel-heading">
 	    <h3 class="panel-title">Optimal Codecs</h3>
 	  </div>
@@ -484,7 +505,7 @@
 	  </div>
 	</div>
 
-	<div class="panel panel-primary">
+	<div id="results-table" class="panel panel-primary">
 	  <div class="panel-heading">
 	    <div>
 	      <!-- <div class="dropdown" style="float: right"> -->
@@ -610,7 +631,7 @@
 
 	      <td ng-if="$first" rowspan="{{plugin.codecs.length}}" ng-bind="plugin.license"></td>
 
-	      <td ng-if="$first" rowspan="{{plugin.codecs.length}}"">
+	      <td ng-if="$first" rowspan="{{plugin.codecs.length}}">
 		<a ng-href="https://quixdb.github.io/squash/api/c/md_plugins_{{plugin.id}}_{{plugin.id}}.html">
 		  <span ng-bind="plugin.id"></span>
 		  <i class="fa fa-external-link"></i>
@@ -783,7 +804,7 @@
 	  </p>
 	</dd>
 
-	<dt id="faq-additional-machine">My library isn't performing as well as I think it should!</dt>
+	<dt id="faq-library-performance">My library isn't performing as well as I think it should!</dt>
 	<dd>
 	  <p>
 	    Sorry.  I am trying to keep conditions as fair and as
@@ -810,7 +831,8 @@
 	    In general I include what I have available.  That tends to
 	    be some newish Intel CPUs, some older Intel CPUs that
 	    haven't yet found their way to the electronics recycler,
-	    and some ARM SBCs.
+	    and some ARM SBCs.  If you would like to donate other
+	    hardware I'm willing to add it to the benchmark.
 	  </p>
 	</dd>
 
@@ -887,6 +909,41 @@
 	  </p>
 	</dd>
 
+	<dt id="faq-raw-data">Can I have the raw data?</dt>
+	<dd>
+	  <p>
+	    Of course!  The table in the
+	    &quot;<a href="#choose-a-machine">choose a
+	    machine</a>&quot; section includes a link to
+	    a <abbr title="Comma Separated Values">CSV</abbr> which
+	    you can import into your favorite spreadsheet application
+	    (or at least your least-hated spreadsheet application).
+	    If you don't have one
+	    yet, <a href="https://www.libreoffice.org/discover/calc/">LibreOffice
+	    Calc</a> is a good choice.
+	  </p>
+
+	  <p>
+	    Additionally, you can grab a copy from
+	    the <a href="https://github.com/quixdb/squash-benchmark/tree/gh-pages">gh-pages
+	    branch</a> of
+	    the <a href="https://github.com/quixdb/squash-benchmark/">squash-benchmark
+	    git repository</a>.
+	  </p>
+
+	  <p>
+	    If you do something interesting with it please let us
+	    know!  Or, even better, submit a pull request so everyone
+	    can benefit from your brilliance!
+	  </p>
+
+	  <p>
+	    The data itself
+	    is <a href="http://creativecommons.org/publicdomain/zero/1.0/">CC0</a>
+	    licensed.  That said, we would certainly appreciate attribution.
+	  </p>
+	</dd>
+
 	<dt id="faq-direct-linking">Can I link to a specific dataset or machine?</dt>
 	<dd>
 	  <p>
@@ -907,7 +964,7 @@
     <footer class="bg-primary" style="padding: 2em 0">
       <div class="container">
 	<p>
-	  Generated
+	  Data generated
 	  by <a href="https://github.com/quixdb/squash-benchmark">squash-benchmark</a>
 	  using <a href="https://quixdb.github.io/squash">Squash</a>.<br/>
 	  Please file bug reports and feature requests

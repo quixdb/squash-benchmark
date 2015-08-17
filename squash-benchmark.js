@@ -670,6 +670,20 @@ function formatDuration(seconds) {
 	}
     });
 
+    if (res == '') {
+	if (seconds == 0)
+	    return '0';
+
+	var remaining = seconds;
+	res = '0.';
+
+	while (remaining < 0.1) {
+	    res += '0';
+	    remaining *= 10;
+	}
+	res += Math.round10(remaining * 1000);
+    }
+
     return res;
 }
 
@@ -1240,7 +1254,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		    if (this.data == undefined) {
 			var res = "No compression<br/>";
 			res += "Size: " + formatSize (dataset_map[$scope.dataset].size) + "<br/>";
-			res += "Total time: <b>" + Math.round10(dataset_map[$scope.dataset].size / transferSpeed, -4) + " seconds</b><br/>";
+			res += "Total time: <b>" + formatDuration(dataset_map[$scope.dataset].size / transferSpeed) + " seconds</b><br/>";
 			return res;
 		    }
 
@@ -1252,21 +1266,21 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		    res += "Ratio: " + Math.round10(this.data.ratio, -2) + "<br/>";
 
 		    if (this.series.name == "Compression") {
-			res += "Compression time: <b>" + Math.round10(this.data.compressTime, -4) + " seconds</b><br/>";
+			res += "Compression time: <b>" + formatDuration(this.data.compressTime) + " seconds</b><br/>";
 		    } else {
-			res += "Compression time: " + Math.round10(this.data.compressTime, -4) + " seconds<br/>";
+			res += "Compression time: " + formatDuration(this.data.compressTime) + " seconds<br/>";
 		    }
 
 		    if (this.series.name == "Transfer") {
-			res += "Transfer time: <b>" + Math.round10(this.data.transferTime, -4) + " seconds</b><br/>";
+			res += "Transfer time: <b>" + formatDuration(this.data.transferTime) + " seconds</b><br/>";
 		    } else {
-			res += "Transfer time: " + Math.round10(this.data.transferTime, -4) + " seconds<br/>";
+			res += "Transfer time: " + formatDuration(this.data.transferTime) + " seconds<br/>";
 		    }
 
 		    if (this.series.name == "Decompression") {
-			res += "Decompression time: <b>" + Math.round10(this.data.decompressTime, -4) + " seconds</b><br/>";
+			res += "Decompression time: <b>" + formatDuration(this.data.decompressTime) + " seconds</b><br/>";
 		    } else {
-			res += "Decompression time: " + Math.round10(this.data.decompressTime, -4) + " seconds<br/>";
+			res += "Decompression time: " + formatDuration(this.data.decompressTime) + " seconds<br/>";
 		    }
 
 		    var totalTime;
@@ -1281,14 +1295,14 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 			totalTime = this.data.totalTime;
 			break;
 		    }
-		    res += "Total time: " + Math.round10(totalTime, -4) + " seconds<br/>";
+		    res += "Total time: " + formatDuration(totalTime) + " seconds<br/>";
 
 		    if (totalTime < uncompressedTime) {
-			res += "Time savings: " + Math.round10(uncompressedTime - totalTime, -4) + " seconds (" +
-			    Math.round10(((uncompressedTime - totalTime) / uncompressedTime) * 100) + "%)";
+			res += "Time savings: " + formatDuration(uncompressedTime - totalTime) + " seconds (" +
+			    formatDuration(((uncompressedTime - totalTime) / uncompressedTime) * 100) + "%)";
 		    } else {
-			res += "Time lost: " + Math.round10(totalTime - uncompressedTime, -4) + " seconds (" +
-			    Math.round10(((totalTime / uncompressedTime) - 1.0) * 100) + "%)";
+			res += "Time lost: " + formatDuration(totalTime - uncompressedTime) + " seconds (" +
+			    formatDuration(((totalTime / uncompressedTime) - 1.0) * 100) + "%)";
 		    }
 
 		    return res;
