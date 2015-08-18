@@ -266,8 +266,9 @@ var machines = [
       memory: 1024 * 8,
       platform: "Asus P8H61-H",
       platformUrl: "http://www.asus.com/Motherboards/P8H61M/",
-      distro: "Fedora 21",
-      kernel: "3.18.7" },
+      distro: "Fedora 22",
+      kernel: "4.1.4",
+      compiler: "gcc-5.1.1" },
     // { name: "raspberry-pi-bplus",
     //   cpu: "Broadcom BCM2835",
     //   cpuUrl: "http://www.broadcom.com/products/BCM2835",
@@ -773,7 +774,9 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	$scope.dataset = $scope.query_string.dataset;
 	$scope.random_dataset = false;
     } else {
-	$scope.dataset = datasets[Math.floor (Math.random () * datasets.length)].id;
+	do {
+	    $scope.dataset = datasets[Math.floor (Math.random () * datasets.length)].id;
+	} while ($scope.dataset == "fireworks.jpeg");
     }
 
     $scope.random_machine = true;
