@@ -1186,7 +1186,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		    field = "decompressTotalTime";
 		    break;
 		case "compress":
-		    field = "decompressTotalTime";
+		    field = "compressTotalTime";
 		    break;
 		case "both":
 		    field = "totalTime";
