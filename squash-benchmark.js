@@ -693,7 +693,7 @@ var squashBenchmarkApp = angular.module("squashBenchmark", []);
 squashBenchmarkApp.factory('squashBenchmarkData', function($q) {
     return function(machineId) {
 	return $q(function (resolve, reject) {
-	    d3.csv (machineId + ".csv", function(data) {
+	    d3.csv ("data/" + machineId + ".csv", function(data) {
 		resolve(data.map (function (val) {
 		    var input_size = dataset_map[val.dataset].size;
 		    return {
