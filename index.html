@@ -18,10 +18,13 @@
     <style type="text/css">
       .result-bar {
         font-weight: bold;
-        padding-left: 1em;
         color: black;
         text-align: left;
         text-shadow: 0px 0px 1px white;
+      }
+
+      .result-bar > span {
+        margin-left: 1em;
       }
 
       .alert a {
@@ -579,7 +582,7 @@
 		    <div ng-switch-default class="progress" style="margin-bottom: 0">
 		      <div class="progress-bar progress-bar-warning result-bar"
 			   style="white-space: nowrap; width: {{ ((result.ratio - 1) / (bestRatio - 1)) * 100 }}%">
-		        {{ result.ratio | number:2 }}
+		        <span>{{ result.ratio | number:2 }}</span>
 		      </div>
 		    </div>
 		  </td>
@@ -590,7 +593,7 @@
 		    <div ng-switch-default class="progress" class="progress" style="margin-bottom: 0">
 		      <div class="progress-bar progress-bar-info result-bar"
 			   style="white-space: nowrap; width: {{ (result.compression_rate / bestCompressionRate) * 100 }}%">
-		        {{ result.compression_rate | formatSpeed }}
+		        <span>{{ result.compression_rate | formatSpeed }}</span>
 		      </div>
 		    </div>
 		  </td>
@@ -601,7 +604,7 @@
 		    <div ng-switch-default class="progress" class="progress" style="margin-bottom: 0">
 		      <div class="progress-bar progress-bar-success result-bar"
 			   style="white-space: nowrap; width: {{ (result.decompression_rate / bestDecompressionRate) * 100 }}%">
-		        {{ result.decompression_rate | formatSpeed }}
+		        <span>{{ result.decompression_rate | formatSpeed }}</span>
 		      </div>
 		    </div>
 		  </td>
