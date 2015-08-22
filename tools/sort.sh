@@ -7,6 +7,6 @@
 
 TMPNAME=$(mktemp)
 head -n1 "$1" > "${TMPNAME}"
-tail -n+2 "$1" | sort -V >> "${TMPNAME}"
+tail -n+2 "$1" | sort -V | grep -v 'dataset,plugin,codec,level,compressed_size,compress_cpu,compress_wall,decompress_cpu,decompress_wall' >> "${TMPNAME}"
 cat "${TMPNAME}" | uniq > "$1"
 rm "${TMPNAME}"
