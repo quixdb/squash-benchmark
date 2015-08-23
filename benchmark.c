@@ -315,7 +315,8 @@ int main (int argc, char** argv) {
     return -1;
   }
 
-  fprintf (context.csv, "dataset,plugin,codec,level,compressed_size,compress_cpu,compress_wall,decompress_cpu,decompress_wall\r\n");
+  if (context.csv != NULL)
+    fprintf (context.csv, "dataset,plugin,codec,level,compressed_size,compress_cpu,compress_wall,decompress_cpu,decompress_wall\r\n");
 
   while ( optind < argc ) {
     context.input_name = argv[optind];
