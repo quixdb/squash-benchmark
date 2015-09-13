@@ -38,7 +38,9 @@
 #include <squash/squash.h>
 #include "timer.h"
 
-#define SQUASH_BENCHMARK_MIN_EXEC_TIME 5.0
+#if !defined(SQUASH_BENCHMARK_MIN_EXEC_TIME)
+#  define SQUASH_BENCHMARK_MIN_EXEC_TIME 5.0
+#endif
 
 static FILE* squash_tmpfile (void);
 static FILE*
@@ -123,8 +125,9 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
       fseek (compressed, 0, SEEK_SET);
 
       squash_timer_start (timer);
-      res = squash_codec_compress_file_with_options (codec, compressed, context->input, opts);
+      res = squash_splice_codec_with_options (context->input, compressed, 0, SQUASH_STREAM_COMPRESS, codec, opts);
       squash_timer_stop (timer);
+      rewind (context->input);
 
       if (res != SQUASH_OK) {
         break;
@@ -150,8 +153,9 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
           fseek (decompressed, 0, SEEK_SET);
 
           squash_timer_start (timer);
-          res = squash_codec_decompress_file_with_options (codec, decompressed, context->input_size, compressed, opts);
+	  res = squash_splice_codec_with_options (compressed, decompressed, context->input_size, SQUASH_STREAM_DECOMPRESS, codec, opts);
           squash_timer_stop (timer);
+	  rewind (compressed);
 
           if (res != SQUASH_OK) {
             break;
