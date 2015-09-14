@@ -146,13 +146,13 @@
       <div class="alert alert-danger" role="alert" ng-show="false">
       	<h2 style="margin-top: 0">Javascript Required</h2>
 
-	<p>
-	  Javascript is required for this to work, and it looks like
-	  you don't have it enabled.  Sorry; you can
-	  still <a href="#faq-raw-data">download the CSV data</a>, but
-	  the charts and tables on this page will not work unless you
-	  enable Javascript.
-	</p>
+        <p>
+          Javascript is required for this to work, and it looks like
+          you don't have it enabled.  Sorry; you can
+          still <a href="#faq-raw-data">download the CSV data</a>, but
+          the charts and tables on this page will not work unless you
+          enable Javascript.
+        </p>
       </div>
 
       <!-- <div class="alert alert-info" role="alert"> -->
@@ -257,8 +257,9 @@
 
 	  <p>
 	    If you think certain algorithms are always faster, you've
-	    got another thing coming!  Different <abbr title="Centran
-	    Processing Unit">CPU</abbr>s can behave very differently
+	    got another thing coming!  Different
+	    <abbr title="Central Processing Unit">CPU</abbr>s
+	    can behave very differently
 	    with the same data.
 	  </p>
 
@@ -268,8 +269,9 @@
 	    Intel <abbr>CPU</abbr>s, and a mix of
 	    ARM <abbr title="Single Board Computer">SBC</abbr>s.
 	    There
-	    is <a href="#faq-additional-machine">an <abbr title="Frequently
-	    Asked Question">FAQ</abbr></a> entry with more detials.
+	    is <a href="#faq-additional-machine">an entry in the
+	    <abbr title="Frequently Asked Questions">FAQ</abbr></a>
+	    with more details.
 	  </p>
 
 	  <div ng-if="random_machine" class="bs-callout bs-callout-info">
@@ -290,7 +292,7 @@
 		  </th>
 		  <th>Status</th>
 		  <th ng-click="machineSortReverse = (machineSort == 'cpu') ? !machineSortReverse : false; machineSort = 'cpu'">
-		    CPU/SoC
+		    <abbr title="Central Processing Unit">CPU</abbr>/<abbr title="System On a Chip">SoC</abbr>
 		    <i ng-if="machineSort == 'cpu'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
 		  </th>
 		  <th ng-click="machineSortReverse = (machineSort == 'architecture') ? !machineSortReverse : false; machineSort = 'architecture'">
@@ -321,7 +323,7 @@
 		    Compiler
 		    <i ng-if="machineSort == 'compiler'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
 		  </th>
-		  <th>CSV</th>
+		  <th><abbr title="Comma-Separated Values">CSV</abbr></th>
 	        </tr>
 	      </thead>
 	      <tbody>
@@ -701,7 +703,7 @@
 	  <p>
 	    If the codec is reliable (it has to pass Squash's unit
 	    tests), works on Linux, accessible from C or C++, and open
-	    source the odds are good I would willing to write a
+	    source the odds are good I would be willing to write a
 	    plugin, or at least merge a pull request.
 	  </p>
 
@@ -838,17 +840,25 @@
 	    Sorry.  I am trying to keep conditions as fair and as
 	    close to real-world as I can, but I'm certainly willing to
 	    discuss any concerns you have with methodology.
-	  </p>
+          </p>
+
+          <p>
+            The Squash library typically adds very little overhead,
+            but if you have ideas on how to improve the plugin for
+            your library I'm happy to accept patches.
+          </p>
 
 	  <p>
-	    I'm willing to provide SSH access to most of the machines
+	    If the issue is performance on an architecture you don't
+	    have access to (e.g., ARM), I'm willing to provide SSH
+	    access to most of the machines included in this benchmark
 	    to people working on open source libraries.  If you would
 	    like access to one to help you optimize your code just let
 	    me know.
 	  </p>
 	</dd>
 
-	<dt id="faq-additional-machine">Can you add <var>«insert machine, CPU, architecture, OS, etc.»</var>?</dt>
+	<dt id="faq-additional-machine">Can you add <var>«insert machine, CPU, architecture, <abbr title="Operating System">OS</abbr>, etc.»</var>?</dt>
 	<dd>
 	  <p>
 	    Only if I have, or at least have access to, a machine
@@ -1006,16 +1016,18 @@
 	  <dd><p>This web site and how the data is presented.</p></dd>
 
 	  <dt><a href="https://github.com/quixdb/squash-benchmark/issues">squash-benchmark</a></dt>
-	  <dd><p>Accuracy, and what information is included.</p></dd>
+	  <dd><p>Accuracy and what information is included.</p></dd>
 
 	  <dt><a href="https://github.com/quixdb/squash/issues">squash</a></dt>
-	  <dd><p>The main library, for requesting new codecs</p></dd>
+	  <dd><p>The main library, to request new codecs</p></dd>
 	</dl>
 
 	<p>
 	  Web interface © 2015 Evan Nemerson,
 	  see <a href="https://github.com/quixdb/squash-benchmark-web/blob/master/COPYING">COPYING</a>
-	  for details.
+	  for details.  The theme
+	  is <a href="https://bootswatch.com/sandstone/">Sandstone</a>
+	  from <a href="https://bootswatch.com/">Bootswatch</a>.
 	</p>
       </div>
     </footer>
