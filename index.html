@@ -630,6 +630,8 @@
 	      <th>License</th>
 	      <th>Plugin</th>
 	      <th>Codec</th>
+	      <th>Streaming</th>
+	      <th>Flushing</th>
 	      <th>Levels</th>
 	    </tr>
 	  </thead>
@@ -657,6 +659,12 @@
 	      </td>
 
 	      <td ng-bind="codec.name"></td>
+	      <td style="text-align: center">
+		<span ng-if="codec.streaming">✓</span>
+	      </td>
+	      <td style="text-align: center">
+		<span ng-if="codec.flushing">✓</span>
+	      </td>
 
 	      <td ng-bind="codec.levels.join(', ')"></td>
 	    </tr>
