@@ -435,7 +435,7 @@ var plugins = [
       codecs: [ { name: "gipfeli" } ] },
     { id: "lz4",
       name: "LZ4",
-      libraryUrl: "https://code.google.com/p/lz4/",
+      libraryUrl: "https://cyan4973.github.io/lz4/",
       license: "3-clause BSD",
       revision: "d86dc916771c126afb797637dda9f6421c0cb998",
       codecs: [
@@ -552,7 +552,7 @@ var plugins = [
       codecs: [ { name: "quicklz" } ] },
     { id: "snappy",
       name: "Snappy",
-      libraryUrl: "https://code.google.com/p/snappy/",
+      libraryUrl: "https://google.github.io/snappy/",
       license: "3-clause BSD",
       version: "1.1.2",
       codecs: [
@@ -563,7 +563,7 @@ var plugins = [
       ] },
     // { id: "wflz",
     //   name: "wfLZ",
-    //   libraryUrl: "https://code.google.com/p/wflz/",
+    //   libraryUrl: "https://github.com/ShaneWF/wflz",
     //   revision: "cfbb02d7a87ab3e39c6a4394da2281744a671ed2",
     //   codecs: [
     // 	  { name: "wflz",
