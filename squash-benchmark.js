@@ -225,8 +225,8 @@ var machines = [
       memory: 1024 * 20,
       platform: "Lenovo ThinkServer TS140",
       platformUrl: "http://shop.lenovo.com/us/en/servers/thinkserver/ts-series/ts140/",
-      distro: "Fedora 21",
-      kernel: "4.1.4",
+      distro: "Fedora 22",
+      kernel: "4.1.6",
       compiler: "gcc-5.1.1" },
     { name: "hoplite",
       cpu: "Intel® Core™ i7-2630QM",
@@ -291,7 +291,7 @@ var machines = [
       platform: "Raspberry Pi 2 Model B",
       platformUrl: "http://www.raspberrypi.org/products/raspberry-pi-2-model-b/",
       distro: "Raspbian Jessie",
-      kernel: "3.18.11",
+      kernel: "4.1.6",
       compiler: "gcc-4.9.2" },
     // { name: "pandaboard-es",
     //   cpu: "Texas Instruments OMAP4460",
@@ -343,9 +343,9 @@ var machines = [
       memory: 1024,
       platform: "Toshiba Satellite A205-S5805",
       platformUrl: "http://support.toshiba.com/support/modelHome?freeText=1909175",
-      distro: "Fedora 22",
-      kernel: "4.1.4",
-      compiler: "gcc-5.1.1" },
+      distro: "Fedora 21",
+      kernel: "4.1.6",
+      compiler: "gcc-4.9.2" },
 ];
 
 var machine_map = {};
@@ -358,7 +358,7 @@ var plugins = [
       name: "Brotli",
       libraryUrl: "https://github.com/google/brotli",
       license: "Apache 2.0",
-      revision: "d811b186c5037b434d56ddb831ceccdf5a954687",
+      revision: "7f7a2fb48cec63c0459ec6b6e7260810bfb01819",
       codecs: [ { name: "brotli",
 		  levels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
 		  streaming: true } ], },
@@ -404,7 +404,7 @@ var plugins = [
       name: "DENSITY",
       libraryUrl: "https://github.com/centaurean/density",
       license: "3-clause BSD",
-      revesion: "dbc43e83295df18f650ed54fc423778ecacad4bd",
+      revesion: "b252a3260cd7a727b0f7b69d1bf3b82e1da7d89a",
       codecs: [
 	  { name: "density",
 	    levels: [1, 7, 9] } ],
@@ -519,7 +519,7 @@ var plugins = [
       name: "ms-compress",
       libraryUrl: "https://github.com/coderforlife/ms-compress/",
       license: "GPLv3+",
-      revision: "a179b8d46c76048872470ba449f672aa064131e6",
+      revision: "043aaaf56c819e6dd7690e378f4c7af6ddb7258f",
       codecs: [
     	  { name: "lznt1",
 	    streaming: true,
@@ -554,7 +554,7 @@ var plugins = [
       name: "Snappy",
       libraryUrl: "https://google.github.io/snappy/",
       license: "3-clause BSD",
-      version: "1.1.2",
+      revision: "0852af76065ba0f35944527e14787f7ae5e0b3ac",
       codecs: [
     	  { name: "snappy" },
     	  { name: "snappy-framed",
@@ -574,7 +574,7 @@ var plugins = [
     { id: "yalz77",
       name: "yalz77",
       libraryUrl: "https://bitbucket.org/tkatchev/yalz77",
-      revision: "a5078995ded6c74e98aed279c0ed8b6e7c5e35ff",
+      revision: "36429ac62e9991b5d52fc37d326d50b6e59a895a",
       codecs: [
 	  { name: "yalz77" },
       ] },
@@ -618,7 +618,7 @@ var plugins = [
       name: "Zstandard",
       libraryUrl: "https://github.com/Cyan4973/zstd",
       license: "2-clause BSD",
-      revision: "1eca5f52994434d3b0427c9014403cf01495f54a",
+      revision: "9c57b424d6f24629de7c7249e4e847900846887b",
       codecs: [
     	  { name: "zstd" },
       ] }
