@@ -430,6 +430,23 @@
 		than it would have been without compression.
 	      </p>
 
+	      <div class="bs-callout bs-callout-info">
+		<h4>Note</h4>
+		<p>
+		  For the presets I have tried to provide typical
+		  real-world speeds, not theoretical peaks.  This can
+		  be significantly less than the advertised speed.
+		</p>
+
+		<p>
+		  When entering custom values please keep in mind that
+		  this uses <em>bytes</em> per second, not bits per
+		  second.  Also, it
+		  uses <a href="https://en.wikipedia.org/wiki/Binary_prefix">binary
+		  prefixes</a> (1 MiB is 1024 KiB, not 1000).
+		</p>
+	      </div>
+
 	      <form class="form-horizontal">
 		<div class="form-group">
 		  <label for="transferSpeed" class="col-sm-2 control-label">Transfer Speed</label>
@@ -438,12 +455,14 @@
 		    <div class="input-group-btn">
 		      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Presets <span class="caret"></span></button>
 		      <ul class="dropdown-menu dropdown-menu-right">
-			<li><a href="" ng-click="transferSpeed = 7680; transferSpeedUnits = 'KiB/s'">Cable Internet</a></li>
+			<li><a href="" ng-click="transferSpeed = 850; transferSpeedUnits = 'KiB/s'">4G Wireless</a></li>
+			<li><a href="" ng-click="transferSpeed = 6; transferSpeedUnits = 'MiB/s'">802.11g</a></li>
+			<li><a href="" ng-click="transferSpeed = 7.5; transferSpeedUnits = 'MiB/s'">Cable Internet</a></li>
 			<li><a href="" ng-click="transferSpeed = 75; transferSpeedUnits = 'MiB/s'">7200 RPM HDD</a></li>
 			<li><a href="" ng-click="transferSpeed = 500; transferSpeedUnits = 'MiB/s'">SSD</a></li>
 		      </ul>
 		    </div>
-		    <input type="number" class="form-control" ng-model="transferSpeed" id="transferSpeed">
+		    <input class="form-control" ng-model="transferSpeed" id="transferSpeed">
 		    <div class="input-group-btn">
 		      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span ng-bind="transferSpeedUnits"></span> <span class="caret"></span></button>
 		      <ul class="dropdown-menu dropdown-menu-right">

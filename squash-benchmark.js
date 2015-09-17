@@ -561,16 +561,16 @@ var plugins = [
 	    streaming: true,
 	    flushing: true }
       ] },
-    // { id: "wflz",
-    //   name: "wfLZ",
-    //   libraryUrl: "https://github.com/ShaneWF/wflz",
-    //   revision: "cfbb02d7a87ab3e39c6a4394da2281744a671ed2",
-    //   codecs: [
-    // 	  { name: "wflz",
-    // 	    levels: [1, 2] },
-    // 	  { name: "wflz-chunked",
-    // 	    levels: [1, 2] },
-    //   ] },
+    { id: "wflz",
+      name: "wfLZ",
+      libraryUrl: "https://github.com/ShaneWF/wflz",
+      revision: "cfbb02d7a87ab3e39c6a4394da2281744a671ed2",
+      codecs: [
+    	  { name: "wflz",
+    	    levels: [1, 2] },
+    	  { name: "wflz-chunked",
+    	    levels: [1, 2] },
+      ] },
     { id: "yalz77",
       name: "yalz77",
       libraryUrl: "https://bitbucket.org/tkatchev/yalz77",
@@ -822,15 +822,15 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
     if ($scope.query_string.speed != undefined) {
 	$scope.transferSpeedUnits = "KiB/s";
 	var speed = parseInt ($scope.query_string.speed);
-	if (speed > 1024 && (speed % 1024 == 0)) {
+	if (speed > 1024 && (speed % 256 == 0)) {
 	    speed /= 1024;
 	    $scope.transferSpeedUnits = "MiB/s";
 
-	    if (speed > 1024 && (speed % 1024 == 0)) {
+	    if (speed > 1024 && (speed % 256 == 0)) {
 		speed /= 1024;
 		$scope.transferSpeedUnits = "GiB/s";
 
-		if (speed > 1024 && (speed % 1024 == 0)) {
+		if (speed > 1024 && (speed % 256 == 0)) {
 		    speed /= 1024;
 		    $scope.transferSpeedUnits = "TiB/s";
 		}
