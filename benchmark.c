@@ -126,7 +126,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
 
       rewind (compressed);
       squash_timer_start (timer);
-      res = squash_splice_codec_with_options (context->input, compressed, 0, SQUASH_STREAM_COMPRESS, codec, opts);
+      res = squash_splice_codec_with_options (codec, SQUASH_STREAM_COMPRESS, compressed, context->input, 0, opts);
       squash_timer_stop (timer);
       rewind (context->input);
 
@@ -154,7 +154,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
           fseek (decompressed, 0, SEEK_SET);
 
           squash_timer_start (timer);
-	  res = squash_splice_codec_with_options (compressed, decompressed, 0, SQUASH_STREAM_DECOMPRESS, codec, opts);
+	  res = squash_splice_codec_with_options (codec, SQUASH_STREAM_DECOMPRESS, decompressed, compressed, 0, opts);
           squash_timer_stop (timer);
 	  rewind (compressed);
 
