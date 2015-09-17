@@ -357,7 +357,7 @@
 
 	<ol>
 	  <li><a href="#ratio-vs-compression">Compression Ratio vs. Compression Speed</a></li>
-	  <li><a href="#ratio-vs-decompression">Compression Ratio vs.</a></li>
+	  <li><a href="#ratio-vs-decompression">Compression Ratio vs. Decompression Speed</a></li>
 	  <li><a href="#compression-vs-decompression">Compression Speed vs. Decompression Speed</a></li>
 	  <li><a href="#round-trip-vs-ratio">Round-Trip vs. Compression Ratio</a></li>
 	  <li><a href="#transfer-plus-processing">Transfer + Processing</a></li>
@@ -438,9 +438,9 @@
 		    <div class="input-group-btn">
 		      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Presets <span class="caret"></span></button>
 		      <ul class="dropdown-menu dropdown-menu-right">
-			<li><a href="" ng-click="transferSpeed = 7680; transferSpeedUnits = 'KiB/s'; drawTransferDecompressionChart()">Cable Internet</a></li>
-			<li><a href="" ng-click="transferSpeed = 75; transferSpeedUnits = 'MiB/s'; drawTransferDecompressionChart()">7200 RPM HDD</a></li>
-			<li><a href="" ng-click="transferSpeed = 500; transferSpeedUnits = 'MiB/s'; drawTransferDecompressionChart()">SSD</a></li>
+			<li><a href="" ng-click="transferSpeed = 7680; transferSpeedUnits = 'KiB/s'">Cable Internet</a></li>
+			<li><a href="" ng-click="transferSpeed = 75; transferSpeedUnits = 'MiB/s'">7200 RPM HDD</a></li>
+			<li><a href="" ng-click="transferSpeed = 500; transferSpeedUnits = 'MiB/s'">SSD</a></li>
 		      </ul>
 		    </div>
 		    <input type="number" class="form-control" ng-model="transferSpeed" id="transferSpeed">
@@ -990,18 +990,35 @@
 	  </p>
 	</dd>
 
-	<dt id="faq-direct-linking">Can I link to a specific dataset or machine?</dt>
+	<dt id="faq-direct-linking">Can I link to a specific configuration?</dt>
 	<dd>
 	  <p>
-	    Append
-	    &quot;?dataset=<var ng-bind="dataset">foo</var>&amp;machine=<var ng-bind="machine">bar</var>&quot;
-	    to the URL.  Or just one of them if you still want the
-	    other to be chosen randomly.
+	    Some things can be configured by passing parameters in the query string:
+	  </p>
+
+	  <dl class="dl-horizontal">
+	    <dt>dataset</dt>
+	    <dd>Dataset to show (currently <var ng-bind="dataset"></var>), the default is selected randomly</dd>
+
+	    <dt>machine</dt>
+	    <dd>Machine to show (currently <var ng-bind="machine"></var>), the default is selected randomly</dd>
+
+	    <dt>speed</dt>
+	    <dd>Transfer speed (in KiB/s) for the Transfer + Processing chart (currently <var ng-bind="calculatedTransferSpeed / 1024"></var>)</dd>
+
+	    <dt>speed-scale</dt>
+	    <dd>The default scale for the speed axis of charts (<var>linear</var> or <var>logarithmic</var>, currently <var ng-bind="speedScale"></var>)</dd>
+	  </dl>
+
+	  <p>
+	    For example, your current configuration would be: <a href="{{ location }}?dataset={{ dataset }}&amp;machine={{ machine }}&amp;speed={{ calculatedTransferSpeed / 1024 }}&amp;speed-scale={{ speedScale }}">{{ location }}?dataset={{ dataset }}&amp;machine={{ machine }}&amp;speed={{ calculatedTransferSpeed / 1024 }}&amp;speed-scale={{ speedScale }}</a>.
 	  </p>
 
 	  <p>
-	    Note that this isn't necessarily stable—we may change the
-	    format when adding new features to the benchmark.
+	    Note that all fields are optional; you can provide as many
+	    or few of them as you like.  Also, please be aware that
+	    this isn't necessarily stable—we may change the format
+	    when adding new features to the benchmark.
 	  </p>
 	</dd>
       </dl>

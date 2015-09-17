@@ -759,6 +759,8 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
     $scope.machines = machines;
     $scope.plugins = plugins;
 
+    $scope.location = window.location.href.split ("?")[0];
+
     $scope.query_string = function () {
 	// http://stackoverflow.com/a/979995
 	var query_string = {};
@@ -810,9 +812,52 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	});
     });
 
-    $scope.transferSpeed = 125;
-    $scope.transferSpeedUnits = "MiB/s";
+    $scope.speedScale = "linear";
+    if ($scope.query_string["speed-scale"] != undefined) {
+	$scope.speedScale = ($scope.query_string["speed-scale"] == "logarithmic") ? "logarithmic" : "linear";
+    }
+
     $scope.transferProcessVisible = 125;
+
+    if ($scope.query_string.speed != undefined) {
+	$scope.transferSpeedUnits = "KiB/s";
+	var speed = parseInt ($scope.query_string.speed);
+	if (speed > 1024 && (speed % 1024 == 0)) {
+	    speed /= 1024;
+	    $scope.transferSpeedUnits = "MiB/s";
+
+	    if (speed > 1024 && (speed % 1024 == 0)) {
+		speed /= 1024;
+		$scope.transferSpeedUnits = "GiB/s";
+
+		if (speed > 1024 && (speed % 1024 == 0)) {
+		    speed /= 1024;
+		    $scope.transferSpeedUnits = "TiB/s";
+		}
+	    }
+	}
+	$scope.transferSpeed = speed;
+    } else {
+	$scope.transferSpeedUnits = "MiB/s";
+	$scope.transferSpeed = 125;
+    }
+
+    $scope.$watchGroup (['transferSpeed', 'transferSpeedUnits'], function (newData, oldData, scope) {
+	scope.calculatedTransferSpeed = scope.transferSpeed;
+
+	switch (scope.transferSpeedUnits) {
+  	case "KiB/s":
+	    scope.calculatedTransferSpeed = scope.calculatedTransferSpeed * 1024;
+	    break;
+  	case "MiB/s":
+	    scope.calculatedTransferSpeed = scope.calculatedTransferSpeed * (1024 * 1024);
+	    break;
+  	case "GiB/s":
+	    scope.calculatedTransferSpeed = scope.calculatedTransferSpeed * (1024 * 1024 * 1024);
+	    break;
+	}
+    });
+
     $scope.transferProcessSort = "time";
     $scope.transferProcessDirection = "decompress";
 
@@ -823,9 +868,11 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 
     function drawRatioCompressionChart (xAxis, yAxis) {
 	if (xAxis == undefined)
-	    xAxis = 'linear';
+	    xAxis = $scope.speedScale;
 	if (yAxis == undefined)
 	    yAxis = 'linear';
+
+	console.log ("x axis = " + xAxis + " / " + $scope.speedScale);
 
 	var chart = $("#ratio-compression-chart").highcharts({
             chart: { type: 'scatter' },
@@ -898,7 +945,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 
     function drawRatioDecompressionChart (xAxis, yAxis) {
 	if (xAxis == undefined)
-	    xAxis = 'linear';
+	    xAxis = $scope.speedScale;
 	if (yAxis == undefined)
 	    yAxis = 'linear';
 
@@ -973,9 +1020,9 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 
     function drawCompressionDecompressionChart (xAxis, yAxis) {
 	if (xAxis == undefined)
-	    xAxis = 'linear';
+	    xAxis = $scope.speedScale;
 	if (yAxis == undefined)
-	    yAxis = 'linear';
+	    yAxis = $scope.speedScale;
 
 	var chart = $("#compression-decompression-chart").highcharts({
             chart: { type: 'scatter' },
@@ -1053,7 +1100,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 
     function drawRTTRatioChart (xAxis, yAxis) {
 	if (xAxis == undefined)
-	    xAxis = 'linear';
+	    xAxis = $scope.speedScale;
 	if (yAxis == undefined)
 	    yAxis = 'linear';
 
@@ -1130,18 +1177,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
     }
 
     function drawTransferDecompressionChart () {
-	var transferSpeed = $scope.transferSpeed;
-	switch ($scope.transferSpeedUnits) {
-  	case "KiB/s":
-	    transferSpeed = transferSpeed * 1024;
-	    break;
-  	case "MiB/s":
-	    transferSpeed = transferSpeed * (1024 * 1024);
-	    break;
-  	case "GiB/s":
-	    transferSpeed = transferSpeed * (1024 * 1024 * 1024);
-	    break;
-	}
+	var transferSpeed = $scope.calculatedTransferSpeed;
 
 	var direction = $scope.transferProcessDirection;
 	var uncompressedSize = dataset_map[$scope.dataset].size;
@@ -1331,7 +1367,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 
     function drawOptimalCodecChart (xAxis, yAxis) {
 	if (xAxis == undefined)
-	    xAxis = 'linear';
+	    xAxis = $scope.speedScale;
 	if (yAxis == undefined)
 	    yAxis = 'linear';
 
@@ -1546,5 +1582,5 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	if (newData[0] != undefined) {
             updateChart ();
 	}
-    })
+    });
 });
