@@ -845,7 +845,8 @@
 	    and <a href="https://github.com/quixdb/squash-benchmark-web/issues/3">quixdb/squash-benchmark-web#3</a>
 	    for discussion).  It is probably going to require
 	    downloading all the data from all the machines, which is
-	    around {{ machines.length * 321332 | formatSize:-1 }},
+	    around
+	    {{data_points_per_machine*datasets.length*machines.length*66|formatSize:-1}},
 	    though HTTP compression should help (oh, the irony of
 	    being stuck with zlib).
 	  </p>
