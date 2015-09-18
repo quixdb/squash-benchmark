@@ -60,13 +60,13 @@ squash_tmpfile (void) {
 
 static void
 print_help_and_exit (int argc, char** argv, int exit_code) {
-  fprintf (stderr, "Usage: %s [OPTION]... FILE...\n", argv[0]);
-  fprintf (stderr, "Benchmark Squash plugins.\n");
-  fprintf (stderr, "\n");
-  fprintf (stderr, "Options:\n");
-  fprintf (stderr, "\t-h            Print this help screen and exit.\n");
-  fprintf (stderr, "\t-c codec      Benchmark the specified codec and exit.\n");
-  fprintf (stderr, "\t-o outfile    JSON output file.\n");
+  fprintf (stdout, "Usage: %s [OPTION]... FILE...\n", argv[0]);
+  fprintf (stdout, "Benchmark Squash plugins.\n");
+  fprintf (stdout, "\n");
+  fprintf (stdout, "Options:\n");
+  fprintf (stdout, "\t-h            Print this help screen and exit.\n");
+  fprintf (stdout, "\t-c codec      Benchmark the specified codec and exit.\n");
+  fprintf (stdout, "\t-o outfile    JSON output file.\n");
 
   exit (exit_code);
 }
@@ -110,9 +110,9 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
     int iterations = 0;
 
     if (level < 0) {
-      fputs ("    compressing: ", stderr);
+      fputs ("    compressing: ", stdout);
     } else {
-      fprintf (stderr, "    level %d: ", level);
+      fprintf (stdout, "    level %d: ", level);
     }
 
     if (fseek (context->input, 0, SEEK_SET) != 0) {
@@ -142,9 +142,9 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
       squash_timer_reset (timer);
 
       if (result.compressed_size == 0) {
-        fprintf (stderr, "failed (0 byte output, %s [%d]).\n", squash_status_to_string (res), res);
+        fprintf (stdout, "failed (0 byte output, %s [%d]).\n", squash_status_to_string (res), res);
       } else {
-        fprintf (stderr, "compressed (%.4f CPU, %.4f wall, %ld bytes)... ",
+        fprintf (stdout, "compressed (%.4f CPU, %.4f wall, %ld bytes)... ",
                  result.compress_cpu,
                  result.compress_wall,
                  result.compressed_size);
@@ -174,7 +174,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
             /* Should never happen. */
             fprintf (stderr, "Failed (size mismatch; expected %ld, got %ld.\n", context->input_size, ftell (decompressed));
           } else {
-            fprintf (stderr, "decompressed (%.6f CPU, %.6f wall).\n",
+            fprintf (stdout, "decompressed (%.6f CPU, %.6f wall).\n",
                      result.decompress_cpu,
                      result.decompress_wall);
 
@@ -183,8 +183,6 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
         }
       }
     }
-
-    fflush (stderr);
 
     squash_timer_free (timer);
     fclose (compressed);
@@ -247,7 +245,7 @@ benchmark_codec (SquashCodec* codec, void* data) {
 
   umask (0100);
 
-  fprintf (stderr, "  %s:%s\n",
+  fprintf (stdout, "  %s:%s\n",
            squash_plugin_get_name (squash_codec_get_plugin (codec)),
            squash_codec_get_name (codec));
 
@@ -289,6 +287,8 @@ int main (int argc, char** argv) {
   int opt;
   int optc = 0;
   SquashCodec* codec = NULL;
+
+  setvbuf (stdout, NULL, _IONBF, 0);
 
   while ( (opt = getopt(argc, argv, "hc:j:o:n:")) != -1 ) {
     switch ( opt ) {
@@ -337,7 +337,7 @@ int main (int argc, char** argv) {
     }
     context.input_size = ftell (context.input);
 
-    fprintf (stderr, "Using %s:\n", context.input_name);
+    fprintf (stdout, "Using %s:\n", context.input_name);
 
     if (codec == NULL) {
       squash_foreach_plugin (benchmark_plugin, &context);
