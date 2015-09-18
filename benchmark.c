@@ -131,6 +131,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
       rewind (context->input);
 
       if (res != SQUASH_OK) {
+	fprintf (stderr, "ERROR: %s (%d) squash_splice_codec_with_options (%s, compress, %p, %p, 0, %p)\n", squash_status_to_string (res), res, squash_codec_get_name (codec), compressed, context->input, opts);
         break;
       }
     }
@@ -282,11 +283,56 @@ benchmark_plugin (SquashPlugin* plugin, void* data) {
   squash_plugin_foreach_codec (plugin, benchmark_codec, data);
 }
 
+static SquashCodec*
+benchmark_parse_codec (const char* str, SquashOptions** options) {
+  SquashCodec* codec;
+  char* s = strdup (str);
+  char* sp_outer = NULL;
+  char* sp_inner = NULL;
+  char* cur_opt = NULL;
+  char* cur_key = NULL;
+  char* cur_val = NULL;
+  SquashStatus res;
+
+  char* name = strtok_r (s, "/", &sp_outer);
+  codec = squash_get_codec (name);
+  if (codec == NULL)
+    return NULL;
+
+  while ((cur_opt = strtok_r (NULL, ",", &sp_outer)) != NULL) {
+    if (*options == NULL) {
+      assert (codec != NULL);
+      *options = squash_options_new (codec, NULL);
+      squash_object_ref_sink (*options);
+    }
+
+    cur_key = strtok_r (cur_opt, "=", &sp_inner);
+    cur_val = strtok_r (NULL,    "=", &sp_inner);
+
+    if (cur_val == NULL) {
+      cur_val = cur_key;
+      cur_key = "level";
+    }
+
+    assert (*options != NULL);
+    res = squash_options_parse_option (*options, cur_key, cur_val);
+    if (res != SQUASH_OK) {
+      fprintf (stderr, "Unable to parse options: %s (%d)\n", squash_status_to_string (res), res);
+      exit (EXIT_FAILURE);
+    }
+  }
+
+  free (s);
+
+  return codec;
+}
+
 int main (int argc, char** argv) {
   struct BenchmarkContext context = { NULL, NULL, NULL, 0 };
   int opt;
   int optc = 0;
   SquashCodec* codec = NULL;
+  SquashOptions* opts = NULL;
 
   setvbuf (stdout, NULL, _IONBF, 0);
 
@@ -304,7 +350,7 @@ int main (int argc, char** argv) {
         setbuf (context.csv, NULL);
         break;
       case 'c':
-        codec = squash_get_codec ((const char*) optarg);
+	codec = benchmark_parse_codec (optarg, &opts);
         if (codec == NULL) {
           fprintf (stderr, "Unable to find codec.\n");
           return -1;
@@ -339,7 +385,9 @@ int main (int argc, char** argv) {
 
     fprintf (stdout, "Using %s:\n", context.input_name);
 
-    if (codec == NULL) {
+    if (opts != NULL) {
+      benchmark_codec_with_options (&context, codec, opts, -1);
+    } else if (codec == NULL) {
       squash_foreach_plugin (benchmark_plugin, &context);
     } else {
       benchmark_codec (codec, &context);
