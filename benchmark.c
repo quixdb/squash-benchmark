@@ -59,8 +59,8 @@ squash_tmpfile (void) {
 }
 
 static void
-print_help_and_exit (int argc, char** argv, int exit_code) {
-  fprintf (stdout, "Usage: %s [OPTION]... FILE...\n", argv[0]);
+print_help_and_exit (const char* executable, int exit_code) {
+  fprintf (stdout, "Usage: %s [OPTION]... FILE...\n", executable);
   fprintf (stdout, "Benchmark Squash plugins.\n");
   fprintf (stdout, "\n");
   fprintf (stdout, "Options:\n");
@@ -271,8 +271,6 @@ benchmark_codec (SquashCodec* codec, void* data) {
 
 static void
 benchmark_plugin (SquashPlugin* plugin, void* data) {
-  struct BenchmarkContext* context = (struct BenchmarkContext*) data;
-
   /* Since we're often running against the source dir, we will pick up
      plugins which have not been compiled.  This should bail us out
      before trying to actually use them. */
@@ -339,7 +337,7 @@ int main (int argc, char** argv) {
   while ( (opt = getopt(argc, argv, "hc:j:o:n:")) != -1 ) {
     switch ( opt ) {
       case 'h':
-        print_help_and_exit (argc, argv, 0);
+        print_help_and_exit (argv[0], 0);
         break;
       case 'o':
         context.csv = fopen (optarg, "w+b");
