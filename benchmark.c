@@ -87,10 +87,11 @@ typedef struct {
 } SquashBenchmarkResult;
 
 static bool
-benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* codec, SquashOptions* opts, int level) {
+benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* codec, SquashOptions* opts) {
   SquashBenchmarkResult result = { 0, 0.0, 0.0, 0.0, 0.0 };
   bool success = false;
   SquashStatus res = SQUASH_OK;
+  const int level = squash_options_get_int (opts, "level");
 
 #if !defined(SQUASH_BENCHMARK_NO_FORK)
   char fifo_name[] = ".squash-benchmark-fifo-XXXXXX";
@@ -256,7 +257,7 @@ benchmark_codec (SquashCodec* codec, void* data) {
     for ( level = 0 ; level <= 999 ; level++ ) {
       snprintf (level_s, 4, "%d", level);
       if (squash_options_parse_option (opts, "level", level_s) == SQUASH_OK) {
-        if (benchmark_codec_with_options (context, codec, opts, level)) {
+        if (benchmark_codec_with_options (context, codec, opts)) {
           have_results = true;
         }
       }
@@ -265,7 +266,7 @@ benchmark_codec (SquashCodec* codec, void* data) {
   }
 
   if (!have_results) {
-    benchmark_codec_with_options (context, codec, NULL, -1);
+    benchmark_codec_with_options (context, codec, NULL);
   }
 }
 
@@ -384,7 +385,7 @@ int main (int argc, char** argv) {
     fprintf (stdout, "Using %s:\n", context.input_name);
 
     if (opts != NULL) {
-      benchmark_codec_with_options (&context, codec, opts, -1);
+      benchmark_codec_with_options (&context, codec, opts);
     } else if (codec == NULL) {
       squash_foreach_plugin (benchmark_plugin, &context);
     } else {
