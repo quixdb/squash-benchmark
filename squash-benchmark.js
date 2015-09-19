@@ -872,6 +872,9 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	    return (visiblePlugins.indexOf (elem) == -1);
 	});
     }
+    if ($scope.query_string["hidden-plugins"] != undefined) {
+	$scope.hiddenPlugins = $scope.query_string["hidden-plugins"].toLowerCase ().split (",");
+    }
 
     $scope.$watchGroup (['transferSpeed', 'transferSpeedUnits'], function (newData, oldData, scope) {
 	scope.calculatedTransferSpeed = scope.transferSpeed;
