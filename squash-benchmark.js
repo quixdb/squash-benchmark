@@ -863,6 +863,16 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	$scope.transferSpeed = 125;
     }
 
+    $scope.hiddenPlugins = [];
+    if ($scope.query_string["visible-plugins"] != undefined) {
+	var visiblePlugins = $scope.query_string["visible-plugins"].toLowerCase ().split (",");
+	$scope.hiddenPlugins = $scope.plugins.map (function (elem) {
+	    return elem.id;
+	}).filter (function (elem) {
+	    return (visiblePlugins.indexOf (elem) == -1);
+	});
+    }
+
     $scope.$watchGroup (['transferSpeed', 'transferSpeedUnits'], function (newData, oldData, scope) {
 	scope.calculatedTransferSpeed = scope.transferSpeed;
 
@@ -892,8 +902,6 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	    xAxis = $scope.speedScale;
 	if (yAxis == undefined)
 	    yAxis = 'linear';
-
-	console.log ("x axis = " + xAxis + " / " + $scope.speedScale);
 
 	var chart = $("#ratio-compression-chart").highcharts({
             chart: { type: 'scatter' },
@@ -953,6 +961,10 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		};
 	    })
 	}).highcharts();
+
+	$scope.hiddenPlugins.forEach (function (elem) {
+	    $("#ratio-compression-chart .highcharts-legend-item > text:contains('" + elem + "')").click ();
+	});
 
 	$("#ratio-compression-chart .highcharts-xaxis-title").click(function (e) {
 	    drawRatioCompressionChart(chart.userOptions.xAxis.type == "linear" ? "logarithmic" : "linear",
@@ -1028,6 +1040,10 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		};
 	    })
 	}).highcharts();
+
+	$scope.hiddenPlugins.forEach (function (elem) {
+	    $("#ratio-decompression-chart .highcharts-legend-item > text:contains('" + elem + "')").click ();
+	});
 
 	$("#ratio-decompression-chart .highcharts-xaxis-title").click(function (e) {
 	    drawRatioDecompressionChart(chart.userOptions.xAxis.type == "linear" ? "logarithmic" : "linear",
@@ -1109,6 +1125,10 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	    })
 	}).highcharts();
 
+	$scope.hiddenPlugins.forEach (function (elem) {
+	    $("#compression-decompression-chart .highcharts-legend-item > text:contains('" + elem + "')").click ();
+	});
+
 	$("#compression-decompression-chart .highcharts-xaxis-title").click(function (e) {
 	    drawCompressionDecompressionChart(chart.userOptions.xAxis.type == "linear" ? "logarithmic" : "linear",
 					      chart.userOptions.yAxis.type);
@@ -1186,6 +1206,10 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		};
 	    })
 	}).highcharts();
+
+	$scope.hiddenPlugins.forEach (function (elem) {
+	    $("#rtt-ratio-chart .highcharts-legend-item > text:contains('" + elem + "')").click ();
+	});
 
 	$("#rtt-ratio-chart .highcharts-xaxis-title").click(function (e) {
 	    drawRTTRatioChart(chart.userOptions.xAxis.type == "linear" ? "logarithmic" : "linear",
