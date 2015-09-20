@@ -51,5 +51,5 @@ benchmark: benchmark.c timer.c
 	$(CC) -Wall -Wextra -g -o benchmark $^ `pkg-config --libs --cflags squash-0.7`
 
 data.csv: benchmark $(DATA)
-	@if [ "`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor`" != "performance" ]; then echo -e "WARNING: You should switch to the 'performance' CPU governor by running\n\n\tsu -c 'echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'\n"; fi
+	@if [ -e /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor -a "`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor`" != "performance" ]; then echo -e "WARNING: You should switch to the 'performance' CPU governor by running\n\n\tsu -c 'echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor'\n"; fi
 	./benchmark -o $@ $(sort $(DATA)) 2>&1 | tee result.log
