@@ -354,6 +354,12 @@ machines.forEach (function (e, i, a) {
 });
 
 var plugins = [
+    { id: "brieflz",
+      name: "BriefLZ",
+      libraryUrl: "https://github.com/jibsen/brieflz",
+      license: "MIT",
+      revision: "bcaa6a1ee7ccf005512b5c23aa92b40cf75f9ed1",
+      codecs: [ { name: "brieflz" } ], },
     { id: "brotli",
       name: "Brotli",
       libraryUrl: "https://github.com/google/brotli",
