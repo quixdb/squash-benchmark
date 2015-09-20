@@ -475,10 +475,10 @@
 		</div>
 
 		<div class="form-group">
-		  <label for="transferSpeed" class="col-sm-2 control-label">Visible Items</label>
+		  <label for="visibleItems" class="col-sm-2 control-label">Visible Items</label>
 
 		  <div class="input-group col-sm-4">
-		    <select class="form-control" ng-model="transferProcessVisible">
+		    <select id="visibleItems" class="form-control" ng-model="transferProcessVisible">
 		      <option value="50">More than 50% faster than no compression</option>
 		      <option value="75">More than 25% faster than no compression</option>
 		      <option value="90">More than 10% faster than no compression</option>
@@ -569,7 +569,7 @@
 		    <i ng-if="rawSort == 'plugin'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
 		  </th>
 		  <th ng-click="rawSortReverse = (rawSort == 'codec') ? !rawSortReverse : false; rawSort = 'codec'">
-		    Codce
+		    Codec
 		    <i ng-if="rawSort == 'codec'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
 		  </th>
 		  <th ng-click="rawSortReverse = (rawSort == 'level') ? !rawSortReverse : false; rawSort = 'level'">
