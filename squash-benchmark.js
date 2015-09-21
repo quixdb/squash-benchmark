@@ -651,6 +651,11 @@ var plugins = [
       ] }
 ];
 
+var plugins_map = {};
+plugins.forEach (function (e, i, a) {
+    plugins_map[e.id] = e;
+});
+
 function formatSize(size, precision) {
     if (precision == undefined)
 	precision = -2;
@@ -869,17 +874,20 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 	$scope.transferSpeed = 125;
     }
 
-    $scope.hiddenPlugins = [];
-    if ($scope.query_string["visible-plugins"] != undefined) {
-	var visiblePlugins = $scope.query_string["visible-plugins"].toLowerCase ().split (",");
-	$scope.hiddenPlugins = $scope.plugins.map (function (elem) {
-	    return elem.id;
-	}).filter (function (elem) {
-	    return (visiblePlugins.indexOf (elem) == -1);
-	});
-    }
     if ($scope.query_string["hidden-plugins"] != undefined) {
-	$scope.hiddenPlugins = $scope.query_string["hidden-plugins"].toLowerCase ().split (",");
+	var hidden_plugins = $scope.query_string["hidden-plugins"].toLowerCase ().split (",");
+	plugins.forEach (function (plugin) {
+	    plugin.visible = hidden_plugins.indexOf (plugin.id) == -1;
+	});
+    } else if ($scope.query_string["visible-plugins"] != undefined) {
+	var visible_plugins = $scope.query_string["visible-plugins"].toLowerCase ().split (",");
+	plugins.forEach (function (plugin) {
+	    plugin.visible = visible_plugins.indexOf (plugin.id) != -1;
+	});
+    } else {
+	plugins.forEach (function (plugin) {
+	    plugin.visible = true;
+	});
     }
 
     $scope.$watchGroup (['transferSpeed', 'transferSpeedUnits'], function (newData, oldData, scope) {
@@ -958,6 +966,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
             },
             series: chartData.map(function (e, i, a) {
 		return {
+		    visible: plugins_map[e.plugin].visible,
 		    name: e.plugin,
 		    color: colors[i % colors.length],
 		    data: e.values.map (function (p) {
@@ -970,10 +979,6 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		};
 	    })
 	}).highcharts();
-
-	$scope.hiddenPlugins.forEach (function (elem) {
-	    $("#ratio-compression-chart .highcharts-legend-item > text:contains('" + elem + "')").click ();
-	});
 
 	$("#ratio-compression-chart .highcharts-xaxis-title").click(function (e) {
 	    drawRatioCompressionChart(chart.userOptions.xAxis.type == "linear" ? "logarithmic" : "linear",
@@ -1038,6 +1043,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
             series: chartData.map(function (e, i, a) {
 		return {
 		    name: e.plugin,
+		    visible: plugins_map[e.plugin].visible,
 		    color: colors[i % colors.length],
 		    data: e.values.map (function (p) {
 			return { z: p.compression_rate,
@@ -1049,10 +1055,6 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		};
 	    })
 	}).highcharts();
-
-	$scope.hiddenPlugins.forEach (function (elem) {
-	    $("#ratio-decompression-chart .highcharts-legend-item > text:contains('" + elem + "')").click ();
-	});
 
 	$("#ratio-decompression-chart .highcharts-xaxis-title").click(function (e) {
 	    drawRatioDecompressionChart(chart.userOptions.xAxis.type == "linear" ? "logarithmic" : "linear",
@@ -1122,6 +1124,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
             series: chartData.map(function (e, i, a) {
 		return {
 		    name: e.plugin,
+		    visible: plugins_map[e.plugin].visible,
 		    color: colors[i % colors.length],
 		    data: e.values.map (function (p) {
 			return { y: p.compression_rate,
@@ -1133,10 +1136,6 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		};
 	    })
 	}).highcharts();
-
-	$scope.hiddenPlugins.forEach (function (elem) {
-	    $("#compression-decompression-chart .highcharts-legend-item > text:contains('" + elem + "')").click ();
-	});
 
 	$("#compression-decompression-chart .highcharts-xaxis-title").click(function (e) {
 	    drawCompressionDecompressionChart(chart.userOptions.xAxis.type == "linear" ? "logarithmic" : "linear",
@@ -1203,6 +1202,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
             series: chartData.map(function (e, i, a) {
 		return {
 		    name: e.plugin,
+		    visible: plugins_map[e.plugin].visible,
 		    color: colors[i % colors.length],
 		    data: e.values.map (function (p) {
 			return { y: p.ratio,
@@ -1215,10 +1215,6 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 		};
 	    })
 	}).highcharts();
-
-	$scope.hiddenPlugins.forEach (function (elem) {
-	    $("#rtt-ratio-chart .highcharts-legend-item > text:contains('" + elem + "')").click ();
-	});
 
 	$("#rtt-ratio-chart .highcharts-xaxis-title").click(function (e) {
 	    drawRTTRatioChart(chart.userOptions.xAxis.type == "linear" ? "logarithmic" : "linear",
