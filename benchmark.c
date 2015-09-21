@@ -146,7 +146,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
       if (result.compressed_size == 0) {
         fprintf (stdout, "failed (0 byte output, %s [%d]).\n", squash_status_to_string (res), res);
       } else {
-        fprintf (stdout, "compressed (%.4f CPU, %.4f wall, %ld bytes)... ",
+        fprintf (stdout, "compressed (%.6fs CPU, %.6fs wall, %ld bytes)... ",
                  result.compress_cpu,
                  result.compress_wall,
                  result.compressed_size);
@@ -176,7 +176,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
             /* Should never happen. */
             fprintf (stderr, "Failed (size mismatch; expected %ld, got %ld.\n", context->input_size, ftell (decompressed));
           } else {
-            fprintf (stdout, "decompressed (%.6f CPU, %.6f wall).\n",
+            fprintf (stdout, "decompressed (%.6fs CPU, %.6fs wall).\n",
                      result.decompress_cpu,
                      result.decompress_wall);
 
