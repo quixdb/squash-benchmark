@@ -832,6 +832,7 @@ squashBenchmarkApp.controller("SquashBenchmarkCtrl", function ($scope, squashBen
 
     $scope.datasetSort = 'id';
     $scope.machineSort = 'name';
+    $scope.rawSort = 'plugin';
 
     $scope.data_points_per_machine = 0;
     $scope.codec_plugin_map = {};
