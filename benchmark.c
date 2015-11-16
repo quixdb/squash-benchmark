@@ -370,7 +370,7 @@ int main (int argc, char** argv) {
 
   while ( optind < argc ) {
     context.input_name = argv[optind];
-    context.input = fopen (context.input_name, "r+b");
+    context.input = fopen (context.input_name, "rb");
     if (context.input == NULL) {
       perror ("Unable to open input data");
       return -1;
