@@ -38,9 +38,7 @@
 #include <squash/squash.h>
 #include "timer.h"
 
-#if !defined(SQUASH_BENCHMARK_MIN_EXEC_TIME)
-#  define SQUASH_BENCHMARK_MIN_EXEC_TIME 5.0
-#endif
+static double min_exec_time = 5.0;
 
 static FILE* squash_tmpfile (void);
 static FILE*
@@ -66,7 +64,8 @@ print_help_and_exit (const char* executable, int exit_code) {
   fprintf (stdout, "Options:\n");
   fprintf (stdout, "\t-h            Print this help screen and exit.\n");
   fprintf (stdout, "\t-c codec      Benchmark the specified codec and exit.\n");
-  fprintf (stdout, "\t-o outfile    JSON output file.\n");
+  fprintf (stdout, "\t-o outfile    CSV output file.\n");
+  fprintf (stdout, "\t-t time       Minumum execution time in seconds(default: 5.0)\n");
 
   exit (exit_code);
 }
@@ -121,7 +120,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
       exit (-1);
     }
 
-    for ( iterations = 0 ; squash_timer_get_elapsed_cpu (timer) < SQUASH_BENCHMARK_MIN_EXEC_TIME ; iterations++ ) {
+    for ( iterations = 0 ; squash_timer_get_elapsed_cpu (timer) < min_exec_time ; iterations++ ) {
       fseek (context->input, 0, SEEK_SET);
       fseek (compressed, 0, SEEK_SET);
 
@@ -151,7 +150,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
                  result.compress_wall,
                  result.compressed_size);
 
-        for ( iterations = 0 ; squash_timer_get_elapsed_cpu (timer) < SQUASH_BENCHMARK_MIN_EXEC_TIME ; iterations++ ) {
+        for ( iterations = 0 ; squash_timer_get_elapsed_cpu (timer) < min_exec_time ; iterations++ ) {
           fseek (compressed, 0, SEEK_SET);
           fseek (decompressed, 0, SEEK_SET);
 
@@ -335,7 +334,7 @@ int main (int argc, char** argv) {
 
   setvbuf (stdout, NULL, _IONBF, 0);
 
-  while ( (opt = getopt(argc, argv, "hc:j:o:n:")) != -1 ) {
+  while ( (opt = getopt(argc, argv, "hc:o:t:")) != -1 ) {
     switch ( opt ) {
       case 'h':
         print_help_and_exit (argv[0], 0);
@@ -355,6 +354,9 @@ int main (int argc, char** argv) {
           return -1;
         }
         break;
+      case 't':
+	min_exec_time = strtod (optarg, NULL);
+	break;
     }
 
     optc++;
