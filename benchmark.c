@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2015 The Squash Authors
+/* Copyright (c) 2013-2016 The Squash Authors
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -90,7 +90,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
   SquashBenchmarkResult result = { 0, 0.0, 0.0, 0.0, 0.0 };
   bool success = false;
   SquashStatus res = SQUASH_OK;
-  const int level = squash_options_get_int (opts, "level");
+  const int level = squash_options_get_int (opts, codec, "level");
 
 #if !defined(SQUASH_BENCHMARK_NO_FORK)
   char fifo_name[] = ".squash-benchmark-fifo-XXXXXX";
