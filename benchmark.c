@@ -24,8 +24,17 @@
  *   Evan Nemerson <evan@nemerson.com>
  */
 
-#include <stdlib.h>
+#if !defined(__gnu_linux__)
+#define SQUASH_BENCHMARK_NO_MEMFD
+#endif
+
+#if !defined(SQUASH_BENCHMARK_NO_MEMFD)
+#define _GNU_SOURCE
+#include <sys/syscall.h>
+#endif
+
 #include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <strings.h>
@@ -40,20 +49,17 @@
 
 static double min_exec_time = 5.0;
 
-static FILE* squash_tmpfile (void);
+static FILE* squash_tmpfile (const char* name);
 static FILE*
-squash_tmpfile (void) {
-  /* char template[] = "squash-benchmark-XXXXXX"; */
-  /* int fd = mkstemp (template); */
-  /* FILE* res = NULL; */
-
-  /* if (fd != -1) { */
-  /*   unlink (template); */
-  /*   res = fdopen (fd, "w+b"); */
-  /* } */
-
-  /* return res; */
+squash_tmpfile (const char* name) {
+#if defined(SQUASH_BENCHMARK_NO_MEMFD)
   return tmpfile ();
+#else
+  int fd = syscall (SYS_memfd_create, name, 0);
+  if (fd == -1)
+    return tmpfile ();
+  return fdopen (fd, "w+");
+#endif
 }
 
 static void
@@ -104,8 +110,8 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
     assert (pipe (descriptors) == 0);
     int out_descriptor = descriptors[1];
 #endif
-    FILE* compressed = squash_tmpfile ();
-    FILE* decompressed = squash_tmpfile ();
+    FILE* compressed = squash_tmpfile ("squash-benchmark-compressed");
+    FILE* decompressed = squash_tmpfile ("squash-benchmark-decompressed");
     SquashTimer* timer = squash_timer_new ();
     int iterations = 0;
 
@@ -121,9 +127,6 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
     }
 
     for ( iterations = 0 ; squash_timer_get_elapsed_cpu (timer) < min_exec_time ; iterations++ ) {
-
-
-      
       fseek (context->input, 0, SEEK_SET);
       fseek (compressed, 0, SEEK_SET);
 
