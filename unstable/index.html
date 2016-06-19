@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="squashBenchmark">
+  <head>
+    <meta charset="utf-8">
+    <title>Squash Compression Benchmark</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.5/sandstone/bootstrap.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.14/angular.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js"></script>
+    <script src="//code.highcharts.com/highcharts.js"></script>
+
+    <style type="text/css">
+      .result-bar {
+        font-weight: bold;
+        color: black;
+        text-align: left;
+        text-shadow: 0px 0px 1px white;
+      }
+
+      .result-bar > span {
+        margin-left: 1em;
+      }
+
+      .alert a {
+        text-decoration: underline;
+      }
+
+      .bs-callout {
+        margin: 20px 0;
+        padding: 15px 30px 15px 15px;
+        border-left: 5px solid #eee;
+      }
+      .bs-callout h4 {
+        margin-top: 0;
+      }
+      .bs-callout p:last-child {
+        margin-bottom: 0;
+      }
+      .bs-callout code,
+      .bs-callout .highlight {
+        background-color: #fff;
+      }
+
+      .bs-callout-danger {
+        background-color: #fcf2f2;
+        border-color: #dFb5b4;
+      }
+      .bs-callout-warning {
+        background-color: #fefbed;
+        border-color: #f1e7bc;
+      }
+      .bs-callout-info {
+        background-color: #f0f7fd;
+        border-color: #d0e3f0;
+      }
+      .bs-callout-danger h4 {
+        color: #B94A48;
+      }
+      .bs-callout-warning h4 {
+        color: #C09853;
+      }
+      .bs-callout-info h4 {
+        color: #3A87AD;
+      }
+    </style>
+  </head>
+  <body ng-controller="SquashBenchmarkCtrl">
+    <div class="navbar navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="https://quixdb.github.io/squash" class="navbar-brand">Squash</a>
+        </div>
+
+        <div class="navbar-collapse collapse" id="navbar-main">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="documentation-dropdow">Documentation <span class="caret"></span></a>
+              <ul class="dropdown-menu" aria-labelledby="documentation-dropdown">
+                <li><a href="https://quixdb.github.io/squash/man/squash.1.html"><code>squash</code> <abbr title="Command Line Interface">CLI</abbr></a></li>
+                <li class="divider"></li>
+                <li><a href="https://quixdb.github.io/squash/api/c/index.html">C API Reference</a></li>
+                <li><a href="https://quixdb.github.io/squash/api/c/md_docs_user-guide.html">C User Guide</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="support-dropdown">Support <span class="caret"></span></a>
+              <ul class="dropdown-menu" aria-labelledby="support-dropdown">
+                <li><a href="https://groups.google.com/forum/#!forum/squash-compression">Mailing List</a></li>
+                <li><a href="irc://chat.freenode.net/squash">IRC</a></li>
+                <li>
+		  <a href="https://stackoverflow.com/questions/tagged/squash-compression">Stack Overflow</a>
+		</li>
+                <li><a href="http://encode.ru/threads/2160-Squash-and-the-Squash-Benchmark">Encode.ru Thread</a></li>
+                <li class="divider"></li>
+                <li><a href="https://github.com/quixdb/squash/issues">Issue Tracker</a></li>
+              </ul>
+            </li>
+            <li class="active"><a href="#">Benchmark</a></li>
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="https://github.com/quixdb/squash"><i class="fa fa-lg fa-github"></i> GitHub</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="page-header jumbotron">
+	<h1>[Unstable] Squash Compression Benchmark</h1>
+
+	<p>
+	  The Squash library is an abstraction layer for compression
+	  algorithms, making it trivial to switch between them… or
+	  write a benchmark which tries them all, which is what you
+	  see here!
+	</p>
+
+	<p>
+	  This is the <em>unstable</em> version of
+	  the <a href="../">Squash Compression Benchmark</a>.  It is
+	  run with a recent git checkout
+	  of <a href="https://quixdb.github.io/squash">Squash</a> on a
+	  single machine (the stable version is currently run on about
+	  10 machines).
+	</p>
+
+	<p>
+	  This benchmark currently consists of
+	  {{datasets.length|number}} datasets, each of which is tested
+	  against {{plugins.length}} plugins containing
+	  {{codecs.length|number}} codecs at every compression level
+	  they offer—the number varies by codec, but there are
+	  {{data_points_per_machine|number}} in total, yielding
+	  {{data_points_per_machine*datasets.length|number}} different
+	  settings.
+	</p>
+      </div>
+
+      <div id="configuration">
+	<h1>Configuration <a href="#configuration"><i class="fa fa-link"></i></a></h1>
+
+	<form>
+	  <h2 id="choose-a-dataset">Choose a dataset <a href="#choose-a-dataset"><i class="fa fa-link"></i></a></h2>
+
+	  <p>
+	    Different codecs can behave <em>very</em> differently with
+	    different data.  Some are great at compressing text but
+	    horrible with binary data, some excel with more repetitive
+	    data like logs.  Many have long initialization times but are
+	    fast once they get started, while others can
+	    compress/decompress small buffers almost instantly.
+	  </p>
+
+	  <p>
+	    This benchmark is run against many standard datasets.
+	    Hopefully one of them is interesting for you, but if not
+	    don't worry—you can use Squash to easily run your own
+	    benchmark with whatever data you want.  That said, if you
+	    think you have a somewhat common use case,
+	    please <a href="https://github.com/nemequ/squash-corpus/issues">let
+	    us know</a>—we may be interested in adding the data to
+	    this benchmark.
+	  </p>
+
+	  <div ng-if="random_dataset" class="bs-callout bs-callout-info">
+	    <h4>Note</h4>
+	    <p>
+	      The default dataset is selected randomly.
+	    </p>
+	  </div>
+
+          <div class="table-responsive">
+	    <table class="table table-striped">
+	      <thead>
+	        <tr>
+		  <th></th>
+		  <th ng-click="datasetSortReverse = (datasetSort == 'id') ? !datasetSortReverse : false; datasetSort = 'id'">
+		    Name
+		    <i ng-if="datasetSort == 'id'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="datasetSortReverse = (datasetSort == 'source') ? !datasetSortReverse : false; datasetSort = 'source'">
+		    Source
+		    <i ng-if="datasetSort == 'source'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="datasetSortReverse = (datasetSort == 'description') ? !datasetSortReverse : false; datasetSort = 'description'">
+		    Description
+		    <i ng-if="datasetSort == 'description'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="datasetSortReverse = (datasetSort == 'size') ? !datasetSortReverse : false; datasetSort = 'size'">
+		    Size
+		    <i ng-if="datasetSort == 'size'" class="fa" ng-class="datasetSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+	        </tr>
+	      </thead>
+	      <tbody>
+	        <tr ng-repeat="corpus in datasets | orderBy:datasetSort:datasetSortReverse">
+		  <td>
+		    <input type="radio" name="corpus" ng-value="corpus.id" ng-model="$parent.dataset" id="dataset-{{corpus.id}}">
+		  </td>
+		  <td>
+		    <label for="dataset-{{corpus.id}}" ng-bind="corpus.id"></label>
+		  </td>
+		  <td><a ng-href="{{corpus.sourceUrl}}" ng-bind="corpus.source"></a></td>
+		  <td ng-bind="corpus.description"></td>
+		  <td ng-bind="corpus.size | formatSize">}</td>
+	        </tr>
+	      </tbody>
+	    </table>
+          </div>
+	</form>
+
+	<div>
+	  <h2 id="choose-a-machine">Choose a machine <a href="#choose-a-machine"><i class="fa fa-link"></i></a></h2>
+
+	  <p>
+	    If you think certain algorithms are always faster, you've
+	    got another thing coming!  Different
+	    <abbr title="Central Processing Unit">CPU</abbr>s
+	    can behave very differently
+	    with the same data.
+	  </p>
+
+	  <p>
+	    The Squash benchmark is currently run on many of the
+	    machines I have access to—this happens to be fairly recent
+	    Intel <abbr>CPU</abbr>s, and a mix of
+	    ARM <abbr title="Single Board Computer">SBC</abbr>s.
+	    There
+	    is <a href="#faq-additional-machine">an entry in the
+	    <abbr title="Frequently Asked Questions">FAQ</abbr></a>
+	    with more details.
+	  </p>
+
+	  <div ng-if="random_machine" class="bs-callout bs-callout-info">
+	    <h4>Note</h4>
+	    <p>
+	      The default machine is selected randomly.
+	    </p>
+	  </div>
+
+          <div class="table-responsive">
+	    <table class="table table-condensed table-striped">
+	      <thead>
+	        <tr>
+		  <th></th>
+		  <th ng-click="machineSortReverse = (machineSort == 'name') ? !machineSortReverse : false; machineSort = 'name'">
+		    Name
+		    <i ng-if="machineSort == 'name'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th>Status</th>
+		  <th ng-click="machineSortReverse = (machineSort == 'cpu') ? !machineSortReverse : false; machineSort = 'cpu'">
+		    <abbr title="Central Processing Unit">CPU</abbr>/<abbr title="System On a Chip">SoC</abbr>
+		    <i ng-if="machineSort == 'cpu'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="machineSortReverse = (machineSort == 'architecture') ? !machineSortReverse : false; machineSort = 'architecture'">
+		    Architecture
+		    <i ng-if="machineSort == 'architecture'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="machineSortReverse = (machineSort == 'speed') ? !machineSortReverse : false; machineSort = 'speed'">
+		    Clock Speed
+		    <i ng-if="machineSort == 'speed'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="machineSortReverse = (machineSort == 'memory') ? !machineSortReverse : false; machineSort = 'memory'">
+		    Memory
+		    <i ng-if="machineSort == 'memory'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="machineSortReverse = (machineSort == 'platform') ? !machineSortReverse : false; machineSort = 'platform'">
+		    Platform
+		    <i ng-if="machineSort == 'platform'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="machineSortReverse = (machineSort == 'distro') ? !machineSortReverse : false; machineSort = 'distro'">
+		    Distro
+		    <i ng-if="machineSort == 'distro'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="machineSortReverse = (machineSort == 'kernel') ? !machineSortReverse : false; machineSort = 'kernel'">
+		    Kernel
+		    <i ng-if="machineSort == 'kernel'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="machineSortReverse = (machineSort == 'compiler') ? !machineSortReverse : false; machineSort = 'compiler'">
+		    Compiler
+		    <i ng-if="machineSort == 'compiler'" class="fa" ng-class="machineSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th><abbr title="Comma-Separated Values">CSV</abbr></th>
+	        </tr>
+	      </thead>
+	      <tbody>
+	        <tr ng-repeat="system in machines | orderBy:machineSort:machineSortReverse">
+		  <td><input type="radio" name="system" id="dataset-{{system.name}}" value="{{system.name}}" ng-model="$parent.machine"></td>
+		  <td><label for="dataset-{{system.name}}" ng-bind="system.name"></label></td>
+		  <td style="text-align: center" ng-switch="system.failures">
+		    <i ng-switch-when="undefined" class="fa fa-check"></i>
+		    <span ng-switch-default class="failure-popover" tabindex="0" role="button" data-toggle="popover" data-trigger="focus" title="Failures" data-failures="{{system.failures}}">
+		      <i class="fa fa-exclamation"></i>
+		    </span>
+		  </td>
+		  <td><a ng-href="{{ system.cpuUrl }}" ng-bind="system.cpu"></a></td>
+		  <td ng-bind="system.architecture"></td>
+		  <td ng-bind="system.speed | formatFrequency"></td>
+		  <td ng-bind="system.memory * 1024 * 1024 | formatSize"></td>
+		  <td><a href="{{ system.platformUrl }}" ng-bind="system.platform"></a></td>
+		  <td ng-bind="system.distro"></td>
+		  <td ng-bind="system.kernel"></td>
+		  <td ng-bind="system.compiler"></td>
+		  <td style="text-align: center"><a href="data/{{ system.name }}.csv"><i class="fa fa-table"></i></a></td>
+	        </tr>
+	      </tbody>
+	    </table>
+          </div>
+	</div>
+      </div>
+
+      <div id="results">
+	<h2>Results <a href="#results"><i class="fa fa-link"></i></a></h2>
+
+	<ol>
+	  <li><a href="#ratio-vs-compression">Compression Ratio vs. Compression Speed</a></li>
+	  <li><a href="#ratio-vs-decompression">Compression Ratio vs. Decompression Speed</a></li>
+	  <li><a href="#compression-vs-decompression">Compression Speed vs. Decompression Speed</a></li>
+	  <li><a href="#round-trip-vs-ratio">Round-Trip vs. Compression Ratio</a></li>
+	  <li><a href="#transfer-plus-processing">Transfer + Processing</a></li>
+	  <li><a href="#optimal-codecs">Optimal Codecs</a></li>
+	  <li><a href="#results-table">Results Table</a></li>
+	</ol>
+
+	<p>
+	  Note that we do provide <a href="#faq-raw-data">access to
+	  the raw data</a> if you would prefer to generate your own
+	  charts.
+	</p>
+
+	<div id="ratio-vs-compression" class="panel panel-primary">
+	  <div class="panel-heading">
+	    <h3 class="panel-title">Compression Ratio vs. Compression Speed <a href="#ratio-vs-compression"><i class="fa fa-link"></i></a></h3>
+	  </div>
+
+	  <div class="embed-responsive embed-responsive-16by9">
+	    <div id="ratio-compression-chart" class="embed-responsive-item panel-body"></div>
+	  </div>
+	</div>
+
+	<div id="ratio-vs-decompression" class="panel panel-primary">
+	  <div class="panel-heading">
+	    <h3 class="panel-title">Compression Ratio vs. Decompression Speed <a href="#ratio-vs-decompression"><i class="fa fa-link"></i></a></h3>
+	  </div>
+
+
+	  <div class="embed-responsive embed-responsive-16by9">
+	    <div id="ratio-decompression-chart" class="embed-responsive-item panel-body"></div>
+	  </div>
+	</div>
+
+	<div id="compression-vs-decompression" class="panel panel-primary">
+	  <div class="panel-heading">
+	    <h3 class="panel-title">Compression Speed vs. Decompression Speed <a href="#compression-vs-decompression"><i class="fa fa-link"></i></a></h3>
+	  </div>
+
+	  <div class="embed-responsive embed-responsive-16by9">
+	    <div id="compression-decompression-chart" class="embed-responsive-item panel-body"></div>
+	  </div>
+	</div>
+
+	<div id="round-trip-vs-ratio" class="panel panel-primary">
+	  <div class="panel-heading">
+	    <h3 class="panel-title">Round Trip Speed vs. Compression Ratio <a href="#round-trip-vs-ratio"><i class="fa fa-link"></i></a></h3>
+	  </div>
+
+	  <div class="embed-responsive embed-responsive-16by9">
+	    <div id="rtt-ratio-chart" class="embed-responsive-item panel-body"></div>
+	  </div>
+	</div>
+
+	<div id="transfer-plus-processing" class="panel panel-primary">
+	  <div class="panel-heading">
+	    <h3 class="panel-title">Transfer + Processing <a href="#transfer-plus-processing"><i class="fa fa-link"></i></a></h3>
+	  </div>
+
+	  <div>
+	    <div class="panel-body">
+	      <p>
+		Sometimes all you care about is how long something
+		takes to load or save, and how much disk space or
+		bandwidth is used doesn't really matter.  For example,
+		if you have a file that would take 1 second to load if
+		uncompressed and you could cut the file size in half
+		by compressing it, as long as decompressing takes less
+		than half a second the content is available sooner
+		than it would have been without compression.
+	      </p>
+
+	      <div class="bs-callout bs-callout-info">
+		<h4>Note</h4>
+		<p>
+		  For the presets I have tried to provide typical
+		  real-world speeds, not theoretical peaks.  This can
+		  be significantly less than the advertised speed.
+		</p>
+
+		<p>
+		  When entering custom values please keep in mind that
+		  this uses <em>bytes</em> per second, not bits per
+		  second.  Also, it
+		  uses <a href="https://en.wikipedia.org/wiki/Binary_prefix">binary
+		  prefixes</a> (1 MiB is 1024 KiB, not 1000).
+		</p>
+	      </div>
+
+	      <form class="form-horizontal">
+		<div class="form-group">
+		  <label for="transferSpeed" class="col-sm-2 control-label">Transfer Speed</label>
+
+		  <div class="input-group col-sm-4">
+		    <div class="input-group-btn">
+		      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Presets <span class="caret"></span></button>
+		      <ul class="dropdown-menu dropdown-menu-right">
+			<li><a href="" ng-click="transferSpeed = 850; transferSpeedUnits = 'KiB/s'">4G Wireless</a></li>
+			<li><a href="" ng-click="transferSpeed = 6; transferSpeedUnits = 'MiB/s'">802.11g</a></li>
+			<li><a href="" ng-click="transferSpeed = 7.5; transferSpeedUnits = 'MiB/s'">Cable Internet</a></li>
+			<li><a href="" ng-click="transferSpeed = 75; transferSpeedUnits = 'MiB/s'">7200 RPM HDD</a></li>
+			<li><a href="" ng-click="transferSpeed = 500; transferSpeedUnits = 'MiB/s'">SSD</a></li>
+		      </ul>
+		    </div>
+		    <input class="form-control" ng-model="transferSpeed" id="transferSpeed">
+		    <div class="input-group-btn">
+		      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span ng-bind="transferSpeedUnits"></span> <span class="caret"></span></button>
+		      <ul class="dropdown-menu dropdown-menu-right">
+			<li><a href="" ng-click="transferSpeedUnits = 'KiB/s'">KiB/s</a></li>
+			<li><a href="" ng-click="transferSpeedUnits = 'MiB/s'">MiB/s</a></li>
+			<li><a href="" ng-click="transferSpeedUnits = 'GiB/s'">GiB/s</a></li>
+		      </ul>
+		    </div>
+		  </div>
+		</div>
+
+		<div class="form-group">
+		  <label for="visibleItems" class="col-sm-2 control-label">Visible Items</label>
+
+		  <div class="input-group col-sm-4">
+		    <select id="visibleItems" class="form-control" ng-model="transferProcessVisible">
+		      <option value="50">More than 50% faster than no compression</option>
+		      <option value="75">More than 25% faster than no compression</option>
+		      <option value="90">More than 10% faster than no compression</option>
+		      <option value="100">Faster than no compression</option>
+		      <option value="110">Within 10% of no compression</option>
+		      <option value="125">Within 25% of no compression</option>
+		      <option value="150">Within 50% of no compression</option>
+		      <option value="0">All</option>
+		    </select>
+		  </div>
+		</div>
+
+		<div class="form-group">
+		  <label class="col-sm-2 control-label">Sort</label>
+
+		  <div class="input-group col-sm-4">
+		    <label class="radio-inline">
+		      <input type="radio" name="transferProcessSort" value="time" ng-model="transferProcessSort"> Total time
+		    </label>
+		    <label class="radio-inline">
+		      <input type="radio" name="transferProcessSort" value="name" ng-model="transferProcessSort"> Name
+		    </label>
+		  </div>
+		</div>
+
+		<div class="form-group">
+		  <label class="col-sm-2 control-label">Direction</label>
+
+		  <div class="input-group col-sm-4">
+		    <label class="radio-inline">
+		      <input type="radio" name="transferProcessDirection" value="decompress" ng-model="transferProcessDirection"> Decompression
+		    </label>
+		    <label class="radio-inline">
+		      <input type="radio" name="transferProcessDirection" value="compress" ng-model="transferProcessDirection"> Compression
+		    </label>
+		    <label class="radio-inline">
+		      <input type="radio" name="transferProcessDirection" value="both" ng-model="transferProcessDirection"> Both
+		    </label>
+		  </div>
+		</div>
+
+		<div class="form-group">
+		  <div class="col-sm-offset-2 col-sm-10">
+		    <button type="submit" class="btn btn-primary" ng-click="drawTransferDecompressionChart()">Draw</button>
+		  </div>
+		</div>
+	      </form>
+
+	      <div id="transfer-decompression-chart"></div>
+	    </div>
+	  </div>
+	</div>
+
+	<div id="optimal-codecs" class="panel panel-primary">
+	  <div class="panel-heading">
+	    <h3 class="panel-title">Optimal Codecs <a href="#optimal-codecs"><i class="fa fa-link"></i></a></h3>
+	  </div>
+
+	  <div class="embed-responsive embed-responsive-16by9">
+	    <div id="optimal-codec-chart" class="embed-responsive-item panel-body"></div>
+	  </div>
+	</div>
+
+	<div id="results-table" class="panel panel-primary">
+	  <div class="panel-heading">
+	    <div>
+	      <!-- <div class="dropdown" style="float: right"> -->
+	      <!-- 	<div id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
+	      <!-- 	  <i class="fa fa-cog fa-2x"></i> -->
+	      <!-- 	</div> -->
+	      <!-- 	<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dLabel"> -->
+	      <!-- 	  <li><a href="#">Compression Speed <i class="fa fa-check"></i></a></li> -->
+	      <!-- 	  <li><a href="#">Decompression Speed <i class="fa fa-check"></i></a></li> -->
+	      <!-- 	  <li><a href="#">Compression Ratio <i class="fa fa-check"></i></a></li> -->
+	      <!-- 	</ul> -->
+	      <!-- </div> -->
+	      <h3 class="panel-title">Results <a href="#results-table"><i class="fa fa-link"></i></a></h3>
+	    </div>
+	  </div>
+
+          <div class="table-responsive">
+	    <table class="table table-condensed table-striped">
+	      <thead>
+	        <tr>
+		  <!-- <th>Show</th> -->
+		  <th ng-click="rawSortReverse = (rawSort == 'plugin') ? !rawSortReverse : false; rawSort = 'plugin'">
+		    Plugin
+		    <i ng-if="rawSort == 'plugin'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="rawSortReverse = (rawSort == 'codec') ? !rawSortReverse : false; rawSort = 'codec'">
+		    Codec
+		    <i ng-if="rawSort == 'codec'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="rawSortReverse = (rawSort == 'level') ? !rawSortReverse : false; rawSort = 'level'">
+		    Level
+		    <i ng-if="rawSort == 'level'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="rawSortReverse = (rawSort == 'compressed_size') ? !rawSortReverse : false; rawSort = 'compressed_size'">
+		    Compression Ratio
+		    <i ng-if="rawSort == 'compressed_size'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="rawSortReverse = (rawSort == 'compress_cpu') ? !rawSortReverse : false; rawSort = 'compress_cpu'">
+		    Compression Speed
+		    <i ng-if="rawSort == 'compress_cpu'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+		  <th ng-click="rawSortReverse = (rawSort == 'decompress_cpu') ? !rawSortReverse : false; rawSort = 'decompress_cpu'">
+		    Decompression Speed
+		    <i ng-if="rawSort == 'decompress_cpu'" class="fa" ng-class="rawSortReverse ? 'fa-sort-desc' : 'fa-sort-asc'"></i>
+		  </th>
+	        </tr>
+	      </thead>
+
+	      <tbody>
+	        <tr ng-repeat="result in data | orderBy:rawSort:rawSortReverse">
+		  <td class="nowrap-xs" style="width: 1px; vertical-align: middle; white-space: nowrap" ng-bind="result.plugin"></td>
+		  <td class="nowrap-xs" style="width: 1px; vertical-align: middle; white-space: nowrap" ng-bind="result.codec"></td>
+		  <td class="nowrap-xs" style="width: 1px; vertical-align: middle; white-space: nowrap" ng-bind="result.level"></td>
+		  <td ng-switch on="result.plugin">
+		    <div ng-switch-when="copy">
+		      {{ result.ratio | number:2 }}
+		    </div>
+		    <div ng-switch-default class="progress" style="margin-bottom: 0">
+		      <div class="progress-bar progress-bar-warning result-bar"
+			   style="white-space: nowrap; width: {{ ((result.ratio - 1) / (bestRatio - 1)) * 100 }}%">
+		        <span>{{ result.ratio | number:2 }}</span>
+		      </div>
+		    </div>
+		  </td>
+		  <td ng-switch on="result.plugin">
+		    <div ng-switch-when="copy">
+		      {{ result.compression_rate | formatSpeed }}
+		    </div>
+		    <div ng-switch-default class="progress" class="progress" style="margin-bottom: 0">
+		      <div class="progress-bar progress-bar-info result-bar"
+			   style="white-space: nowrap; width: {{ (result.compression_rate / bestCompressionRate) * 100 }}%">
+		        <span>{{ result.compression_rate | formatSpeed }}</span>
+		      </div>
+		    </div>
+		  </td>
+		  <td ng-switch on="result.plugin">
+		    <div ng-switch-when="copy">
+		      {{ result.decompression_rate | formatSpeed }}
+		    </div>
+		    <div ng-switch-default class="progress" class="progress" style="margin-bottom: 0">
+		      <div class="progress-bar progress-bar-success result-bar"
+			   style="white-space: nowrap; width: {{ (result.decompression_rate / bestDecompressionRate) * 100 }}%">
+		        <span>{{ result.decompression_rate | formatSpeed }}</span>
+		      </div>
+		    </div>
+		  </td>
+	        </tr>
+	      </tbody>
+	    </table>
+          </div>
+	</div>
+      </div>
+    </div>
+
+    <div id="faq" class="container">
+      <h1>Codec Details <a href="#codec-details"><i class="fa fa-link"></i></a></h1>
+
+      <div class="table-responsive">
+	<table class="table table-condensed table-striped">
+	  <thead>
+	    <tr>
+	      <th>Library Name</th>
+	      <th>Version</th>
+	      <th>License</th>
+	      <th>Plugin</th>
+	      <th>Codec</th>
+	      <th>Streaming</th>
+	      <th>Flushing</th>
+	      <th>Levels</th>
+	    </tr>
+	  </thead>
+	  <tbody ng-repeat="plugin in plugins">
+	    <tr ng-repeat="codec in plugin.codecs">
+	      <td ng-if="$first" rowspan="{{plugin.codecs.length}}">
+		<a ng-if="plugin.libraryUrl != undefined" ng-href="{{plugin.libraryUrl}}" target="_new">
+		  <span ng-bind="plugin.name"></span>
+		  <i class="fa fa-external-link"></i>
+		</a>
+	      </td>
+
+	      <td ng-if="$first" rowspan="{{plugin.codecs.length}}">
+		<span ng-if="plugin.version" ng-bind="plugin.version"></span>
+		<span ng-if="plugin.revision" ng-bind="plugin.revision.slice(0,8)"></span>
+	      </td>
+
+	      <td ng-if="$first" rowspan="{{plugin.codecs.length}}" ng-bind="plugin.license"></td>
+
+	      <td ng-if="$first" rowspan="{{plugin.codecs.length}}">
+		<a ng-href="https://quixdb.github.io/squash/api/c/md_plugins_{{plugin.id}}_{{plugin.id}}.html">
+		  <span ng-bind="plugin.id"></span>
+		  <i class="fa fa-external-link"></i>
+		</a>
+	      </td>
+
+	      <td ng-bind="codec.name"></td>
+	      <td style="text-align: center">
+		<span ng-if="codec.streaming">✓</span>
+	      </td>
+	      <td style="text-align: center">
+		<span ng-if="codec.flushing">✓</span>
+	      </td>
+
+	      <td ng-bind="codec.levels.join(', ')"></td>
+	    </tr>
+	  </tbody>
+	</table>
+      </div>
+    </div>
+
+    <div id="faq" class="container">
+      <h1>FAQ <a href="#faq"><i class="fa fa-link"></i></a></h1>
+
+      <p>
+	Well, okay, I'm writing this before I publish the URL, so not
+	so much &quot;frequently asked questions&quot; as &quot;things
+	I thought you might be wondering&quot;, but if I called this
+	section &quot;TITYMBW&quot; the first thing I would have to
+	answer would be &quot;WTF is 'TITYMBW'?&quot;
+      </p>
+
+      <dl>
+	<dt id="faq-announce-list">Can I be informed of updates? <a href="#faq-announce-list"><i class="fa fa-link"></i></a></dt>
+	<dd>
+	  <p>
+	    Sure!  This benchmark is updated whenever a new version of
+	    Squash is released, so you can
+	    just <a href="https://quixdb.github.io/squash/#announce-list">subscribe
+	    to the squash-annonce mailing list</a>.  We send one
+	    message to announce the updated version of both the
+	    library and the benchmark.
+	  </p>
+	</dd>
+
+	<dt id="faq-additional-codecs">Will you add <var>«insert compression codec»</var>? <a href="#fal-additional-codecs"><i class="fa fa-link"></i></a></dt>
+	<dd>
+	  <p>
+	    In order to be included the benchmark the software must be
+	    supported
+	    by <a href="https://quixdb.github.io/squash/">Squash</a>.
+	    If there is a specific codec you're interested in,
+	    please <a href="https://github.com/quixdb/squash/issues">file
+	    an issue against Squash</a>.
+	  </p>
+
+	  <p>
+	    If the codec is reliable (it has to pass Squash's unit
+	    tests), works on Linux, accessible from C or C++, and open
+	    source the odds are good I would be willing to write a
+	    plugin, or at least merge a pull request.
+	  </p>
+
+	  <p>
+	    If the codec doesn't meet <em>all</em> the above critera I
+	    still <em>may</em> be willing to accept a pull request for
+	    a plugin, but keep in mind that all the machines I run
+	    this on are running Linux with various architectures, so
+	    even if there is a plugin for a Windows-only, or x86-only,
+	    etc., library it probably will not show up for every
+	    machine.  For example, I would like
+	    to <a href="https://github.com/quixdb/squash/issues/54">add
+	    a Windows API plugin</a>, but it will not show up on any
+	    of the Linux machines' results.  Ditto
+	    for <a href="https://developer.apple.com/library/prerelease/ios/documentation/Performance/Reference/Compression/index.html">OS
+	    X</a>.
+	  </p>
+	</dd>
+
+	<dt id="faq-calculation">How are the values calculated? <a href="#faq-calculation"><i class="fa fa-link"></i></a></dt>
+	<dd>
+	  <p>
+	    The benchmark collects the compressed size, compression
+	    time, and decompression time.  Those are then used to
+	    calculate the values used in the benchmark:
+	  </p>
+	  <dl class="dl-horizontal" style="margin-left: 2em">
+	    <dt>Ratio</dt>
+	    <dd><p><var>uncompressed size<var> ÷ <var>compressed size</var></p></dd>
+
+	    <dt>Compression Speed</dt>
+	    <dd><p><var>uncompressed size<var> ÷ <var>compression time</var></p></dd>
+
+	    <dt>Decompression Speed</dt>
+	    <dd><p><var>uncompressed size<var> ÷ <var>decompression time</var></p></dd>
+
+	    <dt>Round Trip Speed</dt>
+	    <dd><p>(2 × <var>uncompressed size<var>) ÷ (<var>compression time</var> + <var>decompression time</var>)</p></dd>
+	  </dl>
+
+	  <p>
+	    Sizes are presented
+	    using <a href="https://en.wikipedia.org/wiki/Binary_prefix">binary
+	    prefixes</a>—1 KiB is 1024 bytes, 1 MiB is 1024 KiB, and so on.
+	  </p>
+	</dd>
+
+	<dt id="faq-memory-usage">What about memory usage? <a href="#faq-memory-usage"><i class="fa fa-link"></i></a></dt>
+	<dd>
+	  <p>
+	    I would really like to include that data.  If you have a
+	    good way to capture that data on the C side
+	    (in <a href="https://github.com/quixdb/squash-benchmark/blob/master/benchmark.c">benchmark.c</a>)
+	    I would be very happy to merge it, and integrate it into
+	    the results.
+	  </p>
+	  <p>
+	    Please
+	    use <a href="https://github.com/quixdb/squash-benchmark/issues/2">quixdb/squash-benchmark#2</a>
+	    to discuss this.
+	  </p>
+	</dd>
+
+	<dt id="faq-wall-clock-or-cpu">Is time CPU time or wall-clock? <a href="#faq-wall-clock-or-cpu"><i class="fa fa-link"></i></a></dt>
+	<dd>
+	  <p>
+	    CPU time.  Wall-clock data is actually captured but not
+	    presented.  I'm willing to consider pull requests if you
+	    can find a good way to display it, as well as a good
+	    reason.
+	  </p>
+	</dd>
+
+	<dt id="faq-multi-threading">What about multi-threading? <a href="#faq-multi-threading"><i class="fa fa-link"></i></a></dt>
+	<dd>
+	  <p>
+	    That's a tricky question.  For one thing it would explode
+	    the number of data points (for example, LZMA would have 4
+	    codecs with 9 levels each, multiplied the number the
+	    number of cores—that's 288 different configurations on an
+	    8-core machine per dataset).  Obviously this would make
+	    generating the benchmark even slower, but the main problem
+	    is presenting the data in a way which doesn't destroy the
+	    usability for people who are interested in single-threaded
+	    compression/decompression.
+	  </p>
+	</dd>
+
+	<dt id="faq-logarithmic">Can you switch the graphs to use a logarithmic scale? <a href="#faq-logarithmic"><i class="fa fa-link"></i></a></dt>
+	<dd>
+	  <p>
+	    <em>You</em> can.  Just click on the label for either axis
+	    and it will toggle between linear and logarithmic.  I know
+	    this isn't obvious—I'd be happy to merge
+	    a <abbr title="Pull Request">PR</abbr> if you can improve
+	    that.
+	  </p>
+
+	  <p>
+	    I don't want to switch the default because I think that
+	    linear is probably better for most people.  Logarithmic
+	    tends to be better if all you care about is compression
+	    ratio, not speed.
+	  </p>
+	</dd>
+
+	<dt id="faq-compare-machines">Can you make it easier to compare machines or datasets (instead of codecs)? <a href="#faq-compare-machines"><i class="fa fa-link"></i></a></dt>
+	<dd>
+	  <p>
+	    I would like to (see
+	    <a href="https://github.com/quixdb/squash-benchmark-web/issues/2">quixdb/squash-benchmark-web#2</a>
+	    and <a href="https://github.com/quixdb/squash-benchmark-web/issues/3">quixdb/squash-benchmark-web#3</a>
+	    for discussion).  It is probably going to require
+	    downloading all the data from all the machines, which is
+	    around
+	    {{data_points_per_machine*datasets.length*machines.length*66|formatSize:-1}},
+	    though HTTP compression should help (oh, the irony of
+	    being stuck with zlib).
+	  </p>
+	</dd>
+
+	<dt id="faq-additional-features">Can you add a feature (chart, table, <i>etc.</i>) to the bencmark? <a href="#faq-additional-features"><i class="fa fa-link"></i></a></dt>
+	<dd>
+	  <p>
+	    No promises, but I am looking for ideas—I'm certainly
+	    willing to at least listen to the request.
+	    Please <a href="https://github.com/quixdb/squash-benchmark-web/issues">file
+	    an issue</a>.
+	  </p>
+	</dd>
+
+	<dt id="faq-library-performance">My library isn't performing as well as I think it should! <a href="#faq-library-performance"><i class="fa fa-link"></i></a></dt>
+	<dd>
+	  <p>
+	    Sorry.  I am trying to keep conditions as fair and as
+	    close to real-world as I can, but I'm certainly willing to
+	    discuss any concerns you have with methodology.
+          </p>
+
+          <p>
+            The Squash library typically adds very little overhead,
+            but if you have ideas on how to improve the plugin for
+            your library I'm happy to accept patches.
+          </p>
+
+	  <p>
+	    If the issue is performance on an architecture you don't
+	    have access to (e.g., ARM), I'm willing to provide SSH
+	    access to most of the machines included in this benchmark
+	    to people working on open source libraries.  If you would
+	    like access to one to help you optimize your code just let
+	    me know.
+	  </p>
+	</dd>
+
+	<dt id="faq-additional-machine">Can you add <var>«insert machine, CPU, architecture, <abbr title="Operating System">OS</abbr>, etc.»</var>? <a href="#faq-additional-machine"><i class="fa fa-link"></i></a></dt>
+	<dd>
+	  <p>
+	    Only if I have, or at least have access to, a machine
+	    which fits that description.
+	  </p>
+
+	  <p>
+	    In general I include what I have available.  That tends to
+	    be some newish Intel CPUs, some older Intel CPUs that
+	    haven't yet found their way to the electronics recycler,
+	    and some ARM SBCs.  If you would like to donate other
+	    hardware I'm willing to add it to the benchmark.
+	  </p>
+	</dd>
+
+	<dt id="faq-compiler-flags">What compiler flags were used? <a href="#faq-compiler-flags"><i class="fa fa-link"></i></a></dt>
+	<dd>
+	  <p>
+	    Flags vary a bit since different plugins require different
+	    flags, but as far as performance related flags are
+	    concerned, plugins are currently compiled with <code>-O3
+	    -flto -march=native -mtune=native</code>.
+	  </p>
+
+	  <p>
+	    If you are the author of one of the libraries and would
+	    like for your plugin to use different flags when compiled
+	    as part of Squash,
+	    please <a href="https://github.com/quixdb/squash-benchmark/issues">file
+	    an issue</a>.  As long as the flags are safe, we will
+	    respect your wishes.
+	  </p>
+	</dd>
+
+	<dt id="faq-browser-compatibility">This doesn't work in my browser. <a href="#faq-browser-compatibility"><i class="fa fa-link"></i></a></dt>
+	<dd>
+	  <p>
+	    I'm sorry, but if you're using an old browser (probably
+	    Internet Explorer) you'll have to upgrade.  I'm willing to
+	    consider patches, but I will not be putting in any effort
+	    to make this page display in older browsers unless someone
+	    wants to pay me to do it—and it's not something I enjoy,
+	    so they would have to pay pretty well.
+	  </p>
+
+	  <p>
+	    If your browser is up to date, make sure JavaScript is
+	    enabled.  Cookies, Flash, etc. aren't necessary, but JS
+	    definitely is.
+	  </p>
+	</dd>
+
+	<dt id="faq-other-benchmarks">Are there any better benchmarks? <a href="#faq-other-benchmarks"><i class="fa fa-link"></i></a></dt>
+	<dd>
+	  <p>
+	    There are different benchmarks, which may or may not be
+	    better, depending on what you're interested in.  Most
+	    benchmarks use command line programs instead of libraries,
+	    which is a bit easier so they tend to include many more
+	    codecs, but usually don't include nearly as many different
+	    machines.  Those benchmarks include:
+	  </p>
+
+	  <ul>
+	    <li><a href="http://mattmahoney.net/dc/text.html">Large Text Compression Benchmark</a></li>
+	    <li><a href="http://www.squeezechart.com/">Squeeze Chart</a></li>
+	    <li><a href="http://www.maximumcompression.com/">Maximum Compression</a></li>
+	    <li><a href="http://heartofcomp.altervista.org/MOC/MOCA.htm">World Compression Challenge</a></li>
+	  </ul>
+
+	  <p>
+	    The only other benchmark I'm aware of focusing on
+	    libraries
+	    is <a href="http://encode.ru/threads/1371-Filesystem-benchmark">fsbench</a>.
+	    It includes more compression codecs (though fewer total
+	    options), as well as hash functions (cryptographic and
+	    non-cryptographic) and some other cryptographic functions.
+	    It is run on a few different machines against a tarball of
+	    Silesa with all files truncated to 1 MiB.
+	  </p>
+
+	  <p>
+	    If I'm missing any modern, up-to-date benchmarks please
+	    <a href="https://github.com/quixdb/squash-benchmark-web/issues">let
+	    me know</a>.
+	  </p>
+	</dd>
+
+	<dt id="faq-raw-data">Can I have the raw data? <a href="#faq-raw-data"><i class="fa fa-link"></i></a></dt>
+	<dd>
+	  <p>
+	    Of course!  The table in the
+	    &quot;<a href="#choose-a-machine">choose a
+	    machine</a>&quot; section includes a link to
+	    a <abbr title="Comma Separated Values">CSV</abbr> which
+	    you can import into your favorite spreadsheet application
+	    (or at least your least-hated spreadsheet application).
+	    If you don't have one
+	    yet, <a href="https://www.libreoffice.org/discover/calc/">LibreOffice
+	    Calc</a> is a good choice.
+	  </p>
+
+	  <p>
+	    Additionally, you can grab a copy from
+	    the <a href="https://github.com/quixdb/squash-benchmark-web/data">the
+	    data folder</a> of
+	    the <a href="https://github.com/quixdb/squash-benchmark-web/">squash-benchmark-web
+	    git repository</a>.
+	  </p>
+
+	  <p>
+	    If you do something interesting with it please let us
+	    know!  Or, even better, submit a pull request so everyone
+	    can benefit from your brilliance!
+	  </p>
+
+	  <p>
+	    The data itself
+	    is <a href="http://creativecommons.org/publicdomain/zero/1.0/">CC0</a>
+	    licensed.  That said, we would certainly appreciate attribution.
+	  </p>
+	</dd>
+
+	<dt id="faq-direct-linking">Can I link to a specific configuration? <a href="#faq-direct-linking"><i class="fa fa-link"></i></a></dt>
+	<dd>
+	  <p>
+	    Some things can be configured by passing parameters in the query string:
+	  </p>
+
+	  <dl class="dl-horizontal">
+	    <dt>dataset</dt>
+	    <dd>Dataset to show (currently <var ng-bind="dataset"></var>), the default is selected randomly</dd>
+
+	    <dt>machine</dt>
+	    <dd>Machine to show (currently <var ng-bind="machine"></var>), the default is selected randomly</dd>
+
+	    <dt>speed</dt>
+	    <dd>Transfer speed (in KiB/s) for the Transfer + Processing chart (currently <var ng-bind="calculatedTransferSpeed / 1024"></var>)</dd>
+
+	    <dt>speed-scale</dt>
+	    <dd>The default scale for the speed axis of charts (<var>linear</var> or <var>logarithmic</var>, currently <var ng-bind="speedScale"></var>)</dd>
+
+	    <dt>visible-plugins</dt>
+	    <dd>A comma-separated list of plugins to show in the scatter plots.  All other plugins will be disabled, though they can be re-enabled by clicking on their entry in the legend.</dd>
+
+	    <dt>hidden-plugins</dt>
+	    <dd>A comma-separated list of plugins to hide in the scatter plots.  Note that, if used, this parameter overrides <var>visible-plugins</var></dd>
+	  </dl>
+
+	  <p>
+	    For example, your current configuration would be: <a href="{{ location }}?dataset={{ dataset }}&amp;machine={{ machine }}&amp;speed={{ calculatedTransferSpeed / 1024 }}&amp;speed-scale={{ speedScale }}">{{ location }}?dataset={{ dataset }}&amp;machine={{ machine }}&amp;speed={{ calculatedTransferSpeed / 1024 }}&amp;speed-scale={{ speedScale }}</a>.
+	  </p>
+
+	  <p>
+	    Note that all fields are optional; you can provide as many
+	    or few of them as you like.  Also, please be aware that
+	    this isn't necessarily stable—we may change the format
+	    when adding new features to the benchmark.
+	  </p>
+	</dd>
+      </dl>
+    </div>
+
+    <div id="discussion" class="container">
+      <h1>Discussion</h1>
+
+      <div id="disqus_thread"></div>
+      <script type="text/javascript">
+	var disqus_shortname = 'squash-benchmark';
+	(function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	})();
+      </script>
+      <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+    </div>
+
+    <footer class="bg-primary" style="padding: 2em 0">
+      <div class="container">
+	<p>
+	  Data generated
+	  by <a href="https://github.com/quixdb/squash-benchmark">squash-benchmark</a>
+	  using <a href="https://quixdb.github.io/squash">Squash</a>.
+	</p>
+
+	<p>
+	  For bug reports an feature requests, please use the relevant issue tracker:
+	</p>
+
+	<dl style="margin-left: 2em">
+	  <dt><a href="https://github.com/quixdb/squash-benchmark-web/issues">squash-benchmark-web</a></dt>
+	  <dd><p>This web site and how the data is presented.</p></dd>
+
+	  <dt><a href="https://github.com/quixdb/squash-benchmark/issues">squash-benchmark</a></dt>
+	  <dd><p>Accuracy and what information is included.</p></dd>
+
+	  <dt><a href="https://github.com/quixdb/squash/issues">squash</a></dt>
+	  <dd><p>The main library, to request new codecs</p></dd>
+	</dl>
+
+	<p>
+	  Web interface © 2015 Evan Nemerson,
+	  see <a href="https://github.com/quixdb/squash-benchmark-web/blob/master/COPYING">COPYING</a>
+	  for details.  The theme
+	  is <a href="https://bootswatch.com/sandstone/">Sandstone</a>
+	  from <a href="https://bootswatch.com/">Bootswatch</a>.
+	</p>
+      </div>
+    </footer>
+
+    <script src="squash-benchmark.js"></script>
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-192022-14', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
