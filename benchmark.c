@@ -44,7 +44,7 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 
-#include <squash/squash.h>
+#include <squash.h>
 #include "timer.h"
 
 static double min_exec_time = 5.0;
