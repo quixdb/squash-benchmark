@@ -36,11 +36,15 @@ SNAPPY = \
 	paper-100k.pdf \
 	urls.10K
 
+OTHER = \
+	vt100
+
 DATA = \
 	$(CANTERBURY) \
 	$(SILESA) \
 	$(LTCB) \
-	$(SNAPPY)
+	$(SNAPPY) \
+	$(OTHER)
 
 all: data.csv
 
