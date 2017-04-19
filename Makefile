@@ -8,6 +8,8 @@ CANTERBURY = \
 	grammar.lsp \
 	kennedy.xls \
 	lcet10.txt \
+	plrabn12.txt \
+	ptt5 \
 	sum \
 	xargs.1
 
@@ -18,8 +20,6 @@ SILESA = \
 	nci \
 	ooffice \
 	osdb \
-	plrabn12.txt \
-	ptt5 \
 	reymont \
 	samba \
 	sao \
