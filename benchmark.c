@@ -33,19 +33,42 @@
 #include <sys/syscall.h>
 #endif
 
+#if !defined(_MSC_VER)
 #include <unistd.h>
+#include <strings.h>
+#include <sys/wait.h>
+#else	// _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS			// disable microsoft complaints about usage of non-secure CRT functions. 
+										// https://docs.microsoft.com/en-us/cpp/c-runtime-library/security-features-in-the-crt
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <strings.h>
 #include <assert.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <sys/wait.h>
+
+#ifdef _MSC_VER
+#include "Windows.h"					// GetTempFileNameA()
+#include <io.h>							// _open(), _write(), _read(), _close(), _umask()
+
+#define open	_open					// avoid VS error C4996: "The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name."
+#define write	_write					// These might be converted, then removed upon confirming that other compilers are happy with the same naming.
+#define read	_read
+#define close	_close
+#define umask	_umask
+#define strdup	_strdup
+#define unlink	_unlink
+
+#define strtok_r strtok_s				// an equivalent
+#endif
 
 #include <squash.h>
 #include "timer.h"
+#include "parg.h"						// a cross platform "getopts"
+
 
 static double min_exec_time = 5.0;
 
@@ -62,6 +85,15 @@ squash_tmpfile (const char* name) {
 #endif
 }
 
+const struct 
+parg_option squash_bench_options[] = {
+{ "help",		PARG_NOARG,		NULL, 'h' },
+{ "codec",		PARG_NOARG,		NULL, 'c' },
+{ "outfile",	PARG_REQARG,	NULL, 'o' },
+{ "time",		PARG_NOARG,		NULL, 't' },
+{ NULL, 0, NULL, 0 }
+};
+
 static void
 print_help_and_exit (const char* executable, int exit_code) {
   fprintf (stdout, "Usage: %s [OPTION]... FILE...\n", executable);
@@ -71,7 +103,7 @@ print_help_and_exit (const char* executable, int exit_code) {
   fprintf (stdout, "\t-h            Print this help screen and exit.\n");
   fprintf (stdout, "\t-c codec      Benchmark the specified codec and exit.\n");
   fprintf (stdout, "\t-o outfile    CSV output file.\n");
-  fprintf (stdout, "\t-t time       Minumum execution time in seconds(default: 5.0)\n");
+  fprintf (stdout, "\t-t time       Minimum execution time in seconds(default: 5.0)\n");
 
   exit (exit_code);
 }
@@ -91,6 +123,64 @@ typedef struct {
   double decompress_wall;
 } SquashBenchmarkResult;
 
+// moves the codec compression/decompression results contained in fifo_name to the User specified CSV output file.
+// @post fifo_name, the temp file for codec results output, is deleted after the results are transferred to the CSV
+static bool 
+append_csv_benchmark(char * fifo_name, struct BenchmarkContext* context, const int level, SquashCodec* codec)
+{
+	bool success = false;
+	SquashBenchmarkResult result = { 0, 0.0, 0.0, 0.0, 0.0 };
+
+#if !defined(SQUASH_BENCHMARK_NO_FORK)
+	int in_descriptor = open(fifo_name, O_RDONLY);
+#else
+	int in_descriptor = descriptors[0];
+#endif
+
+	size_t bytes_read = read(in_descriptor, &result, sizeof(SquashBenchmarkResult));
+
+#if !defined(_WIN32)
+	wait (NULL);
+#endif
+
+	if (bytes_read == sizeof(SquashBenchmarkResult)) {
+		if (context->csv != NULL) {
+			if (level >= 0) {
+				fprintf(context->csv, "%s,%s,%s,%d,%ld,%ld,%f,%f,%f,%f\r\n",
+					context->input_name,
+					squash_plugin_get_name(squash_codec_get_plugin(codec)),
+					squash_codec_get_name(codec),
+					level,
+					context->input_size,
+					result.compressed_size,
+					result.compress_cpu,
+					result.compress_wall,
+					result.decompress_cpu,
+					result.decompress_wall);
+			}
+			else {
+				fprintf(context->csv, "%s,%s,%s,,%ld,%ld,%f,%f,%f,%f\r\n",
+					context->input_name,
+					squash_plugin_get_name(squash_codec_get_plugin(codec)),
+					squash_codec_get_name(codec),
+					context->input_size,
+					result.compressed_size,
+					result.compress_cpu,
+					result.compress_wall,
+					result.decompress_cpu,
+					result.decompress_wall);
+			}
+		}
+
+		success = true;
+	}
+	close(in_descriptor);
+#if !defined(SQUASH_BENCHMARK_NO_FORK)	
+	unlink(fifo_name);
+#endif
+	return success;
+}
+
 static bool
 benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* codec, SquashOptions* opts) {
   SquashBenchmarkResult result = { 0, 0.0, 0.0, 0.0, 0.0 };
@@ -99,17 +189,36 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
   const int level = squash_options_get_int (opts, codec, "level");
 
 #if !defined(SQUASH_BENCHMARK_NO_FORK)
-  char fifo_name[] = ".squash-benchmark-fifo-XXXXXX";
-
+  char fifo_name[FILENAME_MAX] = ".squash-benchmark-fifo-XXXXXX";
+#if !defined(_WIN32)
   assert (mkfifo (mktemp (fifo_name), 0600) == 0);
+  if (fork() == 0) {
+#else 	
+  char tempFile[FILENAME_MAX];				// note: Win32 mktemp() has a 26 unique file name 'a'-'z' limit and issues if for some reason file pre-exists.
+  char directory[]	= { "." };				// in the current directory
+  char prefix[] = { "squ" };				// note: api uses only 3 characters max
 
-  if (fork () == 0) {
-    int out_descriptor = open (fifo_name, O_WRONLY);
+  bool bProcess = GetTempFileNameA(					
+	  directory,							
+	  prefix,
+	  0,									// ==0, creates filenames based upon time (65,535 unique file names before roll over)
+	  tempFile
+  );
+  assert(bProcess);
+  strcpy(fifo_name, tempFile);
+
+  if (bProcess) {
+#endif // _WIN32
+
+	int out_descriptor = open(fifo_name, O_WRONLY);
+	if (out_descriptor == -1)
+		perror("Open failed on fifo_name");
 #else
     int descriptors[2];
     assert (pipe (descriptors) == 0);
     int out_descriptor = descriptors[1];
-#endif
+#endif  // SQUASH_BENCHMARK_NO_FORK
+
     FILE* compressed = squash_tmpfile ("squash-benchmark-compressed");
     FILE* decompressed = squash_tmpfile ("squash-benchmark-decompressed");
     SquashTimer* timer = squash_timer_new ();
@@ -137,7 +246,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
       rewind (context->input);
 
       if (res != SQUASH_OK) {
-	fprintf (stderr, "ERROR: %s (%d) squash_splice_with_options (%s, compress, %p, %p, 0, %p)\n", squash_status_to_string (res), res, squash_codec_get_name (codec), compressed, context->input, opts);
+		fprintf (stderr, "ERROR: %s (%d) squash_splice_with_options (%s, compress, %p, %p, 0, %p)\n", squash_status_to_string (res), res, squash_codec_get_name (codec), compressed, context->input, opts);
         break;
       }
     }
@@ -157,17 +266,17 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
                  result.compressed_size);
 
         for ( iterations = 0 ; squash_timer_get_elapsed_cpu (timer) < min_exec_time ; iterations++ ) {
-          fseek (compressed, 0, SEEK_SET);
-          fseek (decompressed, 0, SEEK_SET);
+			fseek (compressed, 0, SEEK_SET);
+			fseek (decompressed, 0, SEEK_SET);
 
-          squash_timer_start (timer);
-	  res = squash_splice_with_options (codec, SQUASH_STREAM_DECOMPRESS, decompressed, compressed, 0, opts);
-          squash_timer_stop (timer);
-	  rewind (compressed);
+			squash_timer_start (timer);
+			res = squash_splice_with_options (codec, SQUASH_STREAM_DECOMPRESS, decompressed, compressed, 0, opts);
+			squash_timer_stop (timer);
+			rewind (compressed);
 
-          if (res != SQUASH_OK) {
-            break;
-          }
+			if (res != SQUASH_OK) {
+			break;
+			}
         }
 
         if (res != SQUASH_OK) {
@@ -197,48 +306,19 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
 
     close (out_descriptor);
 #if !defined(SQUASH_BENCHMARK_NO_FORK)
+#if !defined(_WIN32)
     exit (0);
-  } else {
-    int in_descriptor = open (fifo_name, O_RDONLY);
-#else
-    int in_descriptor = descriptors[0];
 #endif
-    size_t bytes_read = read (in_descriptor, &result, sizeof (SquashBenchmarkResult));
-    wait (NULL);
-    if (bytes_read == sizeof (SquashBenchmarkResult)) {
-      if (context->csv != NULL) {
-        if (level >= 0) {
-          fprintf (context->csv, "%s,%s,%s,%d,%ld,%ld,%f,%f,%f,%f\r\n",
-                   context->input_name,
-                   squash_plugin_get_name (squash_codec_get_plugin (codec)),
-                   squash_codec_get_name (codec),
-                   level,
-		   context->input_size,
-                   result.compressed_size,
-                   result.compress_cpu,
-                   result.compress_wall,
-                   result.decompress_cpu,
-                   result.decompress_wall);
-        } else {
-          fprintf (context->csv, "%s,%s,%s,,%ld,%ld,%f,%f,%f,%f\r\n",
-                   context->input_name,
-                   squash_plugin_get_name (squash_codec_get_plugin (codec)),
-                   squash_codec_get_name (codec),
-		   context->input_size,
-                   result.compressed_size,
-                   result.compress_cpu,
-                   result.compress_wall,
-                   result.decompress_cpu,
-                   result.decompress_wall);
-        }
-      }
-
-      success = true;
-    }
-    close (in_descriptor);
-#if !defined(SQUASH_BENCHMARK_NO_FORK)
-    unlink (fifo_name);
-  }
+#endif
+  } 
+#if !defined(_WIN32)
+ else {
+	// note: fork() parent is responsible for reporting.
+	success = append_csv_benchmark(fifo_name, context, level, codec);
+ }
+#else
+	// no fork()ing on Win32, done inline upon being completed above
+	success = append_csv_benchmark(fifo_name, context, level, codec);
 #endif
 
   return success;
@@ -252,7 +332,7 @@ benchmark_codec (SquashCodec* codec, void* data) {
   char level_s[4];
   bool have_results = false;
 
-  umask (0100);
+  umask (S_IEXEC);								// using constants: S_IEXEC == 0x0040 == 0100 Octal.  Execute/Search permission.
 
   fprintf (stdout, "  %s:%s\n",
            squash_plugin_get_name (squash_codec_get_plugin (codec)),
@@ -334,6 +414,8 @@ benchmark_parse_codec (const char* str, SquashOptions** options) {
 }
 
 int main (int argc, char** argv) {
+  struct parg_state ps;
+  int optend;
   struct BenchmarkContext context = { NULL, NULL, NULL, 0 };
   int opt;
   int optc = 0;
@@ -342,13 +424,16 @@ int main (int argc, char** argv) {
 
   setvbuf (stdout, NULL, _IONBF, 0);
 
-  while ( (opt = getopt(argc, argv, "hc:o:t:")) != -1 ) {
+  optend = parg_reorder(argc, argv, "hc:o:t:", squash_bench_options);
+  parg_init(&ps);
+
+  while ( (opt = parg_getopt_long(&ps, optend, argv, "hc:o:t:", squash_bench_options, NULL)) != -1 ) {
     switch ( opt ) {
       case 'h':
         print_help_and_exit (argv[0], 0);
         break;
       case 'o':
-        context.csv = fopen (optarg, "w+b");
+        context.csv = fopen (ps.optarg, "w+b");
         if (context.csv == NULL) {
           perror ("Unable to open output file");
           return -1;
@@ -356,21 +441,21 @@ int main (int argc, char** argv) {
         setbuf (context.csv, NULL);
         break;
       case 'c':
-	codec = benchmark_parse_codec (optarg, &opts);
+	codec = benchmark_parse_codec (ps.optarg, &opts);
         if (codec == NULL) {
           fprintf (stderr, "Unable to find codec.\n");
           return -1;
         }
         break;
       case 't':
-	min_exec_time = strtod (optarg, NULL);
+	min_exec_time = strtod (ps.optarg, NULL);
 	break;
     }
 
     optc++;
   }
 
-  if ( optind >= argc ) {
+  if ( ps.optind >= argc ) {
     fputs ("No input files specified.\n", stderr);
     return -1;
   }
@@ -378,8 +463,9 @@ int main (int argc, char** argv) {
   if (context.csv != NULL)
     fprintf (context.csv, "dataset,plugin,codec,level,raw_size,compressed_size,compress_cpu,compress_wall,decompress_cpu,decompress_wall\r\n");
 
-  while ( optind < argc ) {
-    context.input_name = argv[optind];
+  // loop over the input dataset files, processing them:
+  while ( ps.optind < argc ) {
+    context.input_name = argv[ps.optind];
     context.input = fopen (context.input_name, "rb");
     if (context.input == NULL) {
       perror ("Unable to open input data");
@@ -402,7 +488,7 @@ int main (int argc, char** argv) {
       benchmark_codec (codec, &context);
     }
 
-    optind++;
+    ps.optind++;
   }
 
   if (context.csv != NULL) {

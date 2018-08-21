@@ -28,7 +28,9 @@
 
 #include "timer.h"
 
+#if !defined(_MSC_VER)
 #include <unistd.h>
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
