@@ -124,6 +124,7 @@ typedef struct {
 } SquashBenchmarkResult;
 
 // moves the codec compression/decompression results contained in fifo_name to the User specified CSV output file.
+// @pre: fifo_name exists and contains compression results data. 
 // @post fifo_name, the temp file for codec results output, is deleted after the results are transferred to the CSV
 static bool 
 append_csv_benchmark(char * fifo_name, struct BenchmarkContext* context, const int level, SquashCodec* codec)
@@ -132,12 +133,15 @@ append_csv_benchmark(char * fifo_name, struct BenchmarkContext* context, const i
 	SquashBenchmarkResult result = { 0, 0.0, 0.0, 0.0, 0.0 };
 
 #if !defined(SQUASH_BENCHMARK_NO_FORK)
-	int in_descriptor = open(fifo_name, O_RDONLY);
+	int in_descriptor = open(fifo_name, O_RDONLY | O_BINARY);
+	if (in_descriptor == -1)
+		perror("Open failed to read fifo_name");
 #else
 	int in_descriptor = descriptors[0];
 #endif
 
 	size_t bytes_read = read(in_descriptor, &result, sizeof(SquashBenchmarkResult));
+
 
 #if !defined(_WIN32)
 	wait (NULL);
@@ -173,7 +177,10 @@ append_csv_benchmark(char * fifo_name, struct BenchmarkContext* context, const i
 		}
 
 		success = true;
+	} else {
+		fprintf(stderr, "append_csv_benchmark failed to read [%zd] bytes_read.  Error: %s\n", bytes_read, strerror(errno));
 	}
+
 	close(in_descriptor);
 #if !defined(SQUASH_BENCHMARK_NO_FORK)	
 	unlink(fifo_name);
@@ -210,7 +217,7 @@ benchmark_codec_with_options (struct BenchmarkContext* context, SquashCodec* cod
   if (bProcess) {
 #endif // _WIN32
 
-	int out_descriptor = open(fifo_name, O_WRONLY);
+	int out_descriptor = open(fifo_name, O_WRONLY | O_BINARY);
 	if (out_descriptor == -1)
 		perror("Open failed on fifo_name");
 #else
