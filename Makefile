@@ -44,10 +44,11 @@ DATA = \
 
 all: data.csv
 
+# for the *.xz dependencies found, keep the source, decompress, using the xz codec
 %:: %.xz
 	squash -kdc xz $^ $@
 
-benchmark: benchmark.c timer.c
+benchmark: benchmark.c timer.c parg.c
 	$(CC) -Wall -Wextra -g -o benchmark $^ `pkg-config --libs --cflags squash-0.8`
 
 data.csv: benchmark $(DATA)
